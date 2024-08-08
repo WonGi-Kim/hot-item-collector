@@ -76,6 +76,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
      * 만약 찾은 회원이 있다면, 그대로 반환하고 없다면 saveUser()를 호출하여 회원을 저장한다.
      */
     private OAuthUser getUser(OAuthAttributes attributes, SocialType socialType) {
+        String a = attributes.getOauth2UserInfo().getEmail();
+
         OAuthUser findUser = oAuthUserRepository.findBySocialTypeAndEmail(socialType,
                 attributes.getOauth2UserInfo().getEmail()).orElse(null);
 

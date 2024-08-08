@@ -4,6 +4,7 @@ import java.util.Map;
 
 public class GoogleOAuth2UserInfo extends OAuth2UserInfo {
 
+
     public GoogleOAuth2UserInfo(Map<String, Object> attributes) {
         super(attributes);
     }
@@ -14,18 +15,23 @@ public class GoogleOAuth2UserInfo extends OAuth2UserInfo {
     }
 
     @Override
-    public String getNickname() {
-        return (String) attributes.get("name");
+    public String getNickname()  {
+        return getAttributeValue("nickname");
     }
 
     @Override
-    public String getImageUrl() {
-        return (String) attributes.get("picture");
+    public String getImageUrl()  {
+        return getAttributeValue("profile_image");
     }
 
     @Override
-    public String getEmail() {
-        return (String) attributes.get("email");
+    public String getEmail()  {
+        return getAttributeValue("email");
+    }
+
+    private String getAttributeValue(String key) {
+        Object value = attributes.get(key);
+        return value != null ? value.toString() : null;
     }
 }
 
