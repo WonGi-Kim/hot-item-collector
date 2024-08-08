@@ -224,6 +224,19 @@ async function getrefreshToken() {
 
 // Check login status on mount
 onMounted(async () => {
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const newaccessToken = urlParams.get('access');
+  const newrefreshToken = urlParams.get('refresh');
+  if (newaccessToken && newrefreshToken) {
+    Cookies.set('access_token', newaccessToken, { expires: 1 });
+    Cookies.set('refresh_token', newrefreshToken, { expires: 7 });
+
+    // 로그인 후 이동할 페이지로 리다이렉트
+    router.push('/'); // 또는 원하는 경로
+  }
+
+
   const accessToken = Cookies.get('access_token');
   const refreshToken = Cookies.get('refresh_token');
 
@@ -278,7 +291,6 @@ async function logout() {
 
   if (!refreshToken) {
     Cookies.remove('access_token');
-    Cookies.remove('refresh_token');
     isLoggedIn.value = false;
     return;
   }
@@ -399,34 +411,43 @@ async function register() {
 }
 
 async function login() {
-  // 로그인 로직 구현
-  {
-    try {
-      const response = await axios.post('/users/login', {
-        loginId: loginId.value,
-        password: password.value,
-      }, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      console.log('로그인 성공:', response.data);
+  try {
+    // Perform the login request
+    const response = await axios.post('/users/login', {
+      loginId: loginId.value,
+      password: password.value,
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
 
-      // 쿠키에 토큰 저장
-      const {access, refresh} = response.data.result;
-      Cookies.set('access_token', access, {expires: 1}); // access_token을 1일 동안 쿠키에 저장
-      Cookies.set('refresh_token', refresh, {expires: 7}); // refresh_token을 7일 동안 쿠키에 저장
+    console.log('로그인 성공:', response);
 
+    // Log headers to see their structure
+    console.log('Response headers:', response.headers);
 
-      // 로그인 성공 처리
+    // Extract tokens from response headers
+    const accessToken = response.headers['access']; // Ensure header key matches the server's key
+    const refreshToken = response.headers['refresh']; // Ensure header key matches the server's key
+
+    if (accessToken && refreshToken) {
+      // Save tokens in cookies
+      Cookies.set('access_token', accessToken, { expires: 1 }); // Access token for 1 day
+      Cookies.set('refresh_token', refreshToken, { expires: 7 }); // Refresh token for 7 days
+
+      // Handle login success
       isLoggedIn.value = true;
       showLoginModal.value = false;
-      // 로그인 후 추가 작업이 있다면 여기에 추가
-      window.location.reload()
-    } catch (error) {
-      console.error('로그인 실패:', error.response.data);
-      loginError.value = '로그인에 실패하였습니다.';
+      // Additional actions after login
+      window.location.reload();
+    } else {
+      console.error('로그인 성공, 그러나 헤더에 토큰이 없습니다.');
+      loginError.value = '로그인 성공, 그러나 헤더에 토큰이 없습니다.';
     }
+  } catch (error) {
+    console.error('로그인 실패:', error.response ? error.response.data : error.message);
+    loginError.value = '로그인에 실패하였습니다.';
   }
 }
 

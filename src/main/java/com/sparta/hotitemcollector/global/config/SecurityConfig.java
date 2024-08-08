@@ -82,11 +82,13 @@ public class SecurityConfig {
 
         // 소셜 로그인 설정
         http.oauth2Login(oauth2Login -> oauth2Login
-                .successHandler(oAuth2LoginSuccessHandler)
-                .failureHandler(oAuth2LoginFailureHandler)
+                .loginProcessingUrl("/login/oauth2/code/*") // 추가됨!
                 .userInfoEndpoint(userInfoEndpoint ->
                         userInfoEndpoint.userService(customOAuth2UserService)
                 )
+                .successHandler(oAuth2LoginSuccessHandler)
+                .failureHandler(oAuth2LoginFailureHandler)
+
         );
 
         // 커스텀 필터 추가

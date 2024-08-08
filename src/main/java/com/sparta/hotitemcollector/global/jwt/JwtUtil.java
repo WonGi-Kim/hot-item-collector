@@ -2,7 +2,6 @@ package com.sparta.hotitemcollector.global.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.hotitemcollector.domain.user.UserRole;
-import com.sparta.hotitemcollector.global.common.CommonResponse;
 import com.sparta.hotitemcollector.global.config.JwtConfig;
 import com.sparta.hotitemcollector.global.exception.CustomException;
 import com.sparta.hotitemcollector.global.exception.ErrorCode;
@@ -15,10 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
-import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @Slf4j
 @Component
@@ -45,61 +41,62 @@ public class JwtUtil {
         this.redisUtil = redisUtil;
     }
 
-    public String createAccessToken(String userId) {
-        return createToken(userId,tokenExpiration);
+    public String createAccessToken(String userId, UserRole role) {
+        return createToken(userId, role,tokenExpiration);
     }
 
-    public String createRefreshToken(String userId) {
-        return createToken(userId, refreshTokenExpiration);
+    public String createRefreshToken(String userId, UserRole role) {
+        return createToken(userId, role, refreshTokenExpiration);
     }
 
+    /**
+     * AccessToken + RefreshToken 헤더에 실어서 보내기
+     */
+    public void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken) {
+        response.setStatus(HttpServletResponse.SC_OK);
+
+        setAccessTokenHeader(response, "Bearer "+accessToken);
+        setRefreshTokenHeader(response, refreshToken);
+        log.info("Access Token, Refresh Token 헤더 설정 완료");
+    }
 //    /**
-//     * AccessToken + RefreshToken 헤더에 실어서 보내기
+//     * AccessToken + RefreshToken 바디에 실어서 보내기
 //     */
-//    public void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken) {
+//    public void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken) throws IOException {
 //        response.setStatus(HttpServletResponse.SC_OK);
+//        response.setContentType("application/json;charset=UTF-8");
 //
-//        setAccessTokenHeader(response, accessToken);
-//        setRefreshTokenHeader(response, refreshToken);
-//        log.info("Access Token, Refresh Token 헤더 설정 완료");
+//        Map<String, String> tokens = new HashMap<>();
+//        tokens.put("access", accessToken);
+//        if (refreshToken != null) {
+//            tokens.put("refresh", refreshToken);
+//        }
+//        CommonResponse responseForm = new CommonResponse<>("Access Token, Refresh Token 바디에 설정 성공",200,tokens);
+//
+//        String responseBody = objectMapper.writeValueAsString(responseForm);
+//        response.getWriter().write(responseBody);
+//        log.info("Access Token, Refresh Token 바디에 설정 완료");
 //    }
     /**
-     * AccessToken + RefreshToken 바디에 실어서 보내기
+     * AccessToken 헤더 설정
      */
-    public void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken) throws IOException {
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setContentType("application/json;charset=UTF-8");
-
-        Map<String, String> tokens = new HashMap<>();
-        tokens.put("access", accessToken);
-        if (refreshToken != null) {
-            tokens.put("refresh", refreshToken);
-        }
-        CommonResponse responseForm = new CommonResponse<>("Access Token, Refresh Token 바디에 설정 성공",200,tokens);
-
-        String responseBody = objectMapper.writeValueAsString(responseForm);
-        response.getWriter().write(responseBody);
-        log.info("Access Token, Refresh Token 바디에 설정 완료");
+    public void setAccessTokenHeader(HttpServletResponse response, String accessToken) {
+        response.setHeader("access", accessToken);
     }
-//    /**
-//     * AccessToken 헤더 설정
-//     */
-//    public void setAccessTokenHeader(HttpServletResponse response, String accessToken) {
-//        response.setHeader("Authorization", accessToken);
-//    }
-//
-//    /**
-//     * RefreshToken 헤더 설정
-//     */
-//    public void setRefreshTokenHeader(HttpServletResponse response, String refreshToken) {
-//        response.setHeader("refresh", refreshToken);
-//    }
+
+    /**
+     * RefreshToken 헤더 설정
+     */
+    public void setRefreshTokenHeader(HttpServletResponse response, String refreshToken) {
+        response.setHeader("refresh", refreshToken);
+    }
 
 
     // 토큰 생성
-    public String createToken(String userId, long expiration) {
+    public String createToken(String userId, UserRole role, long expiration) {
         return Jwts.builder()
                 .setSubject(userId) // 토큰 발행 주체
+                .claim(AUTHORIZATION_KEY, role.name()) // Add user role to claims
                 .setIssuedAt(new Date()) // 토큰 발행 시간
                 .setExpiration(new Date(System.currentTimeMillis() + expiration)) // 토큰 만료 시간
                 .signWith(secretKey, signatureAlgorithm)

@@ -132,8 +132,8 @@ public class UserService {
         }
 
 
-        String access = jwtUtil.createAccessToken(loginId);
-        String refresh = jwtUtil.createRefreshToken(loginId);
+        String access = jwtUtil.createAccessToken(loginId,finduser.getRole());
+        String refresh = jwtUtil.createRefreshToken(loginId,finduser.getRole());
 
         tokenService.updateToken(optionalToken.get(), refresh);
 
@@ -320,6 +320,7 @@ public class UserService {
 
     /**
      * 닉네임으로 유저 리스트 검색
+     *
      * @param nickname
      * @return
      */
