@@ -73,11 +73,9 @@ public class ProductService {
 			.map(image -> new ProductImageResponseDto(image))
 			.collect(Collectors.toList());
 
-		ProfileImageResponseDto profileImageDto = new ProfileImageResponseDto(product.getUser()
-			.getProfileImage());
 
 		// ProductResponseDto 생성
-		ProductResponseDto responseDto = new ProductResponseDto(product, imageDtos, profileImageDto);
+		ProductResponseDto responseDto = new ProductResponseDto(product, imageDtos);
 		return responseDto;
 	}
 
@@ -127,10 +125,9 @@ public class ProductService {
 			.map(ProductImageResponseDto::new)
 			.collect(Collectors.toList());
 
-		ProfileImageResponseDto profileImageResponseDto = new ProfileImageResponseDto(product.getUser().getProfileImage());
 
 		// ProductResponseDto 생성 및 반환
-		return new ProductResponseDto(product, updatedImageDtos, profileImageResponseDto);
+		return new ProductResponseDto(product, updatedImageDtos);
 	}
 
 	@Transactional
@@ -193,6 +190,7 @@ public class ProductService {
 
 		Page<Product> productPage = productRepository.findByRequirement(followingUsers, null, null, null, null, pageable);
 		return productPage.map(ProductSimpleResponseDto::new);
+		//return null;
 	}
 
 	@Transactional(readOnly = true)
@@ -203,6 +201,7 @@ public class ProductService {
 		return productResponseDtoPage.getContent()
 			.stream()
 			.collect(Collectors.toList());
+		 //return null;
 	}
 
 	@Transactional(readOnly = true)
@@ -245,6 +244,7 @@ public class ProductService {
 		Page<Product> productPage = productRepository.findAll(pageable);
 
 		return productPage.map(ProductSimpleResponseDto::new);
+		// return null;
 	}
 
 	public Product findById(Long productId) {

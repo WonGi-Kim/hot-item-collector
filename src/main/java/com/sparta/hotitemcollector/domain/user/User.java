@@ -39,8 +39,9 @@ public class User extends Timestamped {
     private String address;
 
     @Setter
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private ProfileImage profileImage;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "profileImage_id")
+     private ProfileImage profileImage;
 
     @Setter
     @Column

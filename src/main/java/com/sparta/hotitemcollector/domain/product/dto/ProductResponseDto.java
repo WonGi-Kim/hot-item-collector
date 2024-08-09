@@ -42,4 +42,20 @@ public class ProductResponseDto {
         this.createdAt = product.getCreatedAt();
         this.modifiedAt = product.getModifiedAt();
     }
+
+    public ProductResponseDto(Product product, List<ProductImageResponseDto> images) {
+        this.id = product.getId();
+        this.name = product.getName();
+        this.category = product.getCategory();
+        this.images = images;
+        this.price = product.getPrice();
+        this.info = product.getInfo();
+        this.likes = product.getLikes();
+        this.status=product.getStatus();
+        this.userId = product.getUser().getId();
+        this.nickname=product.getUser().getNickname();
+       // this.profileImage=prfileImage;
+        this.createdAt = product.getCreatedAt();
+        this.modifiedAt = product.getModifiedAt();
+    }
 }

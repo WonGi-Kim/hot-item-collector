@@ -69,7 +69,7 @@ public class UserService {
                 .nickname(signupRequestDto.getNickname())
                 .build();
 
-        ProfileImage profileImage = new ProfileImage(requestDto,user);
+        ProfileImage profileImage = new ProfileImage(requestDto);
         user.updateProfileImage(profileImage);
         User saveUser = userRepository.save(user);
     }
@@ -198,7 +198,7 @@ public class UserService {
 
 
 
-
+    @Transactional
     public ProfileResponseDto updateProfile(ProfileRequestDto requestDto, User user) {
         User findUser = userRepository.findById(user.getId())
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
@@ -230,8 +230,8 @@ public class UserService {
                 profileImageRepository.save(existingProfileImage);
                 findUser.updateProfileImage(existingProfileImage);
             }else{ // 프로필 사진 없을 경우
-                ProfileImageRequestDto profileImageRequestDto = new ProfileImageRequestDto(requestDto.getProfileImage().getFilename(),requestDto.getProfileImage().getImageUrl());
-                ProfileImage newProfileImage = new ProfileImage(profileImageRequestDto,findUser);
+                ProfileImageRequestDto profileImageRequestDto = requestDto.getProfileImage();
+                ProfileImage newProfileImage = new ProfileImage(profileImageRequestDto);
                 profileImageRepository.save(newProfileImage);
                 findUser.updateProfileImage(newProfileImage);
             }
