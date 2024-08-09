@@ -9,8 +9,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.sparta.hotitemcollector.domain.product.dto.HotProductResponseDto;
 import com.sparta.hotitemcollector.domain.product.entity.Product;
 import com.sparta.hotitemcollector.domain.product.entity.ProductCategory;
 import com.sparta.hotitemcollector.domain.product.entity.ProductStatus;
@@ -41,6 +43,27 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 		long total = productQueryResults.getTotal();
 
 		return PageableExecutionUtils.getPage(productList, pageable, () -> total);
+	}
+
+	@Override
+	public Page<HotProductResponseDto> findTop10HotProduct(Pageable pageable){
+
+		QueryResults<HotProductResponseDto> dtoQueryResults = jpaQueryFactory
+			.select(Projections.fields(HotProductResponseDto.class,
+				product.id,
+				product.name
+			))
+			.from(product)
+			.orderBy(product.likes.desc(),
+				product.createdAt.desc())
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetchResults();
+
+		List<HotProductResponseDto> hotProductResponseDtos = dtoQueryResults.getResults();
+		long total = dtoQueryResults.getTotal();
+
+		return PageableExecutionUtils.getPage(hotProductResponseDtos, pageable, () -> total);
 	}
 
 	public BooleanExpression userListEq(List<User> users) {

@@ -1,5 +1,6 @@
 package com.sparta.hotitemcollector.domain.product.repository;
 
+import com.sparta.hotitemcollector.domain.product.dto.HotProductResponseDto;
 import com.sparta.hotitemcollector.domain.product.entity.Product;
 import com.sparta.hotitemcollector.domain.product.entity.ProductCategory;
 import com.sparta.hotitemcollector.domain.product.entity.ProductStatus;
@@ -22,4 +23,8 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Product
 
 	List<Product> findByUserAndStatus(User user, ProductStatus status);
 
+	// @Query(value = "SELECT new com.sparta.hotitemcollector.domain.product.dto.HotProductResponseDto(p.id, p.name) "
+	// 	+ "FROM Product p "
+	// 	+ "ORDER BY p.likes DESC")
+	// Page<HotProductResponseDto> findTop10HotProduct(Pageable pageable);
 }

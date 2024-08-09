@@ -184,7 +184,7 @@ public class ProductService {
 
 	@Transactional(readOnly = true)
 	public Page<ProductSimpleResponseDto> getFollowProduct(User user, int page, int size) {
-		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+		Pageable pageable = PageRequest.of(page, size);
 		List<Follow> followList = followService.getAllFollowers(user);
 
 		List<User> followingUsers = followList.stream()
@@ -198,11 +198,10 @@ public class ProductService {
 	@Transactional(readOnly = true)
 	public List<HotProductResponseDto> getHotProduct(int page, int size) {
 		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-		Page<Product> productPage = productRepository.findTop10ByOrderByLikesDesc(pageable);
+		Page<HotProductResponseDto> productResponseDtoPage = productRepository.findTop10HotProduct(pageable);
 
-		return productPage.getContent()
+		return productResponseDtoPage.getContent()
 			.stream()
-			.map(HotProductResponseDto::new)
 			.collect(Collectors.toList());
 	}
 
