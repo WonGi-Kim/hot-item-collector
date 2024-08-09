@@ -8,16 +8,7 @@ import com.sparta.hotitemcollector.domain.payment.Payment;
 import com.sparta.hotitemcollector.domain.user.User;
 import com.sparta.hotitemcollector.global.Timestamped;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -49,8 +40,8 @@ public class Orders extends Timestamped {
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<OrderItem> orderItems = new ArrayList<>();
 
-    @OneToMany(mappedBy = "order")
-    private List<Payment> paymentList;
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+	private Payment payment;
 
 	@Builder
 	public Orders(User user, String address, String phoneNumber, String userName) {
