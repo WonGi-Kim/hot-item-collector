@@ -4,6 +4,7 @@ import com.sparta.hotitemcollector.domain.follow.FollowRepository;
 import com.sparta.hotitemcollector.domain.s3.service.S3Service;
 import com.sparta.hotitemcollector.domain.token.Token;
 import com.sparta.hotitemcollector.domain.token.TokenService;
+import com.sparta.hotitemcollector.domain.user.dto.OauthSignupRequestDto;
 import com.sparta.hotitemcollector.domain.user.dto.auth.ConnectAccountRequestDto;
 import com.sparta.hotitemcollector.domain.user.dto.auth.LoginResponseDto;
 import com.sparta.hotitemcollector.domain.user.dto.auth.RefreshRequestDto;
@@ -62,6 +63,11 @@ public class UserService {
         ProfileImage profileImage = new ProfileImage(requestDto, user);
         user.updateProfileImage(profileImage);
         userRepository.save(user);
+    }
+
+    public void oauthSignup(OauthSignupRequestDto requestDto) {
+        signup(new SignupRequestDto(requestDto));
+        connectAccount(new ConnectAccountRequestDto(requestDto));
     }
 
     public void connectAccount(ConnectAccountRequestDto requestDto) {
@@ -207,16 +213,16 @@ public class UserService {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
         if (requestDto.getNickname() != null) {
-            findUser.setNickname(requestDto.getNickname());
+            findUser.updateNickname(requestDto.getNickname());
         }
         if (requestDto.getPhoneNumber() != null) {
-            findUser.setPhoneNumber(requestDto.getPhoneNumber());
+            findUser.updatePhoneNumber(requestDto.getPhoneNumber());
         }
         if (requestDto.getAddress() != null) {
-            findUser.setAddress(requestDto.getAddress());
+            findUser.updateAddress(requestDto.getAddress());
         }
         if (requestDto.getInfo() != null) {
-            findUser.setInfo(requestDto.getInfo());
+            findUser.updateInfo(requestDto.getInfo());
         }
 
         // 요청으로 사진을 보냄
@@ -261,7 +267,7 @@ public class UserService {
         }
 
         // 새로운 비밀번호 설정
-        findUser.setPassword(passwordEncoder.encode(requestDto.getNewPassword()));
+        findUser.updatePassword(passwordEncoder.encode(requestDto.getNewPassword()));
 
         // 변경된 비밀번호를 저장합니다.
         userRepository.save(findUser);
@@ -317,6 +323,10 @@ public class UserService {
         }
     }
 
+    public String passwordEncoder(String password) {
+        return passwordEncoder.encode(password);
+    }
+
 
     /**
      * 닉네임으로 유저 리스트 검색
@@ -332,6 +342,14 @@ public class UserService {
         return userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
     }
 
+    public User findByEmail(String email){
+        return userRepository.findByEmail(email).orElseThrow(()->new CustomException(ErrorCode.NOT_FOUND_USER));
+    }
+
+    public User saveUser(User user){
+        return userRepository.save(user);
+    }
+
     public void confirmPassword(ConfirmPasswordDto requestDto, User user) {
         User finduser = userRepository.findByLoginId(user.getLoginId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
@@ -341,4 +359,6 @@ public class UserService {
         }
 
     }
+
+
 }
