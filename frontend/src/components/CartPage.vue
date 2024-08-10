@@ -31,7 +31,7 @@
 
 <script>
 import {ref, computed, onMounted} from 'vue';
-import axios from "axios";
+const client = require('../client')
 import {useRouter} from "vue-router";
 import Cookies from "js-cookie";
 import AppHeader from './AppHeader.vue';
@@ -45,7 +45,7 @@ export default {
 
     const loadCartItems = () => {
 
-      axios.get('/cart', {
+      client.get('/cart', {
         headers: {
           'Authorization': accessToken
         }
@@ -75,7 +75,7 @@ export default {
       if (!userConfirmed) {
         return;
       }
-      axios.delete(`/cart/${item.productId}`, {
+      client.delete(`/cart/${item.productId}`, {
         headers: {
           'Authorization': accessToken
         }

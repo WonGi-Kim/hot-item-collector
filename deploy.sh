@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo ">>> [+] docker-compose up" >> /home/ubuntu/action/deploy.log
+docker-compose up -d --build >> /home/ubuntu/action/docker.log
 BUILD_JAR=$(ls /home/ubuntu/action/build/libs/*.jar)
 JAR_NAME=$(basename $BUILD_JAR)
 echo ">>> build 파일명: $JAR_NAME" >> /home/ubuntu/action/deploy.log
@@ -21,5 +23,20 @@ else
 fi
 
 DEPLOY_JAR=$DEPLOY_PATH$JAR_NAME
-echo ">>> DEPLOY_JAR 배포" >> /home/ubuntu/action/deploy.log
-nohup java -jar $DEPLOY_JAR >> /home/ubuntu/action/deploy.log 2>> /home/ubuntu/action/deploy_err.log &
+echo ">>> DEPLOY_JAR 배포: $DEPLOY_JAR" >> /home/ubuntu/action/deploy.log
+nohup java -jar $DEPLOY_JAR --server.port=8080 >> /home/ubuntu/action/deploy.log 2>> /home/ubuntu/action/deploy_err.log &
+
+# 프론트엔드 애플리케이션을 Nginx를 통해 배포
+echo ">>> Nginx 설정 파일 복사" >> /home/ubuntu/action/deploy.log
+NGINX_CONFIG_PATH=/etc/nginx/sites-available/default
+FRONTEND_BUILD_PATH=/home/ubuntu/action/frontend/dist
+
+yes | sudo cp -rf $FRONTEND_BUILD_PATH/* /var/www/html/
+
+# Nginx 설정 파일 수정 (필요한 경우에만)
+# sed 명령어를 이용하여 Nginx 설정 파일에서 포트나 경로를 변경
+
+echo ">>> Nginx 재시작" >> /home/ubuntu/action/deploy.log
+sudo systemctl restart nginx
+
+echo ">>> 배포 스크립트 종료" >> /home/ubuntu/action/deploy.log

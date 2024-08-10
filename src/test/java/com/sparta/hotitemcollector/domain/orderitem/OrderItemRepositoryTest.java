@@ -56,7 +56,7 @@ class QueryTest {
 		LocalDateTime startDate = LocalDateTime.of(2023, 1, 1, 0, 0);
 		LocalDateTime endDate = LocalDateTime.of(2024, 12, 31, 0, 0);
 		List<Long> ids = new ArrayList<>();
-		for (long i = 30000; i <= 33000; i++) {
+		for (long i = 1; i <= 10; i++) {
 			ids.add(i);
 		}
 		List<Product> productList = new ArrayList<>();
@@ -65,8 +65,14 @@ class QueryTest {
 		// when
 		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>> 메소드 시작 >>>>>>>>>>>>>>>>>>>>>>>>>");
 		long before = System.currentTimeMillis();
-		List<OrderItem> orderItems = orderItemRepository.findAllByStatusAndCreatedAtBetweenAndProductInOrderByCreatedAtDesc(
-			OrderStatus.SHIPMENT_START,
+		// List<OrderItem> orderItems = orderItemRepository.findAllByStatusAndCreatedAtBetweenAndProductInOrderByCreatedAtDesc(
+		// 	OrderStatus.SHIPMENT_START,
+		// 	startDate,
+		// 	endDate,
+		// 	productList
+		// );
+		List<OrderItem> orderItems = orderItemRepository.findAllByRequirement(
+			null,
 			startDate,
 			endDate,
 			productList
@@ -91,7 +97,7 @@ class QueryTest {
 		// when
 		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>> 메소드 시작 >>>>>>>>>>>>>>>>>>>>>>>>>");
 		long before = System.currentTimeMillis();
-		long userId = 1359L;
+		long userId = 1L;
 		Page<OrderItem> orderItemPage1 = orderItemRepository.findOrderItemPageByUserId(userId, startDate, endDate, pageable);
 		long after = System.currentTimeMillis();
 		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>> 메소드 종료 >>>>>>>>>>>>>>>>>>>>>>>>>");
@@ -100,4 +106,23 @@ class QueryTest {
 		System.out.println("총 걸린 시간 : " + (after - before) + "ms");
 		System.out.println("====================================");
 	}
+
+	@Test
+	@DisplayName("3. findByOrderId를 테스트한다")
+	void test3() {
+		//given
+		Long id = 2L;
+
+		// when
+		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>> 메소드 시작 >>>>>>>>>>>>>>>>>>>>>>>>>");
+		long before = System.currentTimeMillis();
+		List<OrderItem> orderItemList = orderItemRepository.findByOrderId(id);
+		long after = System.currentTimeMillis();
+		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>> 메소드 종료 >>>>>>>>>>>>>>>>>>>>>>>>>");
+
+		// then
+		System.out.println("총 걸린 시간 : " + (after - before) + "ms");
+		System.out.println("====================================");
+	}
+
 }

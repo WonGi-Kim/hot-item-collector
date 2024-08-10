@@ -75,9 +75,9 @@ public class OrderService {
 		List<Product> productList = productService.findByUserAndStatus(user, ProductStatus.SOLD_OUT);
 
 		if (status == null || status.isEmpty()) {
-			orderItemList = orderItemRepository.findAllByCreatedAtBetweenAndProductInOrderByCreatedAtDesc(startDate, endDate, productList);
+			orderItemList = orderItemRepository.findAllByRequirement(null, startDate, endDate, productList);
 		} else {
-			orderItemList = orderItemRepository.findAllByStatusAndCreatedAtBetweenAndProductInOrderByCreatedAtDesc(OrderStatus.fromString(status), startDate, endDate, productList);
+			orderItemList = orderItemRepository.findAllByRequirement(OrderStatus.fromString(status), startDate, endDate, productList);
 		}
 
 		return orderItemList

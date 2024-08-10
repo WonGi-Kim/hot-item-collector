@@ -1,7 +1,7 @@
 <script>
 import AppHeader from './AppHeader.vue';
 import { ref, computed, onMounted } from 'vue';
-import axios from "axios";
+const client = require('../client')
 import { useRouter, useRoute } from "vue-router";
 import AppFooter from './AppFooter.vue';
 export default {
@@ -32,7 +32,7 @@ export default {
     const fetchProducts = async (page) => {
       try {
         const url = `/products/search?page=${page}&size=${itemsPerPage}&category=${searchQuery.value}`;
-        const response = await axios.get(url);
+        const response = await client.get(url);
         console.log(response.data);
         const data = response.data.result;
         products.value = data.content || [];

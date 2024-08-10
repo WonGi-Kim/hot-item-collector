@@ -1,7 +1,7 @@
 <script>
 import {onMounted, ref} from 'vue';
 import Cookies from "js-cookie";
-import axios from "axios";
+const client = require('../client')
 import {useRoute, useRouter} from "vue-router";
 import AppHeader from './AppHeader.vue';
 import AppFooter from './AppFooter.vue';
@@ -55,7 +55,7 @@ export default {
 
     const fetchOrderDetail = async () => {
       try {
-        const response = await axios.get(`/order/buy/${orderId}`, {
+        const response = await client.get(`/order/buy/${orderId}`, {
           headers: {
             'Authorization': accessToken
           }

@@ -3,12 +3,12 @@ name: github-action-test
 
 # 해당 workflow가 언제 실행될 것인지에 대한 트리거를 지정
 on:
-  # main branch에 대한 push 나 pull request 이벤트를 트리거로 지정
+  # main branch에 대한 push 이벤트를 트리거로 지정
   push:
     branches: [ main ]
+  # main branch에 대한 pull request 이벤트를 트리거로 지정
   pull_request:
     branches: [ main ]
-
   # 수동으로 해당 workflow 실행 지정
   workflow_dispatch:
 
@@ -27,7 +27,6 @@ jobs:
 
     # step은 작업의 일부로 실행될 일련의 작업을 나타냅니다.
     steps:
-      # 작업에서 액세스할 수 있도록 $GITHUB_WORKSPACE에서 저장소를 체크아웃합니다.
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -48,19 +47,34 @@ jobs:
         run: ./gradlew build
         shell: bash
 
-      - name: Make zip file
-        run: zip -r ./$GITHUB_SHA.zip .
-        shell: bash
-      
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-      
-      - name: Upload to S3
-        run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip
+          node-version: '18'
 
-      - name: Code Deploy
-        run: aws deploy create-deployment --application-name $CODEDEPLOY_NAME --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name $CODEDEPLOY_GROUP --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$GITHUB_SHA.zip  
+      - name: Install frontend dependencies
+        run: npm install
+        working-directory: ./frontend
+
+      - name: Build frontend
+        run: npm run build
+        working-directory: ./frontend
+
+      - name: Make zip file
+        run: zip -r ./$GITHUB_SHA.zip . -x "*.git/*"
+        shell: bash  
+
+      # PR 이벤트에서는 배포를 막고, push 이벤트에서는 배포를 진행
+      - name: Conditional Deploy
+        if: github.event_name == 'push'
+        run: |
+          # Configure AWS credentials
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set region ${{ env.AWS_REGION }}
+          
+          # Upload backend zip to S3
+          aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip
+
+          # Code Deploy
+          aws deploy create-deployment --application-name $CODEDEPLOY_NAME --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name $CODEDEPLOY_GROUP --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$GITHUB_SHA.zip

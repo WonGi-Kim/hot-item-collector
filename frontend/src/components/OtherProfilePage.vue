@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue';
 import AppHeader from './AppHeader.vue';
 import AppFooter from './AppFooter.vue';
 import {useRoute, useRouter} from "vue-router";
-import axios from "axios";
+const client = require('../client')
 import Cookies from "js-cookie";
 
 export default {
@@ -30,7 +30,7 @@ export default {
 
     const fetchUser = async () => {
       if (userId) {
-        const response = await axios.get(`/users/profile/${userId}`);
+        const response = await client.get(`/users/profile/${userId}`);
         console.log(response.data.result);
 
         user.value = response.data.result;
@@ -41,7 +41,7 @@ export default {
 
     const fetchProduct = async (page = 1) => {
       if (userId) {
-        const response = await axios.get(`/products/sale/${userId}?page=${page}&size=${itemsPerPage}`);
+        const response = await client.get(`/products/sale/${userId}?page=${page}&size=${itemsPerPage}`);
         console.log(response.data.result);
 
         products.value = response.data.result.content.map(product => ({
@@ -59,7 +59,7 @@ export default {
 
     const fetchFollowStatus = async () => {
       try {
-        const response = await axios.get(`/follow/${userId}`, {
+        const response = await client.get(`/follow/${userId}`, {
           headers: {
             'Authorization': accessToken
           }
@@ -79,7 +79,7 @@ export default {
 
     const follow = async () => {
       try {
-        await axios.post(`/follow/${userId}`, {}, {
+        await client.post(`/follow/${userId}`, {}, {
           headers: {
             'Authorization': accessToken
           }
@@ -93,7 +93,7 @@ export default {
 
     const unfollow = async () => {
       try {
-        await axios.delete(`/follow/${userId}`, {
+        await client.delete(`/follow/${userId}`, {
           headers: {
             'Authorization': accessToken
           }
