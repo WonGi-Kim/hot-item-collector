@@ -20,8 +20,12 @@
         <form @submit.prevent="submitForm">
           <div v-if="isNewUser">
             <div class="form-group">
-              <label for="username">아이디</label>
+              <label for="username">이름</label>
               <input type="text" id="username" v-model="username" required>
+            </div>
+            <div class="form-group">
+              <label for="loginId">아이디</label>
+              <input type="text" id="loginId" v-model="loginId" required>
             </div>
 
             <div class="form-group">
@@ -32,7 +36,8 @@
                   <span v-if="isEmailVerified" class="email-status-icon success">&#10004;</span>
                   <span v-if="verificationError" class="email-status-icon failure">&#10008;</span>
                 </div>
-                <button type="button" @click="sendVerificationCode" :disabled="!isEmailValid || isEmailVerified">
+                <button type="button" @click="sendVerificationCode" :disabled="!isEmailValid || isEmailVerified || isSendingCode|| timer > 0">
+                  <span v-if="isSendingCode" class="loading-spinner"></span>
                   {{ verificationButtonText }}
                 </button>
               </div>
@@ -108,6 +113,7 @@ export default {
       verificationCode: '',
       timer: 0,
       isEmailVerified: false,
+      isSendingCode: false,
       verificationError: '',
       verificationButtonText: '인증 코드 발송',
       verificationStatus: '',
@@ -166,17 +172,20 @@ export default {
       try {
         let response;
         if (this.isNewUser) {
-          // const response = await axios.post('/api/register', {
-          //   username: this.username,
-          //   email: this.email,
-          //   password: this.password
-          // });
+          const response = await axios.post('http://localhost:8080/users/oauth/signup', {
+            oauthId: this.oauthId,
+            socialId: this.socialId,
+            loginId: this.loginId,
+            username: this.username,
+            email: this.email,
+            password: this.password
+          });
           console.log('신규 사용자 등록:', response.data);
           alert('새 계정이 생성되었습니다!');
         } else {
           // 기존 계정 연결 로직
           response = await axios.post('http://localhost:8080/users/connect', {
-            oauthId: this.oauthId,
+            oauthId: Number(this.oauthId),
             socialId: this.socialId,
             loginId: this.loginId,
             password: this.password
@@ -211,11 +220,15 @@ export default {
       this.verificationError = '';
       this.verificationButtonText = '인증 코드 발송';
       this.verificationStatus = '';
+      this.isSendingCode = false;
     },
     async sendVerificationCode() {
+      if (this.timer > 0) return; // 타이머가 0보다 클 경우 함수 종료
       try {
+        this.isSendingCode = true;
+        this.verificationButtonText = '전송 중...';
         // 이메일 인증 코드 발송 API 호출
-        // const response = await axios.post('/api/send-verification-code', { email: this.email });
+        await axios.post('/users/email', { email: this.email });
         console.log('인증 코드 발송:');
         this.showVerificationCode = true;
         this.startTimer();
@@ -224,6 +237,8 @@ export default {
       } catch (error) {
         console.error('인증 코드 발송 실패:', error);
         this.error = '인증 코드 발송에 실패했습니다. 다시 시도해주세요.';
+      } finally {
+        this.isSendingCode = false;
       }
     },
     startTimer() {
@@ -245,11 +260,11 @@ export default {
     async verifyCode() {
       try {
         // 이메일 인증 코드 확인 API 호출
-        // const response = await axios.post('/api/verify-code', {
-        //   email: this.email,
-        //   code: this.verificationCode
-        // });
-        // console.log('인증 코드 확인:', response.data);
+        const response = await axios.post('/users/email/validate', {
+          email: this.email,
+          authCode: this.verificationCode
+        });
+        console.log('인증 코드 확인:', response.data);
         this.isEmailVerified = true;
         this.showVerificationCode = false;
         this.verificationError = '';
@@ -507,5 +522,20 @@ h2 {
 }
 .email-status-icon.failure {
   color: #f44336;
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #ff6600;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 10px;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 </style>
