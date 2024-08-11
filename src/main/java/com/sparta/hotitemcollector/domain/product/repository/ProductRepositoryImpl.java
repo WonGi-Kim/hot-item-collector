@@ -1,6 +1,7 @@
 package com.sparta.hotitemcollector.domain.product.repository;
 
 import static com.sparta.hotitemcollector.domain.product.entity.QProduct.product;
+import static com.sparta.hotitemcollector.domain.product.entity.QProductImage.productImage;
 
 import java.util.List;
 
@@ -9,12 +10,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.hotitemcollector.domain.product.dto.HotProductResponseDto;
+import com.sparta.hotitemcollector.domain.product.dto.ProductImageResponseDto;
+import com.sparta.hotitemcollector.domain.product.dto.ProductSimpleResponseDto;
 import com.sparta.hotitemcollector.domain.product.entity.Product;
 import com.sparta.hotitemcollector.domain.product.entity.ProductCategory;
+import com.sparta.hotitemcollector.domain.product.entity.ProductImage;
 import com.sparta.hotitemcollector.domain.product.entity.ProductStatus;
 import com.sparta.hotitemcollector.domain.user.User;
 
@@ -26,23 +33,51 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 	private final JPAQueryFactory jpaQueryFactory;
 
 	@Override
-	public Page<Product> findByRequirement(List<User> users, User user, String productName, ProductCategory category, ProductStatus status, Pageable pageable) {
+	public Page<ProductSimpleResponseDto> findByRequirement(List<User> users, User user, String productName, ProductCategory category, ProductStatus status, Pageable pageable) {
 
-		QueryResults<Product> productQueryResults = jpaQueryFactory
+		List<ProductSimpleResponseDto> dtoQueryResults = jpaQueryFactory
+			.select(Projections.fields(ProductSimpleResponseDto.class,
+					product.id,
+					product.name,
+					product.status,
+					product.user.id.as("userId"),
+					product.user.nickname.as("userName")// alias가 dto이름, 접근하는 건 필드 이름
+				))
+				.from(product)
+				.leftJoin(product.user)
+				.where(userListEq(users),
+					userEq(user),
+					productNameEq(productName),
+					categoryEq(category),
+					statusEq(status))
+				.orderBy(product.createdAt.desc())
+				.offset(pageable.getOffset())
+				.limit(pageable.getPageSize())
+				.fetch();
+
+		for (ProductSimpleResponseDto dto : dtoQueryResults) {
+			ProductImageResponseDto imageDto = jpaQueryFactory
+				.select(Projections.fields(ProductImageResponseDto.class,
+					productImage.id,
+					productImage.filename,
+					productImage.imageUrl))
+				.from(productImage)
+				.where(productImage.product.id.eq(dto.getId()))
+				.fetchFirst();
+
+				dto.setProductImageResponseDto(imageDto);
+		}
+
+		Long total = jpaQueryFactory
 			.selectFrom(product)
 			.where(userListEq(users),
 				userEq(user),
 				productNameEq(productName),
 				categoryEq(category),
 				statusEq(status))
-			.offset(pageable.getOffset())
-			.limit(pageable.getPageSize())
-			.fetchResults();
+			.fetchCount();
 
-		List<Product> productList = productQueryResults.getResults();
-		long total = productQueryResults.getTotal();
-
-		return PageableExecutionUtils.getPage(productList, pageable, () -> total);
+		return PageableExecutionUtils.getPage(dtoQueryResults, pageable, () -> total);
 	}
 
 	@Override
