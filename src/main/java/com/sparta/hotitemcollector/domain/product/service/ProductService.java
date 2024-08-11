@@ -190,7 +190,6 @@ public class ProductService {
 
 		Page<ProductSimpleResponseDto> productPage = productRepository.findByRequirement(followingUsers, null, null, null, null, pageable);
 		return productPage;
-		// return null;
 	}
 
 	@Transactional(readOnly = true)
@@ -201,7 +200,6 @@ public class ProductService {
 		return productResponseDtoPage.getContent()
 			.stream()
 			.collect(Collectors.toList());
-		 // return null;
 	}
 
 	@Transactional(readOnly = true)
@@ -241,10 +239,9 @@ public class ProductService {
 	public Page<ProductSimpleResponseDto> getNewProduct(int page, int size) {
 		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
-		Page<Product> productPage = productRepository.findAll(pageable);
+		Page<ProductSimpleResponseDto> productPage = productRepository.findByRequirement(null, null, null, null, null, pageable);
 
-		return productPage.map(ProductSimpleResponseDto::new);
-		// return null;
+		return productPage;
 	}
 
 	public Product findById(Long productId) {
