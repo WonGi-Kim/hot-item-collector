@@ -9,7 +9,7 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3307/hot-item-collector
-#    url: jdbc:mysql://localhost:3308/dummy-hot-item-collector
+    #    url: jdbc:mysql://localhost:3308/dummy-hot-item-collector
     username: ${MYSQL_USER}
     password: ${MYSQL_PASSWORD}
   servlet:
@@ -22,8 +22,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${mail.username}
-    password: ${mail.password}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
     properties:
       mail:
         smtp:
@@ -49,13 +49,13 @@ spring:
       client:
         registration:
           google:
-            client-id: 243126964654-p3i2129e4mvnuv0gubn7he5eokvilcn3.apps.googleusercontent.com
-            client-secret: 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
+            client-id: ${OAUTH2_GOOGLE_CLIENT_ID}
+            client-secret: ${OAUTH2_GOOGLE_CLIENT_SECRET}
             scope: profile, email
 
           kakao:
-            client-id: f85edb01e53f12aa9eacf6bbe1eba789
-            client-secret: jbP51VJL8FBlXJ5lnpcu7MDQFwdcs3It
+            client-id: ${OAUTH2_KAKAO_CLIENT_ID}
+            client-secret: ${OAUTH2_KAKAO_CLIENT_SECRET}
             redirect-uri: http://localhost:8080/login/oauth2/code/kakao
             client-authentication-method: client_secret_post
             authorization-grant-type: authorization_code
@@ -73,13 +73,13 @@ logging:
   level:
     org:
       hibernate:
-#        SQL: debug
+        #        SQL: debug
         orm:
           jdbc:
-#            스프링 부트 3.0 기준 Hibernate 6 Logging 설정
-#            org.hibernate.type.descriptor.sql
-#            -> org.hibernate.orm.jdbc.bind
-#            으로 변경, ?에 어떤 값이 들어갔는지 알 수 있음
+            #            스프링 부트 3.0 기준 Hibernate 6 Logging 설정
+            #            org.hibernate.type.descriptor.sql
+            #            -> org.hibernate.orm.jdbc.bind
+            #            으로 변경, ?에 어떤 값이 들어갔는지 알 수 있음
             bind: trace
 
 cloud:
