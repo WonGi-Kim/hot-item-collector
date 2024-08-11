@@ -58,6 +58,7 @@ public class UserService {
                 .loginId(signupRequestDto.getLoginId())
                 .password(encodedPassword)
                 .username(signupRequestDto.getUsername())
+                .email(signupRequestDto.getEmail())
                 .build();
 
         ProfileImage profileImage = new ProfileImage(requestDto, user);
