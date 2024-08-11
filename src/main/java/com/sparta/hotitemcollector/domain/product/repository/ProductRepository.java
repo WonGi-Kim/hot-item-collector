@@ -14,10 +14,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface ProductRepository extends JpaRepository<Product, Long>, ProductRepositoryCustom {
 
-
-	@Query("SELECT p FROM Product p LEFT JOIN FETCH p.images WHERE p.id = :id")
-	Product findByIdWithImages(@Param("id") Long id);
-
 	List<Product> findByUserAndStatus(User user, ProductStatus status);
 
 }

@@ -18,12 +18,14 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.hotitemcollector.domain.product.dto.HotProductResponseDto;
 import com.sparta.hotitemcollector.domain.product.dto.ProductImageResponseDto;
+import com.sparta.hotitemcollector.domain.product.dto.ProductResponseDto;
 import com.sparta.hotitemcollector.domain.product.dto.ProductSimpleResponseDto;
 import com.sparta.hotitemcollector.domain.product.entity.Product;
 import com.sparta.hotitemcollector.domain.product.entity.ProductCategory;
 import com.sparta.hotitemcollector.domain.product.entity.ProductImage;
 import com.sparta.hotitemcollector.domain.product.entity.ProductStatus;
 import com.sparta.hotitemcollector.domain.user.User;
+import com.sparta.hotitemcollector.domain.user.dto.user.ProfileImageResponseDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -78,6 +80,48 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 			.fetchCount();
 
 		return PageableExecutionUtils.getPage(dtoQueryResults, pageable, () -> total);
+	}
+
+	@Override
+	public ProductResponseDto findByIdWithImages(Long id){
+
+		ProductResponseDto dtoQueryResult = jpaQueryFactory
+			.select(Projections.fields(ProductResponseDto.class,
+				product.id,
+				product.name,
+				product.category,
+				product.price,
+				product.info,
+				product.likes,
+				product.status,
+				product.user.id.as("userId"),
+				product.user.nickname,
+				Projections.fields(ProfileImageResponseDto.class,
+					product.user.profileImage.id,
+					product.user.profileImage.filename,
+					product.user.profileImage.imageUrl
+					).as("profileImage"),
+				product.createdAt,
+				product.modifiedAt
+				))
+			.from(product)
+			.leftJoin(product.user)
+			.where(product.id.eq(id))
+			.orderBy(product.createdAt.desc())
+			.fetchFirst();
+
+		List<ProductImageResponseDto> imageDtos = jpaQueryFactory
+			.select(Projections.fields(ProductImageResponseDto.class,
+				productImage.id,
+				productImage.filename,
+				productImage.imageUrl))
+			.from(productImage)
+			.where(productImage.product.id.eq(dtoQueryResult.getId()))
+			.fetch();
+
+		dtoQueryResult.setProductImageResponseDto(imageDtos);
+
+		return dtoQueryResult;
 	}
 
 	@Override

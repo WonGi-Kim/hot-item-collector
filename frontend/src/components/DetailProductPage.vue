@@ -145,6 +145,20 @@ export default {
             imageUrl: defaultProfileImage
           };
         }
+
+        try{
+        const responseFollow = await axios.get(`/follow/${product.value.userId}`, {
+          headers: {
+            'Authorization': accessToken
+          }
+        });
+        isFollowing.value = responseFollow.data.result.userFollow
+        console.log("팔로우 여부 불러오기 완료")
+      } catch(error) {
+        console.error(error)
+      }
+
+
       } catch (error) {
         console.error('Error fetching product:', error);
       }
@@ -163,25 +177,10 @@ export default {
       }
     }
 
-    const fetchFollowStatus = async () => {
-      try {
-        await fetchProduct()
-        const response = await axios.get(`/follow/${product.value.userId}`, {
-          headers: {
-            'Authorization': accessToken
-          }
-        });
-        isFollowing.value = response.data.result.userFollow
-        console.log("팔로우 여부 불러오기 완료")
-      } catch(error) {
-        console.error(error)
-      }
-    }
 
     onMounted(() => {
       fetchProduct();
       fetchLikeStatus();
-      fetchFollowStatus();
     });
 
     const currentImage = computed(() => {

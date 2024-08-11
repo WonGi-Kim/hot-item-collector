@@ -161,22 +161,9 @@ public class ProductService {
 
 	@Transactional(readOnly = true)
 	public ProductResponseDto getProduct(Long productId) {
-		// Product와 관련된 이미지 정보를 가져옴
-		Product product = productRepository.findByIdWithImages(productId);
+		ProductResponseDto product = productRepository.findByIdWithImages(productId);
 
-		// Product와 연관된 이미지 정보를 DTO로 변환
-		List<ProductImageResponseDto> imageDtos = product.getImages().stream()
-			.map(image -> new ProductImageResponseDto(image))
-			.collect(Collectors.toList());
-
-		// ProfileImageResponseDto를 생성, 프로필 이미지가 없으면 null 설정
-		ProfileImageResponseDto profileImageResponseDto = product.getUser().getProfileImage() != null
-			? new ProfileImageResponseDto(product.getUser().getProfileImage())
-			: null;
-
-		// ProductResponseDto 생성
-		ProductResponseDto responseDto = new ProductResponseDto(product, imageDtos, profileImageResponseDto);
-		return responseDto;
+		return product;
 	}
 
 	@Transactional(readOnly = true)
