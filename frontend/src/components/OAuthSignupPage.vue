@@ -49,9 +49,6 @@
               <p class="timer" v-if="timer > 0">
                 남은 시간: {{ formatTime(timer) }}
               </p>
-              <p class="verification-status" :class="{ success: isEmailVerified, failure: verificationError }">
-                {{ verificationStatus }}
-              </p>
             </div>
 
             <div class="form-group">
@@ -91,7 +88,7 @@
 </template>
 
 <script>
-import axios from "axios";
+const client = require('../client')
 
 export default {
   data() {
@@ -172,7 +169,7 @@ export default {
       try {
         let response;
         if (this.isNewUser) {
-          const response = await axios.post('http://localhost:8080/users/oauth/signup', {
+          const response = await client.post('users/oauth/signup', {
             oauthId: this.oauthId,
             socialId: this.socialId,
             loginId: this.loginId,
@@ -184,7 +181,7 @@ export default {
           alert('새 계정이 생성되었습니다!');
         } else {
           // 기존 계정 연결 로직
-          response = await axios.post('http://localhost:8080/users/connect', {
+          response = await client.post('users/connect', {
             oauthId: Number(this.oauthId),
             socialId: this.socialId,
             loginId: this.loginId,
@@ -228,7 +225,7 @@ export default {
         this.isSendingCode = true;
         this.verificationButtonText = '전송 중...';
         // 이메일 인증 코드 발송 API 호출
-        await axios.post('/users/email', { email: this.email });
+        await client.post('users/email', { email: this.email });
         console.log('인증 코드 발송:');
         this.showVerificationCode = true;
         this.startTimer();
@@ -260,7 +257,7 @@ export default {
     async verifyCode() {
       try {
         // 이메일 인증 코드 확인 API 호출
-        const response = await axios.post('/users/email/validate', {
+        const response = await client.post('users/email/validate', {
           email: this.email,
           authCode: this.verificationCode
         });
@@ -495,16 +492,6 @@ h2 {
 }
 .resend-code:hover {
   color: #e65c00;
-}
-.verification-status {
-  margin-top: 0.5rem;
-  font-weight: bold;
-}
-.verification-status.success {
-  color: #4CAF50;
-}
-.verification-status.failure {
-  color: #f44336;
 }
 .email-input-container {
   position: relative;
