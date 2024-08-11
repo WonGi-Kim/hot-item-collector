@@ -91,7 +91,7 @@
     <div class="modal-content">
       <button class="close-button" @click="closeModal">&times;</button>
       <h2 class="modalTitle">{{ modalTitle }}</h2>
-      <form @submit.prevent="register">
+      <form @submit.prevent="auth">
         <div v-if="isNewUser">
           <div class="form-group">
             <label for="username">이름</label>
@@ -99,7 +99,7 @@
           </div>
           <div class="form-group">
             <label for="loginId">아이디</label>
-            <input type="text" id="loginId" v-model="loginId" required>
+            <input type="text" id="loginId" v-model="loginId" required @input="validateLoginId">
           </div>
 
           <div class="form-group">
@@ -224,11 +224,11 @@
 </template>
 
 <script>
-import axios from "axios";
 import Cookies from "js-cookie";
-import router from "@/router";
+const client = require('../client')
 
 export default {
+
   data() {
     return {
       showModal: false,
@@ -271,7 +271,9 @@ export default {
       isSendingCode: false
     };
   },
+
   computed: {
+
     isFormValid() {
       if (this.isNewUser) {
         return !this.emailError && !this.passwordError && !this.confirmPasswordError &&
@@ -295,7 +297,7 @@ export default {
     if (newAccessToken && newRefreshToken) {
       Cookies.set('access_token', newAccessToken, {expires: 1});
       Cookies.set('refresh_token', newRefreshToken, {expires: 7});
-      router.push('/'); // Redirect to home or desired page
+      await this.$router.push('/'); // Redirect to home or desired page
     }
 
     const accessToken = Cookies.get('access_token');
@@ -310,6 +312,8 @@ export default {
     }
   },
   methods: {
+
+
     showLoginModal() {
       this.isNewUser = false;
       this.modalTitle = '로그인';
@@ -332,7 +336,7 @@ export default {
     },
 
     search() {
-      router.push({
+      this.$router.push({
         name: 'SearchPage',
         query: {searchType: this.searchType, searchQuery: this.searchQuery}
       }).then(() => {
@@ -344,7 +348,7 @@ export default {
     },
     searchByCategory(category) {
       console.log(category);
-      router.push({
+      this.$router.push({
         name: 'CategoryItemPage',
         query: {searchQuery: category}
       }).then(() => {
@@ -366,7 +370,7 @@ export default {
       }
 
       try {
-        const response = await axios.post('/users/refresh', {
+        const response = await client.post('/users/refresh', {
           refresh: refreshToken
         }, {
           headers: {
@@ -395,7 +399,7 @@ export default {
       }
 
       try {
-        const response = await axios.post('/users/logout', {}, {
+        const response = await client.post('/users/logout', {}, {
           headers: {
             'Authorization': accessToken
           }
@@ -407,7 +411,7 @@ export default {
           alert('로그아웃 성공');
           this.isLoggedIn = false;
           console.log('로그아웃 성공');
-          router.push('/');
+          await this.$router.push('/');
         } else {
           console.error('로그아웃 실패:', response.data);
         }
@@ -420,7 +424,7 @@ export default {
         if (confirm('정말로 탈퇴하시겠습니까? 이 작업을 계속 진행하면 회원 정보가 삭제됩니다.')) {
           try {
             const accessToken = Cookies.get('access_token');
-            const response = await axios.patch('/users/withdraw', {}, {
+            const response = await client.patch('/users/withdraw', {}, {
               headers: {
                 'Authorization': accessToken
               }
@@ -432,7 +436,7 @@ export default {
               alert('회원 탈퇴가 완료되었습니다.');
               console.log('회원 탈퇴 성공:', response.data);
               this.isLoggedIn = false;
-              router.push('/');
+              await this.$router.push('/');
             } else {
               console.error('회원 탈퇴 실패:', response.data);
               alert('회원 탈퇴에 실패하였습니다.');
@@ -445,28 +449,43 @@ export default {
       }
     },
     goToProductRegistration() {
-      router.push('/product/upload');
+      this.$router.push('/product/upload');
     },
     goToProductManagement() {
-      router.push('/product/sale');
+      this.$router.push('/product/sale');
     },
     goToOrderManagement() {
-      router.push('/orders/sell');
+      this.$router.push('/orders/sell');
     },
     viewMyInfo() {
-      router.push('/profile');
+      this.$router.push('/profile');
     },
     editProfile() {
-      router.push('/profile/update/password');
+      this.$router.push('/profile/update/password');
     },
     goToCart() {
       // 장바구니 이동 함수 구현
-      router.push('/cart');
+      this.$router.push('/cart');
     },
 
-    async register() {
+
+    async auth() {
       try {
-        const response = await axios.post('/users/signup', {
+        if (this.isNewUser) {
+          // 회원가입 로직
+          await this.signUp(); // 회원가입 처리 메서드 호출
+        } else {
+          // 로그인 로직
+          await this.login(); // 로그인 처리 메서드 호출
+        }
+      } catch (error) {
+        this.error = error.message;
+      }
+    },
+    async signUp() {
+      console.log(this.email);
+      try {
+        const response = await client.post('/users/signup', {
           loginId: this.loginId,
           password: this.password,
           username: this.username,
@@ -498,7 +517,7 @@ export default {
     ,
     async login() {
       try {
-        const response = await axios.post('/users/login', {
+        const response = await client.post('/users/login', {
           loginId: this.loginId,
           password: this.password
         }, {
@@ -538,16 +557,6 @@ export default {
     validateConfirmPassword() {
       this.confirmPasswordError = this.password === this.confirmPassword ? '' : '비밀번호가 일치하지 않습니다.';
     },
-    switchToSignup() {
-      this.showLoginModal = false;
-      this.showSignupModal = true;
-    }
-    ,
-    switchToLogin() {
-      this.showSignupModal = false;
-      this.showLoginModal = true;
-    }
-    ,
     socialLogin(provider) {
       let url = '';
 
@@ -582,7 +591,7 @@ export default {
     async changePassword() {
       try {
         const accessToken = Cookies.get('access_token');
-        const response = await axios.patch('/users/password', {
+        const response = await client.patch('/users/password', {
           oldPassword: this.currentPassword,
           newPassword: this.newPassword
         }, {
@@ -609,11 +618,6 @@ export default {
       }
     }
     ,
-    closeModals() {
-      this.showLoginModal = false;
-      this.showSignupModal = false;
-      this.showChangePasswordModal = false;
-    },
     resetForm() {
       this.loginId = '';
       this.email = '';
@@ -638,7 +642,7 @@ export default {
       try {
         this.isSendingCode = true;
         this.verificationButtonText = '전송 중...';
-        const response = await axios.post('https://hot-item-collector.com/users/email', {email: this.email});
+        const response = await client.post('/users/email', {email: this.email});
         console.log('인증 코드 발송:', response.data);
         this.showVerificationCode = true;
         this.startTimer();
@@ -669,7 +673,7 @@ export default {
     },
     async verifyCode() {
       try {
-        const response = await axios.post('https://hot-item-collector.com/users/email/validate', {
+        const response = await client.post('/users/email/validate', {
           email: this.email,
           authCode: this.verificationCode
         });
