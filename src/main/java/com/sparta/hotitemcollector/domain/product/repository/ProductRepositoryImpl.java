@@ -47,7 +47,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 				.leftJoin(product.user)
 				.where(userListEq(users),
 					userEq(user),
-					productNameEq(productName),
+					productNameContains(productName),
 					categoryEq(category),
 					statusEq(status))
 				.orderBy(product.createdAt.desc())
@@ -72,7 +72,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 			.selectFrom(product)
 			.where(userListEq(users),
 				userEq(user),
-				productNameEq(productName),
+				productNameContains(productName),
 				categoryEq(category),
 				statusEq(status))
 			.fetchCount();
@@ -115,11 +115,11 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 		return product.user.eq(user);
 	}
 
-	public BooleanExpression productNameEq(String productName) {
+	public BooleanExpression productNameContains(String productName) {
 		if (productName == null || productName.isEmpty()) {
 			return null;
 		}
-		return product.name.eq(productName);
+		return product.name.contains(productName);
 	}
 
 	public BooleanExpression categoryEq(ProductCategory category) {

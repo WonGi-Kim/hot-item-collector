@@ -188,9 +188,9 @@ public class ProductService {
 			.map(Follow::getFollowing)
 			.collect(Collectors.toList());
 
-		Page<Product> productPage = productRepository.findByRequirement(followingUsers, null, null, null, null, pageable);
-		return productPage.map(ProductSimpleResponseDto::new);
-		//return null;
+		Page<ProductSimpleResponseDto> productPage = productRepository.findByRequirement(followingUsers, null, null, null, null, pageable);
+		return productPage;
+		// return null;
 	}
 
 	@Transactional(readOnly = true)
@@ -201,14 +201,14 @@ public class ProductService {
 		return productResponseDtoPage.getContent()
 			.stream()
 			.collect(Collectors.toList());
-		 //return null;
+		 // return null;
 	}
 
 	@Transactional(readOnly = true)
 	public Page<ProductSimpleResponseDto> getSaleProduct(User user, ProductStatus status, int page,
 		int size) {
 		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-		Page<Product> productPage = Page.empty(pageable);
+		Page<ProductSimpleResponseDto> productPage = Page.empty(pageable);
 
 		if (status != null) {
 			productPage = productRepository.findByRequirement(null, user, null, null, status, pageable);
@@ -217,7 +217,7 @@ public class ProductService {
 			productPage = productRepository.findByRequirement(null, user, null, null, null, pageable);
 		}
 
-		return productPage.map(ProductSimpleResponseDto::new);
+		return productPage;
 	}
 
 	@Transactional(readOnly = true)
@@ -225,7 +225,7 @@ public class ProductService {
 		User user = userService.findByUserId(userId);
 
 		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-		Page<Product> productPage = Page.empty(pageable);
+		Page<ProductSimpleResponseDto> productPage = Page.empty(pageable);
 
 		if (status != null) {
 			productPage = productRepository.findByRequirement(null, user, null, null, status, pageable);
@@ -234,7 +234,7 @@ public class ProductService {
 			productPage = productRepository.findByRequirement(null, user, null, null, null, pageable);
 		}
 
-		return productPage.map(ProductSimpleResponseDto::new);
+		return productPage;
 	}
 
 	@Transactional(readOnly = true)

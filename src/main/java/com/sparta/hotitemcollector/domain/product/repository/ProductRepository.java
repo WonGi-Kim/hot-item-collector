@@ -8,23 +8,16 @@ import com.sparta.hotitemcollector.domain.user.User;
 
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface ProductRepository extends JpaRepository<Product, Long>, ProductRepositoryCustom {
 
-	Page<Product> findTop10ByOrderByLikesDesc(Pageable pageable);
 
 	@Query("SELECT p FROM Product p LEFT JOIN FETCH p.images WHERE p.id = :id")
 	Product findByIdWithImages(@Param("id") Long id);
 
 	List<Product> findByUserAndStatus(User user, ProductStatus status);
 
-	// @Query(value = "SELECT new com.sparta.hotitemcollector.domain.product.dto.HotProductResponseDto(p.id, p.name) "
-	// 	+ "FROM Product p "
-	// 	+ "ORDER BY p.likes DESC")
-	// Page<HotProductResponseDto> findTop10HotProduct(Pageable pageable);
 }
