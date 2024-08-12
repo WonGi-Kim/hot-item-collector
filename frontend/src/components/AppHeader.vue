@@ -34,8 +34,8 @@
           <button @click="goToCart">장바구니</button>
         </template>
         <template v-else>
-          <button @click="showLoginModal = true">로그인</button>
-          <button @click="showSignupModal = true">회원가입</button>
+          <button @click="showLoginModal">로그인</button>
+          <button @click="showSignupModal">회원가입</button>
         </template>
       </div>
     </div>
@@ -43,75 +43,154 @@
   <nav class="categories">
     <div class="container">
       <div class="categories-container">
-        <a v-for="category in categories" :key="category" @click="searchByCategory(category)" class="category-item">{{ category }}</a>
+        <a v-for="category in categories" :key="category" @click="searchByCategory(category)"
+           class="category-item">{{ category }}</a>
       </div>
     </div>
   </nav>
   <!-- 회원가입 모달 -->
-  <div v-if="showSignupModal" class="modal-overlay" @click.self="showSignupModal = false">
-    <div class="modal-container">
-      <button class="close-btn" @click="showSignupModal = false">&times;</button>
-      <h1>회원가입</h1>
-      <form @submit.prevent="register">
-        <div class="form-group">
-          <label for="auth-signupLoginId">아이디</label>
-          <input type="text" id="auth-signupLoginId" v-model="signupLoginId" @input="validateLoginId" required>
-          <div class="error" v-if="loginIdError">{{ loginIdError }}</div>
-        </div>
-        <div class="form-group">
-          <label for="auth-signupPassword">비밀번호</label>
-          <input type="password" id="auth-signupPassword" v-model="signupPassword" @input="validatePassword" required>
-          <div class="error" v-if="passwordError">{{ passwordError }}</div>
-        </div>
-        <div class="form-group">
-          <label for="auth-username">이름</label>
-          <input type="text" id="auth-username" v-model="username" required>
-        </div>
-        <div class="form-group">
-          <label for="auth-nickname">닉네임</label>
-          <input type="text" id="auth-nickname" v-model="nickname" required>
-          <div class="error" v-if="nicknameError">{{ nicknameError }}</div>
-        </div>
-        <button type="submit" :disabled="!isSignupFormValid">회원가입</button>
-      </form>
-      <div class="social-login">
-        <div class="social-login-divider">
-          <span>또는</span>
-        </div>
-        <button @click="kakaoLogin" class="kakao-login-btn">카카오톡으로 회원가입</button>
-      </div>
-      <div class="login-link">
-        이미 계정이 있으신가요? <a @click="switchToLogin">로그인</a>
-      </div>
-    </div>
-  </div>
+  <!--  <div v-if="showSignupModal" class="modal-overlay" @click.self="showSignupModal = false">-->
+  <!--    <div class="modal-container">-->
+  <!--      <button class="close-btn" @click="showSignupModal = false">&times;</button>-->
+  <!--      <h1>회원가입</h1>-->
+  <!--      <form @submit.prevent="register">-->
+  <!--        <div class="form-group">-->
+  <!--          <label for="auth-signupLoginId">아이디</label>-->
+  <!--          <input type="text" id="auth-signupLoginId" v-model="signupLoginId" @input="validateLoginId" required>-->
+  <!--          <div class="error" v-if="loginIdError">{{ loginIdError }}</div>-->
+  <!--        </div>-->
+  <!--        <div class="form-group">-->
+  <!--          <label for="auth-signupPassword">비밀번호</label>-->
+  <!--          <input type="password" id="auth-signupPassword" v-model="signupPassword" @input="validatePassword" required>-->
+  <!--          <div class="error" v-if="passwordError">{{ passwordError }}</div>-->
+  <!--        </div>-->
+  <!--        <div class="form-group">-->
+  <!--          <label for="auth-username">이름</label>-->
+  <!--          <input type="text" id="auth-username" v-model="username" required>-->
+  <!--        </div>-->
+  <!--        <div class="form-group">-->
+  <!--          <label for="auth-nickname">닉네임</label>-->
+  <!--          <input type="text" id="auth-nickname" v-model="nickname" required>-->
+  <!--          <div class="error" v-if="nicknameError">{{ nicknameError }}</div>-->
+  <!--        </div>-->
+  <!--        <button type="submit" :disabled="!isSignupFormValid">회원가입</button>-->
+  <!--      </form>-->
+  <!--      <div class="social-login">-->
+  <!--        <div class="social-login-divider">-->
+  <!--          <span>또는</span>-->
+  <!--        </div>-->
+  <!--        <button @click="kakaoLogin" class="kakao-login-btn">카카오톡으로 회원가입</button>-->
+  <!--      </div>-->
+  <!--      <div class="login-link">-->
+  <!--        이미 계정이 있으신가요? <a @click="switchToLogin">로그인</a>-->
+  <!--      </div>-->
+  <!--    </div>-->
+  <!--  </div>-->
 
-  <!-- 로그인 모달 -->
-  <div v-if="showLoginModal" class="modal-overlay" @click.self="showLoginModal = false">
-    <div class="modal-container">
-      <button class="close-btn" @click="showLoginModal = false">&times;</button>
-      <h1>로그인</h1>
-      <form @submit.prevent="login">
-        <div class="form-group">
-          <label for="auth-loginId">아이디</label>
-          <input type="text" id="auth-loginId" v-model="loginId" required>
+  <div class="modal" :class="{ active: showModal }">
+    <div class="modal-content">
+      <button class="close-button" @click="closeModal">&times;</button>
+      <h2 class="modalTitle">{{ modalTitle }}</h2>
+      <form @submit.prevent="auth">
+        <div v-if="isNewUser">
+          <div class="form-group">
+            <label for="username">이름</label>
+            <input type="text" id="username" v-model="username" required>
+          </div>
+          <div class="form-group">
+            <label for="loginId">아이디</label>
+            <input type="text" id="loginId" v-model="loginId" required @input="validateLoginId">
+          </div>
+
+          <div class="form-group">
+            <label for="email">이메일</label>
+            <div class="email-verification">
+              <div class="email-input-container">
+                <input type="email" id="email" v-model="email" required @input="validateEmail">
+                <span v-if="isEmailVerified" class="email-status-icon success">&#10004;</span>
+                <span v-if="verificationError" class="email-status-icon failure">&#10008;</span>
+              </div>
+              <button type="button" id="verifiationbutton" @click="sendVerificationCode"
+                      :disabled="!isEmailValid || isEmailVerified || isSendingCode|| timer > 0">
+                <span v-if="isSendingCode" class="loading-spinner"></span>
+                {{ verificationButtonText }}
+              </button>
+            </div>
+            <p class="error" v-if="emailError">{{ emailError }}</p>
+            <div v-if="showVerificationCode" class="verification-code">
+              <input type="text" v-model="verificationCode" placeholder="인증 코드 입력">
+              <button type="button" @click="verifyCode">인증하기</button>
+            </div>
+            <p class="timer" v-if="timer > 0">
+              남은 시간: {{ formatTime(timer) }}
+            </p>
+            <p class="verification-status" :class="{ success: isEmailVerified, failure: verificationError }">
+              {{ verificationStatus }}
+            </p>
+          </div>
+
+          <div class="form-group">
+            <label for="password">비밀번호</label>
+            <input type="password" id="password" v-model="password" required @input="validatePassword">
+            <p class="error" v-if="passwordError">{{ passwordError }}</p>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword">비밀번호 확인</label>
+            <input type="password" id="confirmPassword" v-model="confirmPassword" required
+                   @input="validateConfirmPassword">
+            <p class="error" v-if="confirmPasswordError">{{ confirmPasswordError }}</p>
+          </div>
+
         </div>
-        <div class="form-group">
-          <label for="auth-password">비밀번호</label>
-          <input type="password" id="auth-password" v-model="password" required>
+
+        <div v-else>
+          <div class="form-group">
+            <label for="loginId">아이디</label>
+            <input type="text" id="loginId" v-model="loginId" required>
+            <p class="error" v-if="emailError">{{ emailError }}</p>
+          </div>
+
+          <div class="form-group">
+            <label for="password">비밀번호</label>
+            <input type="password" id="password" v-model="password" required>
+            <p class="error" v-if="passwordError">{{ passwordError }}</p>
+          </div>
         </div>
-        <button type="submit">로그인</button>
-        <div v-if="loginError" class="error">{{ loginError }}</div>
+
+        <button type="submit" class="submit-button" :disabled="!isFormValid">{{ submitButtonText }}</button>
+        <div v-if="isNewUser">
+          <div class="sc-b82c0cba-2 DwtdQ">
+            <div class="sc-jXUnUj bMUZyR">
+              <div class="sc-kXWJUi gIRbED">
+              </div></div><div class="sc-b82c0cba-4 faerXM">
+            <div class="sc-grBnJl dBXZuI">
+              <span class="sc-hrDJJk bReByP">다른 방법으로 가입하기</span>
+            </div>
+          </div>
+          </div>
+        </div>
+        <div v-else>
+          <div class="sc-b82c0cba-2 DwtdQ">
+            <div class="sc-jXUnUj bMUZyR">
+              <div class="sc-kXWJUi gIRbED">
+              </div></div><div class="sc-b82c0cba-4 faerXM">
+            <div class="sc-grBnJl dBXZuI">
+              <span class="sc-hrDJJk bReByP">다른 방법으로 로그인하기</span>
+            </div>
+          </div>
+          </div>
+        </div>
+        <div class="social-buttons">
+          <button class="social-button kakao-button" @click="socialLogin('kakao')">
+            <img src="@/assets/kakao.png" alt="대체 텍스트">
+          </button>
+          <button class="social-button google-button" @click="socialLogin('google')">
+            <img src="@/assets/google.png" alt="대체 텍스트">
+          </button>
+        </div>
       </form>
-      <div class="social-login">
-        <div class="social-login-divider">
-          <span>또는</span>
-        </div>
-        <button @click="kakaoLogin" class="kakao-login-btn">카카오톡으로 로그인</button>
-      </div>
-      <div class="signup-link">
-        계정이 없으신가요? <a @click="switchToSignup">회원가입</a>
-      </div>
+      <p class="error" v-if="error">{{ error }}</p>
     </div>
   </div>
   <!-- 비밀번호 변경 모달 -->
@@ -131,7 +210,8 @@
         </div>
         <div class="form-group">
           <label for="auth-confirmNewPassword">새 비밀번호 확인</label>
-          <input type="password" id="auth-confirmNewPassword" v-model="confirmNewPassword" @input="validateConfirmNewPassword" required>
+          <input type="password" id="auth-confirmNewPassword" v-model="confirmNewPassword"
+                 @input="validateConfirmNewPassword" required>
           <div class="error" v-if="confirmNewPasswordError">{{ confirmNewPasswordError }}</div>
         </div>
         <button type="submit" :disabled="!isChangePasswordFormValid">비밀번호 변경</button>
@@ -143,402 +223,476 @@
 
 </template>
 
-<script setup>
-import { ref, computed, onMounted  } from 'vue';
-import Cookies from 'js-cookie';
-import router from "@/router";
-
+<script>
+import Cookies from "js-cookie";
 const client = require('../client')
 
-const searchType = ref('product');
-const searchQuery = ref('');
-const isLoggedIn = ref(false);
-const categories = ref(['식품', '뷰티', '패션&주얼리', '공예품', '홈리빙', '반려동물']);
-const showChangePasswordModal = ref(false);
+export default {
 
-const showLoginModal = ref(false);
-const showSignupModal = ref(false);
-const signupLoginId = ref('');
-const signupPassword = ref('');
-const loginId = ref('');
-const password = ref('');
-const username = ref('');
-const nickname = ref('');
-const loginIdError = ref('');
-const passwordError = ref('');
-const nicknameError = ref('');
-const loginError = ref('');
-const isSignupFormValid = computed(() => !loginIdError.value && !passwordError.value && signupLoginId.value && signupPassword.value && username.value && nickname.value);
-// 비밀번호 변경 관련 상태
-const currentPassword = ref('');
-const newPassword = ref('');
-const confirmNewPassword = ref('');
-const newPasswordError = ref('');
-const confirmNewPasswordError = ref('');
-const changePasswordError = ref('');
-const changePasswordSuccess = ref('');
-const isChangePasswordFormValid = computed(() =>
-    currentPassword.value &&
-    newPassword.value &&
-    confirmNewPassword.value &&
-    !newPasswordError.value &&
-    !confirmNewPasswordError.value
-);
+  data() {
+    return {
+      showModal: false,
+      isNewUser: false,
+      signupModal: false,
+      searchType: 'product',
+      searchQuery: '',
+      isLoggedIn: false,
+      categories: ['식품', '뷰티', '패션&주얼리', '공예품', '홈리빙', '반려동물'],
+      showChangePasswordModal: false,
+      email: '',
+      loginId: '',
+      timer: 0,
+      password: '',
+      error: '',
+      username: '',
+      nickname: '',
+      confirmPassword: '',
+      confirmPasswordError: '',
+      isEmailVerified: false,
+      loginIdError: '',
+      passwordError: '',
+      nicknameError: '',
+      modalTitle: '',
+      loginError: '',
+      emailError: '',
+      verificationError: '',
+      verificationButtonText: '인증 코드 발송',
+      verificationStatus: '',
+      currentPassword: '',
+      newPassword: '',
+      confirmNewPassword: '',
+      newPasswordError: '',
+      confirmNewPasswordError: '',
+      changePasswordError: '',
+      showVerificationCode: false,
+      submitButtonText: '',
+      verificationCode: '',
+      changePasswordSuccess: '',
+      isSendingCode: false
+    };
+  },
 
-async function getrefreshToken() {
-  const refreshToken = Cookies.get('refresh_token');
+  computed: {
 
-  if (!refreshToken) {
-    console.error('Refresh token not found');
-    logout();
-    return;
-  }
-
-  try {
-    const response = await client.post('/users/refresh', {
-      refresh: refreshToken
-    }, {
-      headers: {
-        'Content-Type': 'application/json'
+    isFormValid() {
+      if (this.isNewUser) {
+        return !this.emailError && !this.passwordError && !this.confirmPasswordError &&
+            this.username && this.email && this.password && this.confirmPassword && this.isEmailVerified;
+      } else {
+        return this.loginId && this.password;
       }
-    });
-
-    // 성공적으로 새로운 토큰을 받은 경우
-    const { access, refresh } = response.data.result;
-
-    // 새로운 토큰을 쿠키에 저장
-    Cookies.set('access_token', access, { expires: 1 });
-    Cookies.set('refresh_token', refresh, { expires: 7 });
-
-    // 로그인 상태 업데이트
-    isLoggedIn.value = true;
-
-    console.log('Access token refreshed successfully');
-  } catch (error) {
-    console.error('Failed to refresh token:', error.response.data);
-    // refresh token이 만료되었거나 잘못된 경우, 로그아웃 처리를 할 수 있습니다.
-    logout();
-  }
-}
-
-// Check login status on mount
-onMounted(async () => {
-  const accessToken = Cookies.get('access_token');
-  const refreshToken = Cookies.get('refresh_token');
-
-  if (accessToken) {
-    // 토큰이 유효한지 확인 (서버로 검증 요청을 보내거나 클라이언트에서 간단히 검사)
-    // 예를 들어, accessToken이 유효한 경우
-    isLoggedIn.value = true;
-  } else if (refreshToken) {
-    // accessToken이 없는 경우 refreshToken으로 accessToken 재발급
-    await getrefreshToken();
-  } else {
-    isLoggedIn.value = false;
-  }
-});
-
-
-
-
-
-function goToProductRegistration() {
-  // 상품 등록 함수 구현
-  router.push('/product/upload');
-
-
-}
-
-function goToProductManagement() {
-  // 판매 물품 관리 함수 구현
-  router.push('/product/sale');
-}
-
-function goToOrderManagement() {
-  // 주문 관리 함수 구현
-  router.push('/orders/sell');
-}
-
-function viewMyInfo() {
-  // 내정보 보기 함수 구현
-  router.push('/profile');
-}
-
-function editProfile() {
-  // 정보 수정 함수 구현
-  router.push('/profile/update/password');
-}
-
-
-
-async function logout() {
-  const accessToken = Cookies.get('access_token');
-  const refreshToken = Cookies.get('refresh_token');
-
-  if (!refreshToken) {
-    Cookies.remove('access_token');
-    Cookies.remove('refresh_token');
-    isLoggedIn.value = false;
-    return;
-  }
-
-
-  try {
-    // Send logout request to server
-    const response = await client.post('/users/logout', {}, {
-      headers: {
-        'Authorization': accessToken
-      }
-    });
-
-    if (response.status === 200) {
-      // Clear tokens from cookies
-      Cookies.remove('access_token');
-      Cookies.remove('refresh_token');
-      alert('로그아웃 성공');
-
-      // Update login state
-      isLoggedIn.value = false;
-
-      console.log('로그아웃 성공');
-      window.location.reload()
-      router.push('/');
-    } else {
-      console.error('로그아웃 실패:', response.data);
+    },
+    isEmailValid() {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(this.email);
+    },
+    isChangePasswordFormValid() {
+      return this.currentPassword && this.newPassword && this.confirmNewPassword && !this.newPasswordError && !this.confirmNewPasswordError;
     }
-  } catch (error) {
-    console.error('로그아웃 요청 실패:', error.response ? error.response.data : error.message);
-  }
-}
+  },
+  async created() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const newAccessToken = urlParams.get('access');
+    const newRefreshToken = urlParams.get('refresh');
+    if (newAccessToken && newRefreshToken) {
+      Cookies.set('access_token', newAccessToken, {expires: 1});
+      Cookies.set('refresh_token', newRefreshToken, {expires: 7});
+      await this.$router.push('/'); // Redirect to home or desired page
+    }
+
+    const accessToken = Cookies.get('access_token');
+    const refreshToken = Cookies.get('refresh_token');
+
+    if (accessToken) {
+      this.isLoggedIn = true;
+    } else if (refreshToken) {
+      await this.getRefreshToken();
+    } else {
+      this.isLoggedIn = false;
+    }
+  },
+  methods: {
 
 
-async function deleteAccount() {
-  // First confirmation dialog
-  if (confirm('정말로 회원 탈퇴를 하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
-    // Second confirmation dialog
-    if (confirm('정말로 탈퇴하시겠습니까? 이 작업을 계속 진행하면 회원 정보가 삭제됩니다.')) {
-      try {
-        const accessToken = Cookies.get('access_token');
-        console.log(accessToken);
+    showLoginModal() {
+      this.isNewUser = false;
+      this.modalTitle = '로그인';
+      this.submitButtonText = '로그인';
+      this.showModal = true;
+    },
+    showSignupModal() {
+      this.isNewUser = true;
+      this.modalTitle = '회원가입';
+      this.submitButtonText = '회원가입';
+      this.showModal = true;
+    },
+    closeModal() {
+      this.showModal = false;
+      this.resetForm();
+    },
+    validateEmail() {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      this.emailError = emailRegex.test(this.email) ? '' : '유효한 이메일 주소를 입력해주세요.';
+    },
 
-      const response = await client.patch('/users/withdraw', {}, {
-        headers: {
-          'Authorization': accessToken
-        }
+    search() {
+      this.$router.push({
+        name: 'SearchPage',
+        query: {searchType: this.searchType, searchQuery: this.searchQuery}
+      }).then(() => {
+        // 강제 새로고침
+        window.location.reload();
+      }).catch(err => {
+        console.error('Routing error:', err);
       });
-          console.log(response.data);
+    },
+    searchByCategory(category) {
+      console.log(category);
+      this.$router.push({
+        name: 'CategoryItemPage',
+        query: {searchQuery: category}
+      }).then(() => {
+        // 강제 새로고침
+        window.location.reload();
+      }).catch(err => {
+        console.error('Routing error:', err);
+      });
+    },
+
+
+    async getRefreshToken() {
+      const refreshToken = Cookies.get('refresh_token');
+
+      if (!refreshToken) {
+        console.error('Refresh token not found');
+        this.logout();
+        return;
+      }
+
+      try {
+        const response = await client.post('/users/refresh', {
+          refresh: refreshToken
+        }, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const {access, refresh} = response.data.result;
+        Cookies.set('access_token', access, {expires: 1});
+        Cookies.set('refresh_token', refresh, {expires: 7});
+        this.isLoggedIn = true;
+        console.log('Access token refreshed successfully');
+      } catch (error) {
+        console.error('Failed to refresh token:', error.response.data);
+        this.logout();
+      }
+    },
+    async logout() {
+      const accessToken = Cookies.get('access_token');
+      const refreshToken = Cookies.get('refresh_token');
+
+      if (!refreshToken) {
+        Cookies.remove('access_token');
+        this.isLoggedIn = false;
+        return;
+      }
+
+      try {
+        const response = await client.post('/users/logout', {}, {
+          headers: {
+            'Authorization': accessToken
+          }
+        });
 
         if (response.status === 200) {
-          // Clear tokens from cookies
           Cookies.remove('access_token');
           Cookies.remove('refresh_token');
-
-          alert('회원 탈퇴가 완료되었습니다.');
-          console.log('회원 탈퇴 성공:', response.data);
-
-          // Update login state
-          isLoggedIn.value = false;
-
-          window.location.reload()
-          // Optionally redirect to the home page or login page
-          router.push('/');
+          alert('로그아웃 성공');
+          this.isLoggedIn = false;
+          console.log('로그아웃 성공');
+          await this.$router.push('/');
         } else {
-          console.error('회원 탈퇴 실패:', response.data);
-          alert('회원 탈퇴에 실패하였습니다.');
+          console.error('로그아웃 실패:', response.data);
         }
       } catch (error) {
-        console.error('회원 탈퇴 요청 실패:', error.response ? error.response.data : error.message);
-        alert('회원 탈퇴 중 오류가 발생했습니다.');
+        console.error('로그아웃 요청 실패:', error.response ? error.response.data : error.message);
       }
-    }
-  }
-}
+    },
+    async deleteAccount() {
+      if (confirm('정말로 회원 탈퇴를 하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+        if (confirm('정말로 탈퇴하시겠습니까? 이 작업을 계속 진행하면 회원 정보가 삭제됩니다.')) {
+          try {
+            const accessToken = Cookies.get('access_token');
+            const response = await client.patch('/users/withdraw', {}, {
+              headers: {
+                'Authorization': accessToken
+              }
+            });
 
-function goToCart() {
-  // 장바구니 이동 함수 구현
-  router.push('/cart');
-}
-
-async function register() {
-  try {
-    const response = await client.post('/users/signup', {
-      loginId: signupLoginId.value,
-      password: signupPassword.value,
-      username: username.value,
-      nickname: nickname.value
-    }, {
-      headers: {
-        'Content-Type': 'application/json'
+            if (response.status === 200) {
+              Cookies.remove('access_token');
+              Cookies.remove('refresh_token');
+              alert('회원 탈퇴가 완료되었습니다.');
+              console.log('회원 탈퇴 성공:', response.data);
+              this.isLoggedIn = false;
+              await this.$router.push('/');
+            } else {
+              console.error('회원 탈퇴 실패:', response.data);
+              alert('회원 탈퇴에 실패하였습니다.');
+            }
+          } catch (error) {
+            console.error('회원 탈퇴 요청 실패:', error.response ? error.response.data : error.message);
+            alert('회원 탈퇴 중 오류가 발생했습니다.');
+          }
+        }
       }
-    });
-    alert('회원가입 성공');
+    },
+    goToProductRegistration() {
+      this.$router.push('/product/upload');
+    },
+    goToProductManagement() {
+      this.$router.push('/product/sale');
+    },
+    goToOrderManagement() {
+      this.$router.push('/orders/sell');
+    },
+    viewMyInfo() {
+      this.$router.push('/profile');
+    },
+    editProfile() {
+      this.$router.push('/profile/update/password');
+    },
+    goToCart() {
+      // 장바구니 이동 함수 구현
+      this.$router.push('/cart');
+    },
 
-    setTimeout(() => {
-      showSignupModal.value = false;
-    }, 500);
 
-    console.log('회원가입 성공:', response.data);
-
-    // 추가적으로 회원가입 성공 시 수행할 작업을 여기에 추가합니다.
-    window.location.reload()
-  } catch (error) {
-    console.error('회원가입 실패:', error.response.data);
-    // 서버 응답에서 에러 메시지를 처리
-    if (error.response && error.response.data) {
-      const { error: errorType, message } = error.response.data;
-      if (errorType === 'Conflict') {
-        if (message.includes('아이디')) {
-          loginIdError.value = message;
-        } else if (message.includes('닉네임')) {
-          nicknameError.value = message;
+    async auth() {
+      try {
+        if (this.isNewUser) {
+          // 회원가입 로직
+          await this.signUp(); // 회원가입 처리 메서드 호출
+        } else {
+          // 로그인 로직
+          await this.login(); // 로그인 처리 메서드 호출
+        }
+      } catch (error) {
+        this.error = error.message;
+      }
+    },
+    async signUp() {
+      console.log(this.email);
+      try {
+        const response = await client.post('/users/signup', {
+          loginId: this.loginId,
+          password: this.password,
+          username: this.username,
+          nickname: this.nickname,
+          email: this.email
+        }, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        alert('회원가입 성공');
+        this.showSignupModal = false;
+        console.log('회원가입 성공:', response.data);
+        window.location.reload();
+      } catch (error) {
+        console.error('회원가입 실패:', error.response.data);
+        if (error.response && error.response.data) {
+          const {error: errorType, message} = error.response.data;
+          if (errorType === 'Conflict') {
+            if (message.includes('아이디')) {
+              this.loginIdError = message;
+            } else if (message.includes('닉네임')) {
+              this.nicknameError = message;
+            }
+          }
         }
       }
     }
-  }
-}
+    ,
+    async login() {
+      try {
+        const response = await client.post('/users/login', {
+          loginId: this.loginId,
+          password: this.password
+        }, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
 
-async function login() {
-  // 로그인 로직 구현
-  {
-    try {
-      const response = await client.post('/users/login', {
-        loginId: loginId.value,
-        password: password.value,
-      }, {
-        headers: {
-          'Content-Type': 'application/json'
+        const accessToken = response.headers['access'];
+        const refreshToken = response.headers['refresh'];
+
+        if (accessToken && refreshToken) {
+          Cookies.set('access_token', accessToken, {expires: 1});
+          Cookies.set('refresh_token', refreshToken, {expires: 7});
+          this.isLoggedIn = true;
+          this.showLoginModal = false;
+          window.location.reload();
+        } else {
+          console.error('로그인 성공, 그러나 헤더에 토큰이 없습니다.');
+          this.loginError = '로그인 성공, 그러나 헤더에 토큰이 없습니다.';
         }
-      });
-      console.log('로그인 성공:', response.data);
+      } catch (error) {
+        console.error('로그인 실패:', error.response ? error.response.data : error.message);
+        this.loginError = '로그인에 실패하였습니다.';
+      }
+    }
+    ,
+    validateLoginId() {
+      const loginIdRegex = /^[a-z0-9]{4,10}$/;
+      this.loginIdError = !loginIdRegex.test(this.loginId) ? '아이디는 4~10자의 영문 소문자와 숫자만 사용 가능합니다.' : '';
+    }
+    ,
+    validatePassword() {
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/;
+      this.passwordError = !passwordRegex.test(this.password) ? '비밀번호는 8~15자의 영문 대/소문자, 숫자, 특수문자를 포함해야 합니다.' : '';
+    },
+    validateConfirmPassword() {
+      this.confirmPasswordError = this.password === this.confirmPassword ? '' : '비밀번호가 일치하지 않습니다.';
+    },
+    socialLogin(provider) {
+      let url = '';
 
-      // 쿠키에 토큰 저장
-      const {access, refresh} = response.data.result;
-      Cookies.set('access_token', access, {expires: 1}); // access_token을 1일 동안 쿠키에 저장
-      Cookies.set('refresh_token', refresh, {expires: 7}); // refresh_token을 7일 동안 쿠키에 저장
+      switch (provider) {
+        case 'kakao':
+          url = 'http://localhost:8080/oauth2/authorization/kakao';
+          break;
+        case 'naver':
+          url = 'http://localhost:8080/oauth2/authorization/naver';
+          break;
+        case 'google':
+          url = 'http://localhost:8080/oauth2/authorization/google';
+          break;
+        default:
+          console.error('Unsupported provider');
+          return;
+      }
 
+      window.location.href = url;
+    }
+    ,
+    validateNewPassword() {
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/;
+      this.newPasswordError = !passwordRegex.test(this.newPassword) ? '비밀번호는 8~15자의 영문 대/소문자, 숫자, 특수문자를 포함해야 합니다.' : '';
+      this.validateConfirmNewPassword();
+    }
+    ,
+    validateConfirmNewPassword() {
+      this.confirmNewPasswordError = this.newPassword !== this.confirmNewPassword ? '새 비밀번호가 일치하지 않습니다.' : '';
+    }
+    ,
+    async changePassword() {
+      try {
+        const accessToken = Cookies.get('access_token');
+        const response = await client.patch('/users/password', {
+          oldPassword: this.currentPassword,
+          newPassword: this.newPassword
+        }, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': accessToken
+          }
+        });
 
-      // 로그인 성공 처리
-      isLoggedIn.value = true;
-      showLoginModal.value = false;
-      // 로그인 후 추가 작업이 있다면 여기에 추가
-      window.location.reload()
-    } catch (error) {
-      console.error('로그인 실패:', error.response.data);
-      loginError.value = '로그인에 실패하였습니다.';
+        if (response.status === 200) {
+          this.changePasswordSuccess = '비밀번호 변경 성공';
+          this.showChangePasswordModal = false;
+          this.currentPassword = '';
+          this.newPassword = '';
+          this.confirmNewPassword = '';
+          console.log('비밀번호 변경 성공:', response.data);
+        } else {
+          this.changePasswordError = '비밀번호 변경 실패';
+          console.error('비밀번호 변경 실패:', response.data);
+        }
+      } catch (error) {
+        this.changePasswordError = '비밀번호 변경 중 오류가 발생했습니다.';
+        console.error('비밀번호 변경 요청 실패:', error.response ? error.response.data : error.message);
+      }
+    }
+    ,
+    resetForm() {
+      this.loginId = '';
+      this.email = '';
+      this.password = '';
+      this.confirmPassword = '';
+      this.username = '';
+      this.error = '';
+      this.emailError = '';
+      this.passwordError = '';
+      this.confirmPasswordError = '';
+      this.showVerificationCode = false;
+      this.verificationCode = '';
+      this.timer = 0;
+      this.isEmailVerified = false;
+      this.verificationError = '';
+      this.verificationButtonText = '인증 코드 발송';
+      this.verificationStatus = '';
+      this.isSendingCode = false;
+    },
+    async sendVerificationCode() {
+      if (this.timer > 0) return;
+      try {
+        this.isSendingCode = true;
+        this.verificationButtonText = '전송 중...';
+        const response = await client.post('/users/email', {email: this.email});
+        console.log('인증 코드 발송:', response.data);
+        this.showVerificationCode = true;
+        this.startTimer();
+        this.verificationButtonText = '코드 재전송';
+        alert('인증 코드가 이메일로 발송되었습니다. 5분 이내에 입력해주세요.');
+      } catch (error) {
+        console.error('인증 코드 발송 실패:', error);
+        this.error = '인증 코드 발송에 실패했습니다. 다시 시도해주세요.';
+      } finally {
+        this.isSendingCode = false;
+      }
+    },
+    startTimer() {
+      this.timer = 300;
+      const interval = setInterval(() => {
+        this.timer--;
+        if (this.timer <= 0) {
+          clearInterval(interval);
+          this.showVerificationCode = false;
+          this.verificationButtonText = '인증 코드 발송';
+        }
+      }, 1000);
+    },
+    formatTime(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = seconds % 60;
+      return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+    },
+    async verifyCode() {
+      try {
+        const response = await client.post('/users/email/validate', {
+          email: this.email,
+          authCode: this.verificationCode
+        });
+        console.log('인증 코드 확인:', response.data);
+        this.isEmailVerified = true;
+        this.showVerificationCode = false;
+        this.verificationError = '';
+        this.verificationButtonText = '인증 완료';
+        this.verificationStatus = '인증 성공';
+        alert('이메일이 성공적으로 인증되었습니다.');
+      } catch (error) {
+        console.error('인증 코드 확인 실패:', error);
+        this.verificationError = '인증 코드가 올바르지 않습니다. 다시 시도해주세요.';
+        this.verificationStatus = '인증 실패';
+        this.isEmailVerified = false;
+      }
     }
   }
 }
-
-function validateLoginId() {
-  const loginIdRegex = /^[a-z0-9]{4,10}$/
-  if (!loginIdRegex.test(signupLoginId.value)) {
-    loginIdError.value = '아이디는 4~10자의 영문 소문자와 숫자만 사용 가능합니다.'
-  } else {
-    loginIdError.value = ''
-  }
-}
-
-function validatePassword() {
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/
-  if (!passwordRegex.test(signupPassword.value)) {
-    passwordError.value = '비밀번호는 8~15자의 영문 대/소문자, 숫자, 특수문자를 포함해야 합니다.'
-  } else {
-    passwordError.value = ''
-  }
-}
-
-function switchToSignup() {
-  showLoginModal.value = false;
-  showSignupModal.value = true;
-}
-
-function switchToLogin() {
-  showSignupModal.value = false;
-  showLoginModal.value = true;
-}
-
-function kakaoLogin() {
-  // 카카오 로그인 로직 구현
-}
-
-function validateNewPassword() {
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/
-  if (!passwordRegex.test(newPassword.value)) {
-    newPasswordError.value = '비밀번호는 8~15자의 영문 대/소문자, 숫자, 특수문자를 포함해야 합니다.'
-  } else {
-    newPasswordError.value = ''
-  }
-  validateConfirmNewPassword();
-}
-
-function validateConfirmNewPassword() {
-  if (newPassword.value !== confirmNewPassword.value) {
-    confirmNewPasswordError.value = '새 비밀번호가 일치하지 않습니다.'
-  } else {
-    confirmNewPasswordError.value = ''
-  }
-}
-
-async function changePassword() {
-  try {
-    const accessToken = Cookies.get('access_token');
-    const response = await client.patch('/users/password', {
-      oldPassword: currentPassword.value,
-      newPassword: newPassword.value,
-    }, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': accessToken
-      }
-    });
-    console.log('비밀번호 변경 성공:', response.data);
-    alert('비밀번호가 성공적으로 변경되었습니다.');
-    changePasswordSuccess.value = '비밀번호가 성공적으로 변경되었습니다.';
-    changePasswordError.value = '';
-    // 비밀번호 변경 성공 후 모달 닫기
-    setTimeout(() => {
-      showChangePasswordModal.value = false;
-      // 입력 필드 초기화
-      currentPassword.value = '';
-      newPassword.value = '';
-      confirmNewPassword.value = '';
-      changePasswordSuccess.value = '';
-    }, 2000);
-  } catch (error) {
-    console.error('비밀번호 변경 실패:', error.response.data);
-    changePasswordError.value = '비밀번호 변경에 실패했습니다. 현재 비밀번호를 확인해주세요.';
-    changePasswordSuccess.value = '';
-  }
-}
-// searchByCategory function
-const searchByCategory = (category) => {
-  console.log(category);
-  router.push({
-    name: 'CategoryItemPage',
-    query: { searchQuery: category }
-  }).then(() => {
-    // 강제 새로고침
-    window.location.reload();
-  }).catch(err => {
-    console.error('Routing error:', err);
-  });
-};
-
-// search function
-const search = () => {
-
-  router.push({
-    name: 'SearchPage',
-    query: { searchType: searchType.value, searchQuery: searchQuery.value }
-  }).then(() => {
-    // 강제 새로고침
-    window.location.reload();
-  }).catch(err => {
-    console.error('Routing error:', err);
-  });
-};
-
-
 </script>
 
 <style>
@@ -552,6 +706,9 @@ const search = () => {
   --kakao-color: #FEE500;
   --input-border: #ccc;
 }
+.modalTitle {
+  text-align: center;
+}
 
 body {
   font-family: Arial, sans-serif;
@@ -562,6 +719,27 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+}
+
+.social-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px
+}
+
+.social-button {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.social-button img {
+  display: block;
+  border: 1px solid #e1e1e1; /* 이미지에 적용된 테두리 제거 */
+  outline: none; /* 포커스 시 테두리 제거 */
+  border-radius: 10%
 }
 
 .container {
@@ -598,25 +776,63 @@ header {
   margin: 10px 0;
   max-width: 600px;
 }
+.DwtdQ {
+  position: relative;
+  width: 100%;
+  margin-top: 22px;
+}
+.bMUZyR {
+  width: 100%;
+  padding: 8px 0px;
+}
+.gIRbED {
+  width: 100%;
+  border-bottom: 1px solid rgba(90, 101, 119, 0.15);
+}
+.faerXM {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  padding: 0px 12px;
+  transform: translate(-50%, -50%);
+  background-color: rgb(255, 255, 255);
+}
+.dBXZuI {
+  display: flex;
+  flex-flow: row;
+  gap: 4px;
+  max-width: fit-content;
+  align-items: center;
+}
+.bReByP {
+  color: #333;
+  font: 500 0.875rem / 1.46 "Pretendard Variable", Figtree, "IBM Plex Sans JP", "Pretendard JP Variable";
+}
+/* .search-bar 내부의 input 스타일 */
+.search-bar input {
+  padding: 10px;
+  margin-top: 0;
+  font-size: 16px;
+  border: none;
+  flex-grow: 1;
+  min-width: 200px;
+  border-radius: 0; /* 검색바의 다른 input과 차별화된 스타일 */
+  width: 0;
+}
 
-.search-bar select,
-.search-bar input,
+/* .search-bar 내부의 select 스타일 */
+.search-bar select {
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px 0 0 5px; /* 검색바의 select 요소만 해당 스타일 적용 */
+}
+
+/* .search-bar 내부의 button 스타일 */
 .search-bar button {
   padding: 10px;
   font-size: 16px;
   border: none;
-}
-
-.search-bar select {
-  border-radius: 5px 0 0 5px;
-}
-
-.search-bar input {
-  flex-grow: 1;
-  min-width: 200px;
-}
-
-.search-bar button {
   background-color: var(--button-color);
   color: var(--bg-color);
   cursor: pointer;
@@ -648,6 +864,255 @@ header {
 .user-actions button:hover {
   background-color: var(--bg-color);
   color: var(--main-color);
+}
+
+/* modal */
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.modal.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 3rem;
+  border-radius: 12px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  width: 450px;
+  position: relative;
+  transform: scale(0.8);
+  transition: all 0.3s ease;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal.active .modal-content {
+  transform: scale(1);
+}
+
+.close-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  transition: all 0.2s ease;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  padding: 0;
+}
+
+.close-button:hover {
+  color: var(--main-color);
+  background-color: #f0f0f0;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-top: 1.5rem;
+  font-weight: 600;
+  text-align: left;
+  color: #333;
+}
+
+/* 전역 input 스타일 (검색바 외의 input에 적용) */
+input {
+  padding: 0.75rem;
+  margin-top: 8px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--main-color);
+}
+
+.error {
+  color: #ff3333;
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+  text-align: left;
+}
+
+.form-group {
+  margin-bottom: 1.75rem;
+}
+
+.submit-button {
+  margin-top: 2rem;
+  background-color: var(--main-color);
+  color: white;
+  border: none;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.submit-button:hover {
+  background-color: var(--main-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(255, 102, 0, 0.2);
+}
+
+h2 {
+
+  color: var(--main-color);
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  font-weight: 700;
+}
+
+.email-verification {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.email-verification input {
+  flex: 1;
+  min-width: 200px;
+}
+
+.email-verification button,
+.verification-code button {
+  background-color: var(--main-color);
+  margin-top: 8px;
+  border: none;
+  color: white;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+  border-radius: 50px;
+}
+
+.verification-code {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.verification-code input {
+  flex: 0 1 150px;
+  min-width: 100px;
+  max-width: 150px;
+}
+
+.timer {
+  font-size: 0.9rem;
+  color: var(--main-color);
+  margin-top: 0.5rem;
+  width: 100%;
+  text-align: right;
+}
+
+.resend-code {
+  background: none;
+  border: none;
+  color: var(--main-color);
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-decoration: underline;
+  padding: 0;
+  margin: 0;
+}
+
+.resend-code:hover {
+  color: var(--hover-color);
+}
+
+.verification-status {
+  margin-top: 0.5rem;
+  font-weight: bold;
+}
+
+.verification-status.success {
+  color: #4CAF50;
+}
+
+.verification-status.failure {
+  color: #f44336;
+}
+
+.email-input-container {
+  position: relative;
+  flex: 1;
+}
+
+.email-status-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.2rem;
+}
+
+.email-status-icon.success {
+  color: #4CAF50;
+}
+
+.email-status-icon.failure {
+  color: #f44336;
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid var(--main-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 10px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Modal Styles */

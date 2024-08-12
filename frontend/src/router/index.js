@@ -20,12 +20,18 @@ import NewItemPage from "@/components/NewItemPage.vue";
 import LikeItemPage from "@/components/LikeItemPage.vue";
 import CategoryItemPage from "@/components/CategoryItemPage.vue";
 import EditProduct from "@/components/EditProduct.vue";
+import OAuthSignupPage from "@/components/OAuthSignupPage.vue";
 
 const routes = [
   {
     path: '/',
     name: 'MainPage',
     component: MainPage,
+  },
+  {
+    path: '/oauth2/signup',
+    name: 'OAuthSignupPage',
+    component: OAuthSignupPage,
   },
   {
     path: '/profile/update/password',
