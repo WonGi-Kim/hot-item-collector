@@ -147,4 +147,8 @@ public class OrderService {
 				.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ORDER));
 
 	}
+
+	public List<OrderItem> findOrderItemListByOrderId(Long orderId) {
+		return orderItemRepository.findOrderItemListByOrderId(orderId);
+	}
 }

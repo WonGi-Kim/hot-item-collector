@@ -20,12 +20,24 @@ import NewItemPage from "@/components/NewItemPage.vue";
 import LikeItemPage from "@/components/LikeItemPage.vue";
 import CategoryItemPage from "@/components/CategoryItemPage.vue";
 import EditProduct from "@/components/EditProduct.vue";
+import OAuthSignupPage from "@/components/OAuthSignupPage.vue";
+import ChatRoom from "@/components/ChatRoom.vue";
 
 const routes = [
   {
     path: '/',
     name: 'MainPage',
     component: MainPage,
+  },
+  {
+    path: '/chatroom',
+    name: 'ChatRoom',
+    component: ChatRoom,
+  },
+  {
+    path: '/oauth2/signup',
+    name: 'OAuthSignupPage',
+    component: OAuthSignupPage,
   },
   {
     path: '/profile/update/password',

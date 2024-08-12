@@ -9,9 +9,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-            .allowedOrigins("http://13.125.60.206:63342", "http://13.125.60.206:8081","http://localhost:8081")
-            .allowedMethods("GET", "POST", "PUT", "DELETE","PATCH")
-            .allowedHeaders("*")
-            .allowCredentials(true);
+                .allowedOrigins("http://hotitemcollector.com:63342", "http://hotitemcollector.com:8081", "http://localhost:8081", "http://localhost:63342")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
+                .allowedHeaders("*")
+                .exposedHeaders("access", "refresh") // Expose specific headers
+                .allowCredentials(true);
     }
 }

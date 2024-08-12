@@ -7,7 +7,6 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
-import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -17,8 +16,6 @@ import com.querydsl.core.types.dsl.PathInits;
 public class QProfileImage extends EntityPathBase<ProfileImage> {
 
     private static final long serialVersionUID = 1413393382L;
-
-    private static final PathInits INITS = PathInits.DIRECT2;
 
     public static final QProfileImage profileImage = new QProfileImage("profileImage");
 
@@ -36,27 +33,16 @@ public class QProfileImage extends EntityPathBase<ProfileImage> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> modifiedAt = _super.modifiedAt;
 
-    public final QUser user;
-
     public QProfileImage(String variable) {
-        this(ProfileImage.class, forVariable(variable), INITS);
+        super(ProfileImage.class, forVariable(variable));
     }
 
     public QProfileImage(Path<? extends ProfileImage> path) {
-        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
+        super(path.getType(), path.getMetadata());
     }
 
     public QProfileImage(PathMetadata metadata) {
-        this(metadata, PathInits.getFor(metadata, INITS));
-    }
-
-    public QProfileImage(PathMetadata metadata, PathInits inits) {
-        this(ProfileImage.class, metadata, inits);
-    }
-
-    public QProfileImage(Class<? extends ProfileImage> type, PathMetadata metadata, PathInits inits) {
-        super(type, metadata, inits);
-        this.user = inits.isInitialized("user") ? new QUser(forProperty("user"), inits.get("user")) : null;
+        super(ProfileImage.class, metadata);
     }
 
 }

@@ -1,10 +1,13 @@
 package com.sparta.hotitemcollector.domain.user.dto.auth;
 
+import com.sparta.hotitemcollector.domain.user.dto.OauthSignupRequestDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class SignupRequestDto {
     @NotBlank(message = "사용자 ID는 필수 입력 사항입니다.")
     @Pattern(regexp = "^[a-z0-9]{4,10}$",
@@ -16,6 +19,13 @@ public class SignupRequestDto {
     private String password;
     @NotBlank(message = "이름은 필수 입력 사항입니다.")
     private String username;
-    @NotBlank(message = "이름은 필수 입력 사항입니다.")
-    private String nickname;
+
+    private String email;
+
+    public SignupRequestDto(OauthSignupRequestDto oauthSignupRequestDto) {
+        this.loginId = oauthSignupRequestDto.getLoginId();
+        this.password = oauthSignupRequestDto.getPassword();
+        this.username = oauthSignupRequestDto.getUsername();
+        this.email = oauthSignupRequestDto.getUsername();
+    }
 }
