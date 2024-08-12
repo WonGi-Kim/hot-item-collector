@@ -28,14 +28,15 @@ public class FollowService {
         // 팔로우 당하는 사람 ERD에서 following_id
         User followingUser = userService.findByUserId(userId);
 
+        if (checkFollowAlready(followerUser, followingUser)) {
+            throw new CustomException(ErrorCode.ALREADY_EXIST_FOLLOW);
+        }
+
         Follow newFollow = Follow.builder()
                 .follower(followerUser)
                 .following(followingUser)
                 .build();
 
-        if (checkFollowAlready(followerUser, followingUser)) {
-            throw new CustomException(ErrorCode.ALREADY_EXIST_FOLLOW);
-        }
         followRepository.save(newFollow);
     }
 

@@ -31,3 +31,22 @@ services:
     container_name: hot-item-collector-redis
     ports:
       - "6379:6379"
+  mongodb:
+    image: mongo
+    container_name: hot-item-collector-mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+
+  rabbitmq:
+    image: rabbitmq
+    container_name: hot-item-collector-rabbitmq
+    ports:
+      - "5672:5672"  # RabbitMQ main port
+      - "15672:15672"  # RabbitMQ management UI port
+      - "61613:61613"  # STOMP port
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
