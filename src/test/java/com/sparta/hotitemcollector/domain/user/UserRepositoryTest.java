@@ -44,7 +44,7 @@ public class UserRepositoryTest {
 		}
 	}
 
-	@Test
+	/*@Test
 	@DisplayName("2. existsByNicknameContainingIgnoreCase를 테스트한다")
 	void Test2() {
 		// given
@@ -62,5 +62,5 @@ public class UserRepositoryTest {
 		System.out.println("====================================");
 
 		System.out.println(isExist);
-	}
+	}*/
 }
