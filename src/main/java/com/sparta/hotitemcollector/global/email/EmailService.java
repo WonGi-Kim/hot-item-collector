@@ -32,7 +32,7 @@ public class EmailService {
         // Generate and set the new password
         String authNum = createCode();
         Optional<User> findUser = userService.findByEmail(emailMessage.getTo());
-        if (!findUser.get().isExist()) {
+        if (findUser.isEmpty()) {
             throw new CustomException(ErrorCode.NOT_FOUND_USER);
         }
         findUser.get().updatePassword(userService.passwordEncoder(authNum));
