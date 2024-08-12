@@ -19,6 +19,7 @@ public class ChatMessageService {
                 .roomId(roomId)
                 .message(message)
                 .sender(sender)
+                .createdAt(LocalDateTime.now())
                 .build();
 
         ChatMessage savedMessage = chatMessageRepository.save(chatMessage);
