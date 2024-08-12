@@ -73,11 +73,9 @@ public class ProductService {
 			.map(image -> new ProductImageResponseDto(image))
 			.collect(Collectors.toList());
 
-		ProfileImageResponseDto profileImageDto = new ProfileImageResponseDto(product.getUser()
-			.getProfileImage());
 
 		// ProductResponseDto 생성
-		ProductResponseDto responseDto = new ProductResponseDto(product, imageDtos, profileImageDto);
+		ProductResponseDto responseDto = new ProductResponseDto(product, imageDtos);
 		return responseDto;
 	}
 
@@ -127,10 +125,9 @@ public class ProductService {
 			.map(ProductImageResponseDto::new)
 			.collect(Collectors.toList());
 
-		ProfileImageResponseDto profileImageResponseDto = new ProfileImageResponseDto(product.getUser().getProfileImage());
 
 		// ProductResponseDto 생성 및 반환
-		return new ProductResponseDto(product, updatedImageDtos, profileImageResponseDto);
+		return new ProductResponseDto(product, updatedImageDtos);
 	}
 
 	@Transactional
@@ -164,45 +161,31 @@ public class ProductService {
 
 	@Transactional(readOnly = true)
 	public ProductResponseDto getProduct(Long productId) {
-		// Product와 관련된 이미지 정보를 가져옴
-		Product product = productRepository.findByIdWithImages(productId);
+		ProductResponseDto product = productRepository.findByIdWithImages(productId);
 
-		// Product와 연관된 이미지 정보를 DTO로 변환
-		List<ProductImageResponseDto> imageDtos = product.getImages().stream()
-			.map(image -> new ProductImageResponseDto(image))
-			.collect(Collectors.toList());
-
-		// ProfileImageResponseDto를 생성, 프로필 이미지가 없으면 null 설정
-		ProfileImageResponseDto profileImageResponseDto = product.getUser().getProfileImage() != null
-			? new ProfileImageResponseDto(product.getUser().getProfileImage())
-			: null;
-
-		// ProductResponseDto 생성
-		ProductResponseDto responseDto = new ProductResponseDto(product, imageDtos, profileImageResponseDto);
-		return responseDto;
+		return product;
 	}
 
 	@Transactional(readOnly = true)
 	public Page<ProductSimpleResponseDto> getFollowProduct(User user, int page, int size) {
-		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+		Pageable pageable = PageRequest.of(page, size);
 		List<Follow> followList = followService.getAllFollowers(user);
 
 		List<User> followingUsers = followList.stream()
 			.map(Follow::getFollowing)
 			.collect(Collectors.toList());
 
-		Page<Product> productPage = productRepository.findByRequirement(followingUsers, null, null, null, null, pageable);
-		return productPage.map(ProductSimpleResponseDto::new);
+		Page<ProductSimpleResponseDto> productPage = productRepository.findByRequirement(followingUsers, null, null, null, null, pageable);
+		return productPage;
 	}
 
 	@Transactional(readOnly = true)
 	public List<HotProductResponseDto> getHotProduct(int page, int size) {
 		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-		Page<Product> productPage = productRepository.findTop10ByOrderByLikesDesc(pageable);
+		Page<HotProductResponseDto> productResponseDtoPage = productRepository.findTop10HotProduct(pageable);
 
-		return productPage.getContent()
+		return productResponseDtoPage.getContent()
 			.stream()
-			.map(HotProductResponseDto::new)
 			.collect(Collectors.toList());
 	}
 
@@ -210,7 +193,7 @@ public class ProductService {
 	public Page<ProductSimpleResponseDto> getSaleProduct(User user, ProductStatus status, int page,
 		int size) {
 		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-		Page<Product> productPage = Page.empty(pageable);
+		Page<ProductSimpleResponseDto> productPage = Page.empty(pageable);
 
 		if (status != null) {
 			productPage = productRepository.findByRequirement(null, user, null, null, status, pageable);
@@ -219,7 +202,7 @@ public class ProductService {
 			productPage = productRepository.findByRequirement(null, user, null, null, null, pageable);
 		}
 
-		return productPage.map(ProductSimpleResponseDto::new);
+		return productPage;
 	}
 
 	@Transactional(readOnly = true)
@@ -227,7 +210,7 @@ public class ProductService {
 		User user = userService.findByUserId(userId);
 
 		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-		Page<Product> productPage = Page.empty(pageable);
+		Page<ProductSimpleResponseDto> productPage = Page.empty(pageable);
 
 		if (status != null) {
 			productPage = productRepository.findByRequirement(null, user, null, null, status, pageable);
@@ -236,16 +219,16 @@ public class ProductService {
 			productPage = productRepository.findByRequirement(null, user, null, null, null, pageable);
 		}
 
-		return productPage.map(ProductSimpleResponseDto::new);
+		return productPage;
 	}
 
 	@Transactional(readOnly = true)
 	public Page<ProductSimpleResponseDto> getNewProduct(int page, int size) {
 		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
-		Page<Product> productPage = productRepository.findAll(pageable);
+		Page<ProductSimpleResponseDto> productPage = productRepository.findByRequirement(null, null, null, null, null, pageable);
 
-		return productPage.map(ProductSimpleResponseDto::new);
+		return productPage;
 	}
 
 	public Product findById(Long productId) {
