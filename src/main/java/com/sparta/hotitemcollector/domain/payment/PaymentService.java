@@ -96,18 +96,25 @@ public class PaymentService {
 
 	public PaymentRequestDto getPaymentRequestDataByOrderId(Long orderId) {
 		Orders order = orderService.findOrderById(orderId);
-		Payment payment = findPaymentByOrderId(orderId);
+		List<Payment> payments = paymentRepository.findByOrderId(orderId);
+		BigDecimal totalAmount = payments.stream()
+				.map(Payment::getAmount)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+		String productName = payments.stream()
+				.map(payment -> payment.getOrder().getOrderItems().get(0).getProduct().getName())
+				.collect(Collectors.joining(", "));
 
 		return PaymentRequestDto.builder()
-			.pg("html5_inicis")
-			.payMethod("card")
-			.merchantUid(payment.getMerchantUid())
-			.amount(payment.getAmount())
-			.name(payment.getOrder().getOrderItems().get(0).getProduct().getName())
-			.buyerName(order.getUserName())
-			.buyerAddr(order.getAddress())
-			.buyerTel(order.getPhoneNumber())
-			.build();
+				.pg("html5_inicis")
+				.payMethod("card")
+				.merchantUid(payments.get(0).getMerchantUid())
+				.amount(totalAmount)
+				.name(productName)
+				.buyerName(order.getUserName())
+				.buyerAddr(order.getAddress())
+				.buyerTel(order.getPhoneNumber())
+				.build();
 	}
 
 	@Transactional
@@ -187,8 +194,8 @@ public class PaymentService {
 		return new PrepareData(payment.getMerchantUid(),payment.getAmount());
 	}
 
-	private Payment findPaymentByOrderId(Long orderId) {
-		return paymentRepository.findByOrderId(orderId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_PAYMENT));
-	}
+//	private Payment findPaymentByOrderId(Long orderId) {
+//		return paymentRepository.findByOrderId(orderId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_PAYMENT));
+//	}
 
 }
