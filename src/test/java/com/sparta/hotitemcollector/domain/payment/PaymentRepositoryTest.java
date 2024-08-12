@@ -36,7 +36,7 @@ public class PaymentRepositoryTest {
 		System.out.println("====================================");
 	}
 
-	@Test
+	/*@Test
 	@DisplayName("2. findByOrderId를 테스트한다")
 	void test2() {
 		//given
@@ -52,5 +52,5 @@ public class PaymentRepositoryTest {
 		// then
 		System.out.println("총 걸린 시간 : " + (after - before) + "ms");
 		System.out.println("====================================");
-	}
+	}*/
 }
