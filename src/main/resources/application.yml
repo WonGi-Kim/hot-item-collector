@@ -10,7 +10,7 @@ spring:
     name: hot-item-collector
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3307/hot-item-collector
+    url: jdbc:mysql://hotitemcollector.com:3307/hot-item-collector
     #    url: jdbc:mysql://localhost:3308/dummy-hot-item-collector
     username: ${MYSQL_USER}
     password: ${MYSQL_PASSWORD}
@@ -47,10 +47,10 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@localhost:27017/hot-item-collector-mongo?authSource=admin
+      uri: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@hotitemcollector.com:27017/hot-item-collector-mongo?authSource=admin
 
   rabbitmq:
-    host: localhost
+    host: hotitemcollector.com
     port: 5672
     username: guest
     password: guest
@@ -68,7 +68,7 @@ spring:
           kakao:
             client-id: ${OAUTH2_KAKAO_CLIENT_ID}
             client-secret: ${OAUTH2_KAKAO_CLIENT_SECRET}
-            redirect-uri: http://localhost:8080/login/oauth2/code/kakao
+            redirect-uri: http://hotitemcollector.com:8080/login/oauth2/code/kakao
             client-authentication-method: client_secret_post
             authorization-grant-type: authorization_code
             scope: profile_nickname, profile_image
