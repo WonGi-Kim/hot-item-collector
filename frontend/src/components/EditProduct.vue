@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue';
 import AppHeader from './AppHeader.vue';
 import AppFooter from './AppFooter.vue';
-import axios from "axios";
+const client = require('../client')
 import Cookies from 'js-cookie';
 import { useRoute, useRouter } from "vue-router";
 import defaultProfileImage from "@/assets/user.png";
@@ -72,7 +72,7 @@ export default {
 
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(`/products/${productId}`);
+        const response = await client.get(`/products/${productId}`);
         const data = response.data.result;
         console.log(data);
 
@@ -104,7 +104,7 @@ export default {
           throw new Error('Access token is missing.');
         }
         if (productId && product.value.images[index].id) {
-          const response = await axios.delete(`/products/${productId}/image/${product.value.images[index].id}`, {
+          const response = await client.delete(`/products/${productId}/image/${product.value.images[index].id}`, {
             headers: {
               'Authorization': accessToken
             }
@@ -144,7 +144,7 @@ export default {
             formData.append('files', imageFile);
           });
 
-          const response = await axios.put(`/products/${productId}`, formData, {
+          const response = await client.put(`/products/${productId}`, formData, {
             headers: {
               'Authorization': accessToken,
               'Content-Type': 'multipart/form-data',

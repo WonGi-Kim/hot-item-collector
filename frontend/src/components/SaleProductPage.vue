@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import AppHeader from "@/components/AppHeader.vue";
 import AppFooter from "@/components/AppFooter.vue";
 import Cookies from "js-cookie";
-import axios from "axios";
+const client = require('../client')
 import {useRouter} from "vue-router";
 
 export default {
@@ -36,7 +36,7 @@ export default {
 
       try {
         const params = status ? { status } : {};
-        const response = await axios.get(`/products/sale?page=${page}&size=${itemsPerPage}`, {
+        const response = await client.get(`/products/sale?page=${page}&size=${itemsPerPage}`, {
           headers: {
             'Authorization': accessToken
           },

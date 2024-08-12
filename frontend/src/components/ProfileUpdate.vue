@@ -178,7 +178,7 @@ body {
 
 <script>
 import { ref, onMounted  } from 'vue';
-import axios from 'axios';
+const client = require('../client')
 import Cookies from 'js-cookie';
 import AppHeader from './AppHeader.vue';
 import AppFooter from './AppFooter.vue';
@@ -203,7 +203,7 @@ export default {
     const fetchUserProfile = async () => {
       try {
         const accessToken = Cookies.get('access_token');
-        const response = await axios.get('/users/profile', {
+        const response = await client.get('/users/profile', {
           headers: {
             'Authorization': accessToken
           }
@@ -255,7 +255,7 @@ export default {
           formData.append('files', selectedFile.value);
         }
 
-        await axios.patch('/users/profile', formData, {
+        await client.patch('/users/profile', formData, {
           headers: {
             'Authorization': accessToken,
             'Content-Type': 'multipart/form-data'

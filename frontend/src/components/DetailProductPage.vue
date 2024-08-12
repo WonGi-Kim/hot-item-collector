@@ -58,7 +58,7 @@
 <script>
 import AppHeader from './AppHeader.vue';
 import {ref, onMounted, computed} from 'vue'
-import axios from "axios";
+const client = require('../client')
 import {useRoute} from "vue-router";
 import AppFooter from "@/components/AppFooter.vue";
 import defaultUserImage from "../assets/user.png"
@@ -123,7 +123,7 @@ export default {
 
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(`/products/${productId}`, {
+        const response = await client.get(`/products/${productId}`, {
           headers: {
             'Content-Type': 'application/json',
           },
@@ -147,18 +147,16 @@ export default {
         }
 
         try{
-        const responseFollow = await axios.get(`/follow/${product.value.userId}`, {
-          headers: {
-            'Authorization': accessToken
-          }
-        });
-        isFollowing.value = responseFollow.data.result.userFollow
-        console.log("팔로우 여부 불러오기 완료")
-      } catch(error) {
-        console.error(error)
-      }
-
-
+          const responseFollow = await client.get(`/follow/${product.value.userId}`, {
+            headers: {
+              'Authorization': accessToken
+            }
+          });
+          isFollowing.value = responseFollow.data.result.userFollow
+          console.log("팔로우 여부 불러오기 완료")
+        } catch(error) {
+          console.error(error)
+        }
       } catch (error) {
         console.error('Error fetching product:', error);
       }
@@ -166,7 +164,7 @@ export default {
 
     const fetchLikeStatus = async () => {
       try {
-        const response = await axios.get(`/likes/${productId}`, {
+        const response = await client.get(`/likes/${productId}`, {
           headers: {
             'Authorization': accessToken
           }
@@ -176,6 +174,7 @@ export default {
         console.error(error)
       }
     }
+
 
 
     onMounted(() => {
@@ -190,7 +189,7 @@ export default {
 
     const follow = async () => {
       try {
-        await axios.post(`/follow/${product.value.userId}`, {}, {
+        await client.post(`/follow/${product.value.userId}`, {}, {
           headers: {
             'Authorization': accessToken
           }
@@ -207,7 +206,7 @@ export default {
 
     const unfollow = async () => {
       try {
-        await axios.delete(`/follow/${product.value.userId}`, {
+        await client.delete(`/follow/${product.value.userId}`, {
           headers: {
             'Authorization': accessToken
           }
@@ -230,7 +229,7 @@ export default {
     const toggleLike = async () => {
 
       try {
-        await axios.post(`/likes/${productId}`, {}, {
+        await client.post(`/likes/${productId}`, {}, {
           headers: {
             'Authorization': accessToken
           }
@@ -258,7 +257,7 @@ export default {
 
     const addToCart = () => {
 
-      axios.post(`/cart/${productId}`, {},{
+      client.post(`/cart/${productId}`, {},{
         headers: {
           'Content-Type':'application/json',
           'Authorization':accessToken

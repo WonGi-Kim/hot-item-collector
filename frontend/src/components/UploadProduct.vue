@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import AppHeader from './AppHeader.vue';
 import AppFooter from './AppFooter.vue';
-import axios from "axios";
+const client = require('../client')
 import Cookies from 'js-cookie';
 import { useRouter } from "vue-router";
 
@@ -73,7 +73,7 @@ export default {
           formData.append('files', imageFile);
         });
 
-        const response = await axios.post('/products', formData, {
+        const response = await client.post('/products', formData, {
           headers: {
             'Authorization': accessToken,
             'Content-Type': 'multipart/form-data',

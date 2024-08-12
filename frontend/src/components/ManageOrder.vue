@@ -1,7 +1,7 @@
 <script>
 import {onMounted, ref} from 'vue';
 import Cookies from "js-cookie";
-import axios from "axios";
+const client = require('../client')
 import AppHeader from './AppHeader.vue';
 import AppFooter from './AppFooter.vue';
 
@@ -20,7 +20,7 @@ export default {
       return date.split('T')[0]
     }
     const searchOrders = () => {
-      axios.get('/orders/sell', {
+      client.get('/orders/sell', {
         params: {
           startDate: startDate.value,
           endDate: endDate.value,
@@ -37,7 +37,7 @@ export default {
     }
 
     const loadOrders = () => {
-      axios.get('/orders/sell', {
+      client.get('/orders/sell', {
         headers: {
           'Authorization': accessToken
         }
@@ -50,7 +50,7 @@ export default {
 
     const updateStatus = (order) => {
 
-      axios.patch(`/orders/sell/${order.orderItemId}`, {
+      client.patch(`/orders/sell/${order.orderItemId}`, {
         status: order.orderStatus
       }, {
         headers: {

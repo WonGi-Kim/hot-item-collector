@@ -230,7 +230,7 @@ import { ref, computed, onMounted  } from 'vue';
 import AppHeader from './AppHeader.vue';
 import AppFooter from './AppFooter.vue';
 import {useRoute, useRouter} from 'vue-router';
-import axios from "axios";
+const client = require('../client')
 import defaultProfile from "../assets/user.png";
 import Cookies from "js-cookie";
 
@@ -298,7 +298,7 @@ export default {
     const fetchProduct = async () => {
       if (productId) {
         try {
-          const response = await axios.get(`/products/${productId}`);
+          const response = await client.get(`/products/${productId}`);
           console.log(response.data.result);
 
           product.value = response.data.result;
@@ -331,7 +331,7 @@ export default {
       if (productId) {
         const accessToken = Cookies.get('access_token');
         try{
-           const response = await axios.delete(`/products/${productId}`,{
+           const response = await client.delete(`/products/${productId}`,{
              headers: {
                'Authorization': accessToken
              }

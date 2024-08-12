@@ -3,9 +3,11 @@ package com.sparta.hotitemcollector.domain.product.repository;
 import static com.sparta.hotitemcollector.domain.product.entity.QProduct.product;
 import static com.sparta.hotitemcollector.domain.product.entity.QProductImage.productImage;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 
@@ -36,6 +38,11 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 
 	@Override
 	public Page<ProductSimpleResponseDto> findByRequirement(List<User> users, User user, String productName, ProductCategory category, ProductStatus status, Pageable pageable) {
+
+		// 유저리스트가 들어왔는데 팔로우하는 사람이 없는 경우 -> 빈 리스트 반환 필요
+		if (users != null && users.isEmpty()) {
+			return new PageImpl<>(Collections.emptyList(), pageable, 0);
+		}
 
 		List<ProductSimpleResponseDto> dtoQueryResults = jpaQueryFactory
 			.select(Projections.fields(ProductSimpleResponseDto.class,

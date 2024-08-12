@@ -1,7 +1,7 @@
 <script>
 import AppHeader from './AppHeader.vue';
 import { ref, computed, onMounted } from 'vue';
-import axios from "axios";
+const client = require('../client')
 import {useRouter} from "vue-router";
 import AppFooter from './AppFooter.vue';
 
@@ -45,7 +45,7 @@ export default {
         }
 
         const url = `/products/like?page=${page}&size=${itemsPerPage}`;
-        const response = await axios.get(url,{
+        const response = await client.get(url,{
           headers: {
             'Authorization': `Bearer ${token}`
           }

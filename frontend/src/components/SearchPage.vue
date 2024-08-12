@@ -38,7 +38,7 @@
 import AppHeader from './AppHeader.vue';
 import AppFooter from './AppFooter.vue';
 import { ref, computed, onMounted } from 'vue';
-import axios from "axios";
+const client = require('../client')
 import { useRouter, useRoute } from "vue-router";
 
 export default {
@@ -76,7 +76,7 @@ export default {
         } else if (searchType.value === 'seller') {
           url = `/products/search?page=${page}&size=${itemsPerPage}&nickname=${searchQuery.value}`;
         }
-        const response = await axios.get(url);
+        const response = await client.get(url);
         console.log(response.data);
         const data = response.data.result;
         products.value = data.content || [];

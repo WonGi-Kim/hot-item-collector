@@ -12,6 +12,9 @@ permissions:
     group: ubuntu
 
 hooks:
+  BeforeInstall:
+    - location: cleanup.sh
+      timeout: 300
   ApplicationStart:
     - location: deploy.sh
       timeout: 60

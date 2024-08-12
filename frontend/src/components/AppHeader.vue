@@ -145,11 +145,10 @@
 
 <script setup>
 import { ref, computed, onMounted  } from 'vue';
-import axios from 'axios'; // axios import
 import Cookies from 'js-cookie';
 import router from "@/router";
 
-
+const client = require('../client')
 
 const searchType = ref('product');
 const searchQuery = ref('');
@@ -196,7 +195,7 @@ async function getrefreshToken() {
   }
 
   try {
-    const response = await axios.post('/users/refresh', {
+    const response = await client.post('/users/refresh', {
       refresh: refreshToken
     }, {
       headers: {
@@ -286,7 +285,7 @@ async function logout() {
 
   try {
     // Send logout request to server
-    const response = await axios.post('/users/logout', {}, {
+    const response = await client.post('/users/logout', {}, {
       headers: {
         'Authorization': accessToken
       }
@@ -322,7 +321,7 @@ async function deleteAccount() {
         const accessToken = Cookies.get('access_token');
         console.log(accessToken);
 
-      const response = await axios.patch('/users/withdraw', {}, {
+      const response = await client.patch('/users/withdraw', {}, {
         headers: {
           'Authorization': accessToken
         }
@@ -362,7 +361,7 @@ function goToCart() {
 
 async function register() {
   try {
-    const response = await axios.post('/users/signup', {
+    const response = await client.post('/users/signup', {
       loginId: signupLoginId.value,
       password: signupPassword.value,
       username: username.value,
@@ -402,7 +401,7 @@ async function login() {
   // 로그인 로직 구현
   {
     try {
-      const response = await axios.post('/users/login', {
+      const response = await client.post('/users/login', {
         loginId: loginId.value,
         password: password.value,
       }, {
@@ -483,7 +482,7 @@ function validateConfirmNewPassword() {
 async function changePassword() {
   try {
     const accessToken = Cookies.get('access_token');
-    const response = await axios.patch('/users/password', {
+    const response = await client.patch('/users/password', {
       oldPassword: currentPassword.value,
       newPassword: newPassword.value,
     }, {

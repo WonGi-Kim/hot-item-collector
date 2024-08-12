@@ -1,6 +1,6 @@
 <script>
 import { ref, computed, onMounted } from 'vue';
-import axios from "axios";
+const client = require('../client')
 import { useRouter } from "vue-router";
 import AppHeader from './AppHeader.vue';
 import AppFooter from './AppFooter.vue';
@@ -21,7 +21,7 @@ export default {
     const fetchProducts = async (page) => {
       try {
         const url = `/products/new?page=${page}&size=${itemsPerPage}`; // 페이지 인덱스는 0부터 시작
-        const response = await axios.get(url);
+        const response = await client.get(url);
         const data = response.data.result;
         products.value = data.content || [];
         totalPages.value = data.totalPages || 1;
