@@ -25,7 +25,7 @@
 
 <script>
 import { ref } from 'vue';
-import axios from 'axios';
+const client = require('../client')
 import AppHeader from './AppHeader.vue';
 import AppFooter from './AppFooter.vue';
 import Cookies from 'js-cookie';
@@ -41,7 +41,7 @@ export default {
     const confirmPassword = async () => {
       const accessToken = Cookies.get('access_token');
       try {
-        const response = await axios.post(
+        const response = await client.post(
             '/users/confirm/password',
             { password: password.value },
             {

@@ -233,7 +233,7 @@ body {
 import { ref, onMounted  } from 'vue'
 import AppHeader from './AppHeader.vue';
 import AppFooter from './AppFooter.vue';
-import axios from 'axios';
+const client = require('../client')
 import Cookies from "js-cookie";
 import { useRouter } from 'vue-router';
 
@@ -259,7 +259,7 @@ export default {
       const accessToken = Cookies.get('access_token');
       try {
         // Fetch user profile data
-        const userResponse = await axios.get('/users/profile', {
+        const userResponse = await client.get('/users/profile', {
           headers: {
             'Authorization': accessToken
           }
@@ -278,7 +278,7 @@ export default {
         };
 
         // Fetch registered products
-        const registeredResponse = await axios.get('/products/sale', {
+        const registeredResponse = await client.get('/products/sale', {
           params: {
             page: 1,
             size: 4
@@ -294,7 +294,7 @@ export default {
           image: product.image.imageUrl
         }));
 
-        const purchaseResponse = await axios.get(`/orderitems/buy`, {
+        const purchaseResponse = await client.get(`/orderitems/buy`, {
           params: {
             page: 1,
             size: 4
@@ -315,7 +315,7 @@ export default {
 
 
 
-        const likedResponse = await axios.get('/products/like', {
+        const likedResponse = await client.get('/products/like', {
           params: {
             page: 1,
             size: 4

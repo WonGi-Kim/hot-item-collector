@@ -2,7 +2,7 @@
 import {ref, onMounted} from 'vue'
 import {DateTime} from 'luxon'
 import Cookies from "js-cookie";
-import axios from "axios";
+const client = require('../client')
 import AppHeader from './AppHeader.vue';
 import AppFooter from './AppFooter.vue';
 import router from "@/router";
@@ -27,7 +27,7 @@ export default {
 
     const searchPurchases = () => {
 
-      axios.get('/orderitems/buy', {
+      client.get('/orderitems/buy', {
         params: {
           startDate: startDate.value,
           endDate: endDate.value,

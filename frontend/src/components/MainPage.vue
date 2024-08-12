@@ -50,7 +50,6 @@
 import AppHeader from './AppHeader.vue';
 import AppFooter from './AppFooter.vue';
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
 import {useRouter} from "vue-router";
 
 export default {
@@ -59,11 +58,12 @@ export default {
     const isLoggedIn = ref(false);
     const hotTopItems = ref([]);
     const router = useRouter();
+    const client = require('../client')
 
     // API 요청을 통해 데이터를 가져오는 함수
     const fetchHotTopItems = async () => {
       try {
-        const response = await axios.get('/products/hot', {
+        const response = await client.get('/products/hot', {
           params: {
             page: 1,
             size: 10,
@@ -89,7 +89,7 @@ export default {
     const fetchNewItems = async () => {
       try {
 
-        const response = await axios.get('/products/new',{
+        const response = await client.get('/products/new',{
           params: {
             page: 1,
             size: 4,
@@ -142,7 +142,7 @@ export default {
           return;
         }
 
-        const response = await axios.get('/products/follow', {
+        const response = await client.get('/products/follow', {
           params: {
             page: 1,
             size: 4,

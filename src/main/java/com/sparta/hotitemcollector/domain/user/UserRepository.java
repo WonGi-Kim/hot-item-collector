@@ -14,7 +14,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
         + "WHERE upper(u.nickname) LIKE upper (CONCAT (:nickname,'%')) escape '\\'")
     List<User> findByNicknameContainingIgnoreCase(String nickname);
 
-    boolean existsByNicknameContainingIgnoreCase(String nickname);
+    boolean existsByNicknameIgnoreCase(String nickname);
 
     Optional<User> findByNickname(String nickname);
+
+
+    Optional<User> findByEmail(String email);
 }

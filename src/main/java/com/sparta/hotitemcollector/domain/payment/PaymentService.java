@@ -96,21 +96,14 @@ public class PaymentService {
 
 	public PaymentRequestDto getPaymentRequestDataByOrderId(Long orderId) {
 		Orders order = orderService.findOrderById(orderId);
-		List<Payment> payments = paymentRepository.findByOrderId(orderId);
-		BigDecimal totalAmount = payments.stream()
-				.map(Payment::getAmount)
-				.reduce(BigDecimal.ZERO, BigDecimal::add);
-
-		String productName = payments.stream()
-				.map(payment -> payment.getOrder().getOrderItems().get(0).getProduct().getName())
-				.collect(Collectors.joining(", "));
+		Payment payment = findPaymentByOrderId(orderId);
 
 		return PaymentRequestDto.builder()
 			.pg("html5_inicis")
 			.payMethod("card")
-			.merchantUid(payments.get(0).getMerchantUid())
-			.amount(totalAmount)
-			.name(productName)
+			.merchantUid(payment.getMerchantUid())
+			.amount(payment.getAmount())
+			.name(payment.getOrder().getOrderItems().get(0).getProduct().getName())
 			.buyerName(order.getUserName())
 			.buyerAddr(order.getAddress())
 			.buyerTel(order.getPhoneNumber())
@@ -192,6 +185,10 @@ public class PaymentService {
 
 	private PrepareData createPrepareData(Payment payment) {
 		return new PrepareData(payment.getMerchantUid(),payment.getAmount());
+	}
+
+	private Payment findPaymentByOrderId(Long orderId) {
+		return paymentRepository.findByOrderId(orderId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_PAYMENT));
 	}
 
 }

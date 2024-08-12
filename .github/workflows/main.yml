@@ -47,10 +47,6 @@ jobs:
         run: ./gradlew build
         shell: bash
 
-      - name: Make backend zip file
-        run: zip -r ./$GITHUB_SHA.zip . -x "*.git/*"
-        shell: bash  
-
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
@@ -64,9 +60,9 @@ jobs:
         run: npm run build
         working-directory: ./frontend
 
-      - name: Make frontend zip file
-        run: zip -r ./frontend-build.zip ./frontend/dist -x "*.git/*"
-        shell: bash
+      - name: Make zip file
+        run: zip -r ./$GITHUB_SHA.zip . -x "*.git/*"
+        shell: bash  
 
       # PR 이벤트에서는 배포를 막고, push 이벤트에서는 배포를 진행
       - name: Conditional Deploy
@@ -79,9 +75,6 @@ jobs:
           
           # Upload backend zip to S3
           aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip
-          
-          # Upload frontend zip to S3
-          aws s3 cp --region ap-northeast-2 ./frontend-build.zip s3://$S3_BUCKET_NAME/frontend-build.zip
 
           # Code Deploy
           aws deploy create-deployment --application-name $CODEDEPLOY_NAME --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name $CODEDEPLOY_GROUP --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$GITHUB_SHA.zip

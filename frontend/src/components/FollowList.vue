@@ -22,7 +22,7 @@
 import AppHeader from './AppHeader.vue';
 import AppFooter from './AppFooter.vue';
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
+const client = require('../client')
 import { useRouter } from "vue-router";
 import Cookies from "js-cookie";
 
@@ -38,14 +38,14 @@ export default {
       try {
         if (user.isFollowing) {
           // 팔로우 취소 요청
-          await axios.delete(`/follow/${user.id}`, {
+          await client.delete(`/follow/${user.id}`, {
             headers: {
               'Authorization': accessToken
             }
           });
         } else {
           // 팔로우 요청
-          await axios.post(`/follow/${user.id}`, {}, {
+          await client.post(`/follow/${user.id}`, {}, {
             headers: {
               'Authorization': accessToken
             }
@@ -67,7 +67,7 @@ export default {
     const fetchFollowingUsers = async () => {
       try {
         const accessToken = Cookies.get('access_token');
-        const response = await axios.get('/follows', {
+        const response = await client.get('/follows', {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': accessToken
