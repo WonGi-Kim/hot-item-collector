@@ -74,7 +74,7 @@ public class ChatRoomService {
                 chatRoom.getRoomName(),
                 chatRoom.getBuyer().getNickname(),
                 chatRoom.getSeller().getNickname(),
-                chatRoom.getBuyer().getProfileImage().getImageUrl()
+                chatRoom.getSeller().getProfileImage().getImageUrl()
         );
     }
 

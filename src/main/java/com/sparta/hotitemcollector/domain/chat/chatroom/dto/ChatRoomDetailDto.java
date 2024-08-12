@@ -9,13 +9,13 @@ public class ChatRoomDetailDto {
     private String roomName;
     private String buyerName;
     private String sellerName;
-    private String buyerImage;
+    private String sellerImage;
 
-    public ChatRoomDetailDto(String roomId, String roomName, String buyerName, String sellerName, String buyerImage) {
+    public ChatRoomDetailDto(String roomId, String roomName, String buyerName, String sellerName, String sellerImage) {
         this.roomId = roomId;
         this.roomName = roomName;
         this.buyerName = buyerName;
         this.sellerName = sellerName;
-        this.buyerImage = buyerImage;
+        this.sellerImage = sellerImage;
     }
 }

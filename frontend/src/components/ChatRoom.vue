@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <AppHeader/>
-    <div class="main-content">
+    <AppHeader v-if="activeChat" />
+    <div v-if="activeChat" class="main-content">
       <div class="chat-container">
         <div class="chat-list">
           <div class="chat-search">
@@ -19,17 +19,16 @@
                 :class="['chat-item', { active: activeChatIndex === index }]"
                 @click="setActiveChat(index)"
             >
-              <img :src="chat.avatar" :alt="chat.name" class="chat-item-avatar" />
+              <img :src="chat.avatar || 'default-avatar-url.png'" :alt="chat.name" class="chat-item-avatar" />
               <div class="chat-item-info">
-                <div class="chat-item-name">{{ chat.name }}</div>
-                <div class="chat-item-preview">{{ chat.messages[chat.messages.length - 1].text }}</div>
+                <div class="chat-item-name">{{ chat.sellerName }}</div>
               </div>
             </div>
           </div>
         </div>
-        <div class="chat-window">
+        <div v-if="activeChat" class="chat-window">
           <div class="chat-header" @click="showUserModal">
-            <img :src="activeChat.avatar" :alt="activeChatName" class="chat-header-avatar" />
+            <img :src="activeChat.avatar || 'default-avatar-url.png'" :alt="activeChatName" class="chat-header-avatar" />
             {{ activeChatName }}
           </div>
           <div class="chat-messages">
@@ -45,17 +44,13 @@
         </div>
       </div>
     </div>
-
-
-
-    <!-- User Profile Modal -->
     <div class="modal" v-if="showModal">
       <div class="modal-content">
         <div class="modal-profile">
-          <img :src="activeChat.avatar" :alt="activeChatName" />
+          <img :src="activeChat?.avatar || 'default-avatar-url.png'" :alt="activeChatName" />
           <div class="modal-profile-info">
             <h2>{{ activeChatName }}</h2>
-            <p>{{ activeChat.bio }}</p>
+            <p>{{ activeChat?.bio }}</p>
           </div>
         </div>
         <div class="modal-buttons">
@@ -64,7 +59,7 @@
         </div>
       </div>
     </div>
-    <AppFooter/>
+    <AppFooter v-if="activeChat" />
   </div>
 </template>
 
@@ -79,25 +74,7 @@ import AppFooter from './AppFooter.vue';
 export default {
   components: {AppFooter, AppHeader},
   setup() {
-    const chatList = ref([
-      // Example chat data
-      {
-        name: 'Alice',
-        avatar: 'https://randomuser.me/api/portraits/women/1.jpg',
-        messages: [
-          { type: 'received', text: '안녕하세요!', time: '2024-08-12 10:00' }
-        ],
-        bio: 'Alice의 프로필입니다.'
-      },
-      {
-        name: 'Bob',
-        avatar: 'https://randomuser.me/api/portraits/men/1.jpg',
-        messages: [
-          { type: 'received', text: '안녕하세요!', time: '2024-08-12 10:05' }
-        ],
-        bio: 'Bob의 프로필입니다.'
-      }
-    ])
+    const chatList = ref([]) // 초기 데이터는 빈 배열로 설정
 
     const activeChatIndex = ref(0)
     const newMessage = ref('')
@@ -105,12 +82,12 @@ export default {
     const showModal = ref(false)
 
     const activeChat = computed(() => chatList.value[activeChatIndex.value])
-    const activeChatName = computed(() => activeChat.value.name)
+    const activeChatName = computed(() => activeChat.value.roomName)
 
     const filteredChatList = computed(() => {
-      return chatList.value.filter(chat =>
-          chat.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-      )
+      return chatList.value.filter(chat => {
+        return chat.sellerName && chat.roomName.toLowerCase().includes(searchQuery.value.toLowerCase())
+      });
     })
 
     const setActiveChat = (index) => {
@@ -182,7 +159,16 @@ export default {
             'Authorization': accessToken
           }
         });
-        chatList.value = response.data
+
+        // 서버에서 받아온 데이터를 chatList에 반영
+        chatList.value = response.data.result.map(chat => ({
+          roomName: chat.roomName,
+          buyerName: chat.buyerName,
+          sellerName: chat.sellerName,
+          avatar: chat.sellerImage,
+          messages: [] // 초기 메시지 목록은 빈 배열로 설정
+        }));
+
       } catch (error) {
         console.error('Failed to load chat rooms:', error)
       }
@@ -206,7 +192,8 @@ export default {
       filterChats,
       showUserModal,
       closeModal,
-      goToUserProfile
+      goToUserProfile,
+      loadChatLists
     }
   }
 }
