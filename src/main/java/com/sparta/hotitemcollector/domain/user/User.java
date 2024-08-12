@@ -23,7 +23,9 @@ public class User extends Timestamped {
     @Column(name = "login_id",nullable = false)
     private String loginId;
 
-    @Setter
+    @Column(nullable = false)
+    private String email;
+
     @Column
     private String nickname;
 
@@ -38,7 +40,6 @@ public class User extends Timestamped {
     @Column
     private String address;
 
-    @Setter
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "profileImage_id")
      private ProfileImage profileImage;
@@ -51,15 +52,15 @@ public class User extends Timestamped {
     @Enumerated(value = EnumType.STRING)
     private UserStatus userStatus;
 
-    @Setter
     @Column
     private String info;
 
     @Builder
-    public User(String loginId,String password, String username, String nickname,ProfileImage profileImage){
+    public User(String loginId,String password,String email, String username, String nickname,ProfileImage profileImage){
         this.userStatus = UserStatus.NORMAL;
         this.role = UserRole.USER;
         this.loginId = loginId;
+        this.email = email;
         this.password = password;
         this.username = username;
         this.nickname = nickname;
@@ -69,6 +70,16 @@ public class User extends Timestamped {
     public void updateStatus(UserStatus userStatus) {
         this.userStatus = userStatus;
     }
+
+    public void updatePhoneNumber(String phoneNumber) {this.phoneNumber = phoneNumber;}
+
+    public void updateAddress(String address) {this.address = address;}
+
+    public void updateInfo(String info) {this.info = info;}
+
+    public void updatePassword(String password) {this.password = password;}
+
+    public void updateNickname(String nickname) {this.nickname = nickname;}
 
     public boolean isExist() {
         return this.userStatus == UserStatus.NORMAL;

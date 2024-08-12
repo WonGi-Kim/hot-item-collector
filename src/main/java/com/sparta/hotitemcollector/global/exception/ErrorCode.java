@@ -31,6 +31,10 @@ public enum ErrorCode {
 	INCORRECT_PASSWORD(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다."),
 	WITHDRAW_USER(HttpStatus.BAD_REQUEST, "탈퇴한 회원입니다."),
 
+	// email
+	INCORRECT_AUTHCODE(HttpStatus.UNAUTHORIZED, "인증번호가 일치하지 않습니다."),
+	DUPLICATE_AUTHCODE(HttpStatus.BAD_REQUEST,"인증번호가 존재합니다."),
+
 	// Product
 	NOT_FOUND_PRODUCT(HttpStatus.BAD_REQUEST, "상품을 찾을 수 없습니다."),
 	NOT_SAME_USER(HttpStatus.BAD_REQUEST, "사용자가 일치하지 않아 요청을 처리할 수 없습니다."),
