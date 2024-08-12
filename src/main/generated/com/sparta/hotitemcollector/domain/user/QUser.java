@@ -29,6 +29,8 @@ public class QUser extends EntityPathBase<User> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
 
+    public final StringPath email = createString("email");
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final StringPath info = createString("info");
@@ -70,7 +72,7 @@ public class QUser extends EntityPathBase<User> {
 
     public QUser(Class<? extends User> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.profileImage = inits.isInitialized("profileImage") ? new QProfileImage(forProperty("profileImage"), inits.get("profileImage")) : null;
+        this.profileImage = inits.isInitialized("profileImage") ? new QProfileImage(forProperty("profileImage")) : null;
     }
 
 }

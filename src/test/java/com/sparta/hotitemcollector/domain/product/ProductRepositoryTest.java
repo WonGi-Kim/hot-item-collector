@@ -1,5 +1,7 @@
 package com.sparta.hotitemcollector.domain.product;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import com.sparta.hotitemcollector.TestConfig;
+import com.sparta.hotitemcollector.domain.product.dto.HotProductResponseDto;
+import com.sparta.hotitemcollector.domain.product.dto.ProductResponseDto;
 import com.sparta.hotitemcollector.domain.product.entity.Product;
 import com.sparta.hotitemcollector.domain.product.entity.ProductCategory;
 import com.sparta.hotitemcollector.domain.product.entity.ProductStatus;
@@ -49,7 +53,7 @@ public class ProductRepositoryTest {
 		// when
 		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>> 메소드 시작 >>>>>>>>>>>>>>>>>>>>>>>>>");
 		long before = System.currentTimeMillis();
-		 Page<Product> productPage = productRepository.findByRequirement(null, user, productName, null, null,  pageable);
+		// Page<Product> productPage = productRepository.findByRequirement(null, user, productName, null, null,  pageable);
 		long after = System.currentTimeMillis();
 		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>> 메소드 종료 >>>>>>>>>>>>>>>>>>>>>>>>>");
 
@@ -77,6 +81,25 @@ public class ProductRepositoryTest {
 	}
 
 	@Test
+	@DisplayName("22. findTop10ByOrderByLikesDesc를 테스트한다")
+	void test22() {
+		//given
+		Pageable pageable = PageRequest.of(1, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+		// when
+		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>> 메소드 시작 >>>>>>>>>>>>>>>>>>>>>>>>>");
+		long before = System.currentTimeMillis();
+		Page<HotProductResponseDto> productPage = productRepository.findTop10HotProduct(pageable);
+		long after = System.currentTimeMillis();
+		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>> 메소드 종료 >>>>>>>>>>>>>>>>>>>>>>>>>");
+
+		// then
+		System.out.println("총 걸린 시간 : " + (after - before) + "ms");
+		System.out.println("====================================");
+	}
+
+
+	@Test
 	@DisplayName("3. findByIdWithImages를 테스트한다")
 	void test3() {
 		//given
@@ -91,6 +114,24 @@ public class ProductRepositoryTest {
 
 		// then
 		System.out.println("총 걸린 시간 : " + (after - before) + "ms");
+		System.out.println("====================================");
+	}
+
+	@Test
+	@DisplayName("3. findAll을 테스트한다")
+	void test4() {
+		//given
+
+		// when
+		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>> 메소드 시작 >>>>>>>>>>>>>>>>>>>>>>>>>");
+		long before = System.currentTimeMillis();
+		List<Product> productList = productRepository.findAll();
+		long after = System.currentTimeMillis();
+		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>> 메소드 종료 >>>>>>>>>>>>>>>>>>>>>>>>>");
+
+		// then
+		System.out.println("총 걸린 시간 : " + (after - before) + "ms");
+		assertNotNull(productList);
 		System.out.println("====================================");
 	}
 

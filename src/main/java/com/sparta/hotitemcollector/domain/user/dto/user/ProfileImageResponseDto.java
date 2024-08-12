@@ -2,8 +2,10 @@ package com.sparta.hotitemcollector.domain.user.dto.user;
 
 import com.sparta.hotitemcollector.domain.user.ProfileImage;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class ProfileImageResponseDto {
     private Long id;
     private String filename;

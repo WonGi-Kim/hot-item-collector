@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User 2 Chat Room</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/webstomp-client/1.0.2/webstomp.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        #chat-room {
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 300px;
+            overflow-y: scroll;
+            margin-bottom: 10px;
+        }
+        .input-area {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        .input-area input {
+            flex: 1;
+            padding: 10px;
+        }
+        .input-area button {
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+<h1>User 2 Chat Room</h1>
+<div id="chat-room"></div>
+<div class="input-area">
+    <input type="text" id="messageInput" placeholder="Enter your message" />
+    <button onclick="sendMessage()">Send</button>
+</div>
+
+<script>
+    const token = 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMiIsImF1dGgiOiJVU0VSIiwiaWF0IjoxNzIzMTE3Mzc3LCJleHAiOjE5MDMxMTczNzd9.Cni831mdzt5C6obd5cXYf5IaRgZwBlTUgC-BFMbFX0c'; // User 2 토큰
+    const roomId = '5f176cc5-e620-4b22-b58b-8a5ab8af979a'; // 방 ID
+
+    const socket = new WebSocket('ws://localhost:8080/ws');
+    const stompClient = Stomp.over(socket);
+
+    stompClient.connect({'Authorization': token}, (frame) => {
+        console.log('Connected: ' + frame);
+
+        stompClient.subscribe('/topic/' + roomId, (message) => {
+            console.log('Received message:', message);
+            const chatRoom = document.getElementById('chat-room');
+
+            try {
+                // 메시지 본문 파싱
+                const chatMessages = JSON.parse(message.body);
+
+                // chatMessages가 배열인지 확인
+                if (Array.isArray(chatMessages)) {
+                    chatMessages.forEach(chatMessage => {
+                        const messageElement = document.createElement('div');
+                        messageElement.textContent = chatMessage.sender + ': ' + chatMessage.message;
+                        chatRoom.appendChild(messageElement);
+                    });
+                } else {
+                    // 배열이 아닌 경우 단일 메시지로 처리
+                    const messageElement = document.createElement('div');
+                    messageElement.textContent = chatMessages.sender + ': ' + chatMessages.message;
+                    chatRoom.appendChild(messageElement);
+                }
+            } catch (e) {
+                console.error('Error parsing message body:', e);
+            }
+
+            chatRoom.scrollTop = chatRoom.scrollHeight; // 스크롤을 맨 아래로
+        });
+
+        stompClient.send("/app/join/" + roomId, {}, {});
+    });
+
+    function sendMessage() {
+        const messageInput = document.getElementById('messageInput');
+        const messageContent = {
+            roomId: roomId,
+            message: messageInput.value
+        };
+
+        stompClient.send("/app/send", {}, JSON.stringify(messageContent));
+        messageInput.value = ''; // 입력창 비우기
+    }
+</script>
+</body>
+</html>

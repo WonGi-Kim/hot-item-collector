@@ -106,15 +106,15 @@ public class PaymentService {
 				.collect(Collectors.joining(", "));
 
 		return PaymentRequestDto.builder()
-			.pg("html5_inicis")
-			.payMethod("card")
-			.merchantUid(payments.get(0).getMerchantUid())
-			.amount(totalAmount)
-			.name(productName)
-			.buyerName(order.getUserName())
-			.buyerAddr(order.getAddress())
-			.buyerTel(order.getPhoneNumber())
-			.build();
+				.pg("html5_inicis")
+				.payMethod("card")
+				.merchantUid(payments.get(0).getMerchantUid())
+				.amount(totalAmount)
+				.name(productName)
+				.buyerName(order.getUserName())
+				.buyerAddr(order.getAddress())
+				.buyerTel(order.getPhoneNumber())
+				.build();
 	}
 
 	@Transactional
@@ -193,5 +193,9 @@ public class PaymentService {
 	private PrepareData createPrepareData(Payment payment) {
 		return new PrepareData(payment.getMerchantUid(),payment.getAmount());
 	}
+
+//	private Payment findPaymentByOrderId(Long orderId) {
+//		return paymentRepository.findByOrderId(orderId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_PAYMENT));
+//	}
 
 }

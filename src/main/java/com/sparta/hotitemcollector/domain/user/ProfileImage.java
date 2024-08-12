@@ -26,15 +26,6 @@ public class ProfileImage extends Timestamped {
     private String filename;
     @Column(name = "image_url")
     private String imageUrl;
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    public ProfileImage(ProfileImageRequestDto profileImage,User user) {
-        this.filename=profileImage.getFilename();
-        this.imageUrl= profileImage.getImageUrl();
-        this.user=user;
-    }
 
     public ProfileImage(ProfileImageRequestDto requestDto) {
         this.filename=requestDto.getFilename();

@@ -7,6 +7,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
+
+    // @Query("SELECT u "
+    //     + "FROM User u JOIN FETCH u.profileImage "
+    //     + "WHERE u.loginId = :loginId")
     Optional<User> findByLoginId(String loginId);
 
     @Query("SELECT u "
@@ -14,5 +18,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
         + "WHERE upper(u.nickname) LIKE upper (CONCAT (:nickname,'%')) escape '\\'")
     List<User> findByNicknameContainingIgnoreCase(String nickname);
 
-    boolean existsByNicknameContainingIgnoreCase(String nickname);
+    boolean existsByNicknameIgnoreCase(String nickname);
+
+    Optional<User> findByNickname(String nickname);
+
+
+    Optional<User> findByEmail(String email);
 }
