@@ -69,7 +69,10 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue'
+import Cookies from "js-cookie";
+
+const client = require('../client')
+import { ref, computed, onMounted } from 'vue'
 import AppHeader from './AppHeader.vue';
 import AppFooter from './AppFooter.vue';
 
@@ -167,6 +170,27 @@ export default {
       alert(`${activeChatName.value}의 상세 프로필로 이동합니다.`)
       closeModal()
     }
+
+    const loadChatLists = async () => {
+      try {
+        const accessToken = Cookies.get('access_token');
+        if (!accessToken) {
+          throw new Error('Access token is missing.');
+        }
+        const response = await client.get(`/chatrooms/list`, {
+          headers: {
+            'Authorization': accessToken
+          }
+        });
+        chatList.value = response.data
+      } catch (error) {
+        console.error('Failed to load chat rooms:', error)
+      }
+    }
+
+    onMounted(() =>{
+      loadChatLists();
+    })
 
     return {
       chatList,

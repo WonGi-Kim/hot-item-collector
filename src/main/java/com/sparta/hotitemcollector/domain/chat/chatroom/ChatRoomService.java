@@ -1,6 +1,8 @@
 package com.sparta.hotitemcollector.domain.chat.chatroom;
 
 import com.sparta.hotitemcollector.domain.chat.chatroom.dto.ChatRoomDetailDto;
+import com.sparta.hotitemcollector.domain.user.User;
+import com.sparta.hotitemcollector.domain.user.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,15 +16,19 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
+    private final UserService userService;
 
     @Transactional
-    public ChatRoomDetailDto createChatRoom(String buyer, String seller) {
+    public ChatRoomDetailDto createChatRoom(Long buyerId, Long sellerId) {
         // roomId는 대화하기 버튼이 눌릴 시 생성
+        User buyer = userService.findByUserId(buyerId);
+        User seller = userService.findByUserId(sellerId);
+
         String roomId = generateRoomId();
-        String roomName = generateRoomName(buyer,seller);
+        String roomName = generateRoomName(buyer.getNickname(),seller.getNickname());
 
         // 채팅방이 이미 존재하는지 확인
-        Optional<ChatRoom> existingChatRoom = chatRoomRepository.findByBuyerAndSeller(buyer, seller);
+        Optional<ChatRoom> existingChatRoom = chatRoomRepository.findByBuyerIdAndSellerId(buyerId, sellerId);
 
         ChatRoom chatRoom = existingChatRoom.orElseGet(() -> {
             ChatRoom newChatRoom = ChatRoom.builder()
@@ -37,9 +43,9 @@ public class ChatRoomService {
         return convertChatRoomToChatRoomDetailDto(chatRoom);
     }
 
-    public List<ChatRoomDetailDto> getAllChatRoomByUser(String nickname) {
+    public List<ChatRoomDetailDto> getAllChatRoomByUser(Long userId) {
         // Buyer 또는 Seller가 해당 닉네임인 채팅방을 모두 조회
-        List<ChatRoom> chatRooms = chatRoomRepository.findAllByBuyerOrSeller(nickname, nickname);
+        List<ChatRoom> chatRooms = chatRoomRepository.findAllByBuyerIdOrSellerId(userId, userId);
 
         return chatRooms.stream()
                 .map(this::convertChatRoomToChatRoomDetailDto)
@@ -63,7 +69,13 @@ public class ChatRoomService {
     }
 
     private ChatRoomDetailDto convertChatRoomToChatRoomDetailDto(ChatRoom chatRoom) {
-        return new ChatRoomDetailDto(chatRoom.getRoomId(), chatRoom.getRoomName(), chatRoom.getBuyer(), chatRoom.getSeller());
+        return new ChatRoomDetailDto(
+                chatRoom.getRoomId(),
+                chatRoom.getRoomName(),
+                chatRoom.getBuyer().getNickname(),
+                chatRoom.getSeller().getNickname(),
+                chatRoom.getBuyer().getProfileImage().getImageUrl()
+        );
     }
 
 }
