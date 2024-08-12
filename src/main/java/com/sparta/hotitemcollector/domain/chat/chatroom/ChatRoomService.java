@@ -38,7 +38,9 @@ public class ChatRoomService {
     }
 
     public List<ChatRoomDetailDto> getAllChatRoomByUser(String nickname) {
-        List<ChatRoom> chatRooms = chatRoomRepository.findAllByBuyer(nickname);
+        // Buyer 또는 Seller가 해당 닉네임인 채팅방을 모두 조회
+        List<ChatRoom> chatRooms = chatRoomRepository.findAllByBuyerOrSeller(nickname, nickname);
+
         return chatRooms.stream()
                 .map(this::convertChatRoomToChatRoomDetailDto)
                 .collect(Collectors.toList());
