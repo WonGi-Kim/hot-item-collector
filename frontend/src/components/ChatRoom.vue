@@ -1,15 +1,6 @@
 <template>
   <div id="app">
-    <div class="top-bar">
-      <h1>Hot Item Collector</h1>
-      <nav>
-        <a href="https://hotitemcollector.com/">홈</a>
-        <a href="https://hotitemcollector.com/products">상품</a>
-        <a href="https://hotitemcollector.com/chat">채팅</a>
-        <a href="https://hotitemcollector.com/profile">프로필</a>
-      </nav>
-    </div>
-
+    <AppHeader/>
     <div class="main-content">
       <div class="chat-container">
         <div class="chat-list">
@@ -55,9 +46,7 @@
       </div>
     </div>
 
-    <div class="bottom-bar">
-      © 2023 Hot Item Collector. 모든 권리 보유.
-    </div>
+
 
     <!-- User Profile Modal -->
     <div class="modal" v-if="showModal">
@@ -75,13 +64,17 @@
         </div>
       </div>
     </div>
+    <AppFooter/>
   </div>
 </template>
 
 <script>
 import { ref, computed } from 'vue'
+import AppHeader from './AppHeader.vue';
+import AppFooter from './AppFooter.vue';
 
 export default {
+  components: {AppFooter, AppHeader},
   setup() {
     const chatList = ref([
       // Example chat data
@@ -249,13 +242,18 @@ body {
 
 .main-content {
   flex: 1;
+  justify-content: center;
   display: flex;
   padding: 20px;
 }
 
 .chat-container {
   display: flex;
-  width: 100%;
+  height: 700px;
+  width: 1100px;
+  max-width: 100%;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .chat-list {
