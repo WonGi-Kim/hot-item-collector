@@ -26,6 +26,6 @@ public class SignupRequestDto {
         this.loginId = oauthSignupRequestDto.getLoginId();
         this.password = oauthSignupRequestDto.getPassword();
         this.username = oauthSignupRequestDto.getUsername();
-        this.email = oauthSignupRequestDto.getUsername();
+        this.email = oauthSignupRequestDto.getEmail();
     }
 }
