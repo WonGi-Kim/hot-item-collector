@@ -9,8 +9,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class ProductResponseDto {
 
     private Long id;
@@ -27,7 +29,7 @@ public class ProductResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
-    public ProductResponseDto(Product product, List<ProductImageResponseDto> images, ProfileImageResponseDto prfileImage) {
+    public ProductResponseDto(Product product, List<ProductImageResponseDto> images) {
         this.id = product.getId();
         this.name = product.getName();
         this.category = product.getCategory();
@@ -38,8 +40,11 @@ public class ProductResponseDto {
         this.status=product.getStatus();
         this.userId = product.getUser().getId();
         this.nickname=product.getUser().getNickname();
-        this.profileImage=prfileImage;
         this.createdAt = product.getCreatedAt();
         this.modifiedAt = product.getModifiedAt();
+    }
+
+    public void setProductImageResponseDto(List<ProductImageResponseDto> imageResponseDto){
+        this.images=imageResponseDto;
     }
 }

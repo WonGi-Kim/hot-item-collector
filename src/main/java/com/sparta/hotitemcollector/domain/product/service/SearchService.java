@@ -30,7 +30,7 @@ public class SearchService {
 	public Page<ProductSimpleResponseDto> getSearchProduct(String nickname, String productName,
 		ProductCategory category, int page, int size) {
 		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-		Page<Product> productPage = Page.empty(pageable);
+		Page<ProductSimpleResponseDto> productPage = Page.empty(pageable);
 
 		if (nickname != null && !nickname.isEmpty()) {
 			List<User> userList = userService.findByNicknameContainingIgnoreCase(nickname);
@@ -47,6 +47,6 @@ public class SearchService {
 			productPage = productRepository.findByRequirement(null, null, null, category, null, pageable);
 		}
 
-		return productPage.map(ProductSimpleResponseDto::new);
+		return productPage;
 	}
 }

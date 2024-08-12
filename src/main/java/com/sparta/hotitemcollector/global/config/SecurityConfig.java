@@ -77,6 +77,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/prepare/order").permitAll()
                         .requestMatchers(HttpMethod.GET, "/prepare/payment").permitAll()
+                        .requestMatchers("/topic/**","/send/**").permitAll()
                         .anyRequest().authenticated()
         );
 

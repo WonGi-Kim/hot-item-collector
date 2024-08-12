@@ -1,5 +1,11 @@
 package com.sparta.hotitemcollector.domain.user;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.sparta.hotitemcollector.domain.follow.FollowRepository;
 import com.sparta.hotitemcollector.domain.s3.service.S3Service;
 import com.sparta.hotitemcollector.domain.token.Token;
@@ -61,7 +67,7 @@ public class UserService {
                 .email(signupRequestDto.getEmail())
                 .build();
 
-        ProfileImage profileImage = new ProfileImage(requestDto, user);
+        ProfileImage profileImage = new ProfileImage(requestDto);
         user.updateProfileImage(profileImage);
         userRepository.save(user);
     }
@@ -74,6 +80,7 @@ public class UserService {
     public void connectAccount(ConnectAccountRequestDto requestDto) {
         User finduser = userRepository.findByLoginId(requestDto.getLoginId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+
         checkUserStatus(finduser);
 
         if (!passwordEncoder.matches(requestDto.getPassword(), finduser.getPassword())) {
@@ -209,6 +216,8 @@ public class UserService {
     }
 
 
+
+    @Transactional
     public ProfileResponseDto updateProfile(ProfileRequestDto requestDto, User user) {
         User findUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
@@ -239,9 +248,9 @@ public class UserService {
                 existingProfileImage.updateImage(requestDto.getProfileImage());
                 profileImageRepository.save(existingProfileImage);
                 findUser.updateProfileImage(existingProfileImage);
-            } else { // 프로필 사진 없을 경우
-                ProfileImageRequestDto profileImageRequestDto = new ProfileImageRequestDto(requestDto.getProfileImage().getFilename(), requestDto.getProfileImage().getImageUrl());
-                ProfileImage newProfileImage = new ProfileImage(profileImageRequestDto, findUser);
+            }else{ // 프로필 사진 없을 경우
+                ProfileImageRequestDto profileImageRequestDto = requestDto.getProfileImage();
+                ProfileImage newProfileImage = new ProfileImage(profileImageRequestDto);
                 profileImageRepository.save(newProfileImage);
                 findUser.updateProfileImage(newProfileImage);
             }
@@ -359,6 +368,10 @@ public class UserService {
             throw new CustomException(ErrorCode.INCORRECT_PASSWORD);
         }
 
+    }
+
+    public User findByNickname(String nickname) {
+        return userRepository.findByNickname(nickname).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
     }
 
 

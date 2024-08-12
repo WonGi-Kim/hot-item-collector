@@ -30,6 +30,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     private final JwtUtil jwtService;
     private final TokenService tokenService;
     private final OAuthUserRepository oAuthUserRepository;
+    String REDIRECT_URL="http://hotitemcollector.com:8081";
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -42,7 +43,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
             // User가 null인 경우 회원가입 페이지로 리다이렉트
             if (oAuthUser.getUser() == null) {
-                String redirectUrl = "http://localhost:8081/oauth2/signup?oauthId=" + oAuthUser.getId() + "&socialId=" + oAuthUser.getSocialId();
+                String redirectUrl = REDIRECT_URL+"/oauth2/signup?oauthId=" + oAuthUser.getId() + "&socialId=" + oAuthUser.getSocialId();
                 response.sendRedirect(redirectUrl);
 
             } else {
@@ -72,7 +73,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         }
         jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
         // 최초 로그인이 아닌 경우 로그인 성공 페이지로 이동
-        String redirectURL = UriComponentsBuilder.fromUriString("http://localhost:8081/")
+        String redirectURL = UriComponentsBuilder.fromUriString(REDIRECT_URL+"/")
                 .queryParam("access", "Bearer "+accessToken)
                 .queryParam("refresh", refreshToken)
                 .build()

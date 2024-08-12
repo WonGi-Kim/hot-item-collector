@@ -29,18 +29,22 @@ public class User extends Timestamped {
     @Column
     private String nickname;
 
+    @Setter
     @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)
     private UserRole role;
 
+    @Setter
     @Column
     private String address;
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private ProfileImage profileImage;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "profileImage_id")
+     private ProfileImage profileImage;
 
+    @Setter
     @Column
     private String phoneNumber;
 
