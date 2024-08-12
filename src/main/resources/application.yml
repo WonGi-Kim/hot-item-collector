@@ -10,7 +10,7 @@ spring:
     name: hot-item-collector
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://hotitemcollector.com:3307/hot-item-collector
+    url: jdbc:mysql://localhost:3307/hot-item-collector
     #    url: jdbc:mysql://localhost:3308/dummy-hot-item-collector
     username: ${MYSQL_USER}
     password: ${MYSQL_PASSWORD}
@@ -47,10 +47,10 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@hotitemcollector.com:27017/hot-item-collector-mongo?authSource=admin
+      uri: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@localhost:27017/hot-item-collector-mongo?authSource=admin
 
   rabbitmq:
-    host: hotitemcollector.com
+    host: localhost
     port: 5672
     username: guest
     password: guest
