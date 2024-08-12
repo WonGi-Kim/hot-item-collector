@@ -8,18 +8,16 @@ import com.sparta.hotitemcollector.domain.user.User;
 import com.sparta.hotitemcollector.domain.user.UserService;
 import com.sparta.hotitemcollector.global.exception.CustomException;
 import com.sparta.hotitemcollector.global.exception.ErrorCode;
-
 import lombok.RequiredArgsConstructor;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -92,4 +90,11 @@ public class CartService {
 		return cartItemRepository.findByProductIdAndUserId(productId, userId).isPresent();
 	}
 
+	public CartItem findByUserAndProduct(User user, Product product) {
+		return cartItemRepository.findByUserAndProduct(user, product);
+	}
+
+	public void deleteCartItem(CartItem cartItem) {
+		cartItemRepository.delete(cartItem);
+	}
 }
