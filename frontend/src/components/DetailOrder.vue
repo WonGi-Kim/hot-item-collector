@@ -263,7 +263,6 @@ h2 {
 }
 
 .seller-name {
-  color: var(--main-color);
   text-decoration: none;
   font-weight: bold;
 }

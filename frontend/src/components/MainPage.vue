@@ -623,7 +623,6 @@ header {
 }
 
 .seller-info a {
-  color: var(--main-color);
   text-decoration: none;
 }
 
