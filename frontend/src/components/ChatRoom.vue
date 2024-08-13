@@ -14,8 +14,13 @@
             >
               <img :src="chat.avatar" :alt="chat.sellerName" class="chat-item-avatar" />
               <div class="chat-item-info">
-                <div class="chat-item-name">{{ chat.sellerName }}</div>
-                <div class="chat-item-preview">{{ chat.messages.length > 0 ? chat.messages[chat.messages.length - 1].text : 'No messages' }}</div>
+                <div class="chat-item-name">
+                  <!-- 현재 사용자와 sellerName이 같다면 buyerName을 사용 -->
+                  {{ chat.sellerName === currentUser.valueOf() ? chat.buyerName : chat.sellerName }}
+                </div>
+                <div class="chat-item-preview">
+                  {{ chat.messages.length > 0 ? chat.messages[chat.messages.length - 1].text : 'No messages' }}
+                </div>
               </div>
             </div>
           </div>
@@ -25,13 +30,21 @@
             {{ activeChat.roomName }}
           </div>
           <div class="chat-messages" id="chat-room">
-            <div v-for="(message, index) in activeChat.messages" :key="index" :class="['message', message.type]">
+            <div
+                v-for="(message, index) in activeChat.messages"
+                :key="index"
+                :class="['message', message.type]"
+            >
               <div class="message-bubble">{{ message.text }}</div>
               <div class="message-time">{{ message.time }}</div>
             </div>
           </div>
           <div class="chat-input">
-            <input v-model="newMessage" @keyup.enter="sendMessage" placeholder="메시지를 입력하세요..." />
+            <input
+                v-model="newMessage"
+                @keyup.enter="sendMessage"
+                placeholder="메시지를 입력하세요..."
+            />
             <button @click="sendMessage">전송</button>
           </div>
         </div>
@@ -56,7 +69,11 @@ export default {
     const newMessage = ref('');
     const searchQuery = ref('');
     const activeChat = computed(() => chatList.value[activeChatIndex.value] || null);
-    const filteredChatList = computed(() => chatList.value.filter(chat => chat.roomName.toLowerCase().includes(searchQuery.value.toLowerCase())));
+    const filteredChatList = computed(() =>
+        chatList.value.filter(chat =>
+            chat.roomName.toLowerCase().includes(searchQuery.value.toLowerCase())
+        )
+    );
     const currentUser = ref('');
 
     const accessToken = Cookies.get('access_token');
@@ -78,8 +95,8 @@ export default {
       try {
         const response = await client.get('/chatrooms/list', {
           headers: {
-            'Authorization': accessToken
-          }
+            Authorization: accessToken,
+          },
         });
         chatList.value = response.data.result.map(chat => ({
           roomId: chat.roomId,
@@ -87,7 +104,7 @@ export default {
           buyerName: chat.buyerName,
           sellerName: chat.sellerName,
           avatar: chat.sellerImage,
-          messages: []
+          messages: [],
         }));
       } catch (error) {
         console.error('Failed to load chat rooms:', error);
@@ -96,7 +113,7 @@ export default {
 
     const socketConnections = {};
 
-    const connectSocket = async (roomId) => {
+    const connectSocket = async roomId => {
       if (socketConnections[roomId]) {
         console.log(`Socket for room ${roomId} is already connected.`);
         return;
@@ -107,39 +124,43 @@ export default {
       const stompClient = Stomp.over(socket);
 
       await new Promise((resolve, reject) => {
-        stompClient.connect({ 'Authorization': accessToken }, () => {
-          console.log('Connected to WebSocket.');
+        stompClient.connect(
+            { Authorization: accessToken },
+            () => {
+              console.log('Connected to WebSocket.');
 
-          const subscription = stompClient.subscribe(`/topic/${roomId}`, (message) => {
-            try {
-              const chatMessages = JSON.parse(message.body);
-              if (Array.isArray(chatMessages)) {
-                chatMessages.forEach(chatMessage => {
-                  addMessageToChat(roomId, chatMessage);
-                });
-              } else {
-                addMessageToChat(roomId, chatMessages);
-              }
-            } catch (e) {
-              console.error('Error parsing message body:', e);
+              const subscription = stompClient.subscribe(`/topic/${roomId}`, message => {
+                try {
+                  const chatMessages = JSON.parse(message.body);
+                  if (Array.isArray(chatMessages)) {
+                    chatMessages.forEach(chatMessage => {
+                      addMessageToChat(roomId, chatMessage);
+                    });
+                  } else {
+                    addMessageToChat(roomId, chatMessages);
+                  }
+                } catch (e) {
+                  console.error('Error parsing message body:', e);
+                }
+              });
+
+              socketConnections[roomId] = {
+                stompClient,
+                subscription,
+              };
+
+              stompClient.send(`/app/join/${roomId}`, {}, JSON.stringify({ roomId }));
+              resolve();
+            },
+            error => {
+              console.error('Connection error:', error);
+              reject(error);
             }
-          });
-
-          socketConnections[roomId] = {
-            stompClient,
-            subscription,
-          };
-
-          stompClient.send(`/app/join/${roomId}`, {}, JSON.stringify({ roomId }));
-          resolve();
-        }, (error) => {
-          console.error('Connection error:', error);
-          reject(error);
-        });
+        );
       });
     };
 
-    const disconnectSocket = (roomId) => {
+    const disconnectSocket = roomId => {
       const connection = socketConnections[roomId];
       if (connection) {
         connection.subscription.unsubscribe();
@@ -150,7 +171,7 @@ export default {
       }
     };
 
-    const setActiveChat = async (index) => {
+    const setActiveChat = async index => {
       const newRoomId = chatList.value[index].roomId;
       if (activeChatIndex.value !== null) {
         const previousRoomId = chatList.value[activeChatIndex.value].roomId;
@@ -166,8 +187,8 @@ export default {
       try {
         const response = await client.get('/users/profile', {
           headers: {
-            'Authorization': accessToken
-          }
+            Authorization: accessToken,
+          },
         });
         currentUser.value = response.data.result.nickname;
       } catch (error) {
@@ -190,8 +211,8 @@ export default {
               month: '2-digit',
               day: '2-digit',
               hour: '2-digit',
-              minute: '2-digit'
-            })
+              minute: '2-digit',
+            }),
           });
         }
       }
@@ -202,7 +223,7 @@ export default {
         const roomId = activeChat.value?.roomId;
         const messageContent = {
           roomId: roomId,
-          message: newMessage.value
+          message: newMessage.value,
         };
 
         const connection = socketConnections[roomId];
@@ -246,9 +267,10 @@ export default {
       setActiveChat,
       addMessageToChat,
       sendMessage,
-      fetchUserProfile
+      fetchUserProfile,
+      currentUser
     };
-  }
+  },
 };
 </script>
 
