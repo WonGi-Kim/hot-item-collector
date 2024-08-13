@@ -11,7 +11,7 @@
             <button v-if="isLoggedIn" class="follow-button" @click="toggleFollow">
               {{ isFollowing ? '팔로우 취소' : '팔로우' }}
             </button>
-            <button v-if="isLoggedIn" class="chat-button">
+            <button v-if="isLoggedIn" class="chat-button" @click="createChatRoom">
               채팅하기
             </button>
           </div>
@@ -320,6 +320,29 @@ export default {
       showModal.value = true
     }
 
+    const createChatRoom = async () => {
+      try {
+        const response = await client.post(
+            '/chatroom',
+            {
+              sellerId: product.value.userId, // ChatRoomCreationDto에 담을 데이터
+            },
+            {
+              headers: {
+                'Authorization': accessToken,
+                'Content-Type': 'application/json',
+              },
+            }
+        );
+
+        const chatRoomId = response.data.result.chatRoomId;
+        // 채팅방 생성 성공 후, 생성된 채팅방으로 리다이렉트
+        router.push({ name: 'ChatRoom', params: { chatRoomId } });
+      } catch (error) {
+        console.error('채팅방 생성 실패:', error);
+      }
+    };
+
     return {
       isLoggedIn,
       product,
@@ -337,7 +360,8 @@ export default {
       buyNow,
       switchToCart,
       buttonText,
-      showGoToCartButton
+      showGoToCartButton,
+      createChatRoom
     }
   },
 }

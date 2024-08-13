@@ -20,22 +20,34 @@ public class ChatRoomService {
 
     @Transactional
     public ChatRoomDetailDto createChatRoom(Long buyerId, Long sellerId) {
-        // roomId는 대화하기 버튼이 눌릴 시 생성
-        User buyer = userService.findByUserId(buyerId);
-        User seller = userService.findByUserId(sellerId);
+        // buyerId와 sellerId를 정렬
+        Long firstUserId, secondUserId;
+        User firstUser, secondUser;
+
+        if (buyerId < sellerId) {
+            firstUserId = buyerId;
+            secondUserId = sellerId;
+            firstUser = userService.findByUserId(buyerId);
+            secondUser = userService.findByUserId(sellerId);
+        } else {
+            firstUserId = sellerId;
+            secondUserId = buyerId;
+            firstUser = userService.findByUserId(sellerId);
+            secondUser = userService.findByUserId(buyerId);
+        }
 
         String roomId = generateRoomId();
-        String roomName = generateRoomName(buyer.getNickname(),seller.getNickname());
+        String roomName = generateRoomName(firstUser.getNickname(), secondUser.getNickname());
 
         // 채팅방이 이미 존재하는지 확인
-        Optional<ChatRoom> existingChatRoom = chatRoomRepository.findByBuyerIdAndSellerId(buyerId, sellerId);
+        Optional<ChatRoom> existingChatRoom = chatRoomRepository.findByBuyerIdAndSellerId(firstUserId, secondUserId);
 
         ChatRoom chatRoom = existingChatRoom.orElseGet(() -> {
             ChatRoom newChatRoom = ChatRoom.builder()
                     .roomId(roomId)
                     .roomName(roomName)
-                    .buyer(buyer)
-                    .seller(seller)
+                    .buyer(firstUser)
+                    .seller(secondUser)
                     .build();
             return chatRoomRepository.save(newChatRoom);
         });
