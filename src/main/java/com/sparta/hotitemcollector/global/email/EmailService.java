@@ -16,6 +16,7 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.security.SecureRandom;
+import java.util.Optional;
 
 
 @Slf4j
@@ -30,9 +31,12 @@ public class EmailService {
     public void sendPasswordResetEmail(EmailMessage emailMessage) {
         // Generate and set the new password
         String authNum = createCode();
-        User findUser = userService.findByEmail(emailMessage.getTo());
-        findUser.updatePassword(userService.passwordEncoder(authNum));
-        userService.saveUser(findUser);
+        Optional<User> findUser = userService.findByEmail(emailMessage.getTo());
+        if (findUser.isEmpty()) {
+            throw new CustomException(ErrorCode.NOT_FOUND_USER);
+        }
+        findUser.get().updatePassword(userService.passwordEncoder(authNum));
+        userService.saveUser(findUser.orElse(null));
 
         // Send email
         sendEmail(emailMessage.getTo(), "Password Reset Request", "password", authNum);

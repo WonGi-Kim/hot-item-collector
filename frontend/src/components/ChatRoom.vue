@@ -274,7 +274,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 /* The CSS styles remain the same */
 :root {
   --main-color: #FF0000;

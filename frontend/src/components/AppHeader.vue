@@ -558,17 +558,17 @@ export default {
       this.confirmPasswordError = this.password === this.confirmPassword ? '' : '비밀번호가 일치하지 않습니다.';
     },
     socialLogin(provider) {
-      let url = '';
+      let url = 'http://localhost:8080';
 
       switch (provider) {
         case 'kakao':
-          url = 'http://localhost:8080/oauth2/authorization/kakao';
+          url = url+'/oauth2/authorization/kakao';
           break;
         case 'naver':
-          url = 'http://localhost:8080/oauth2/authorization/naver';
+          url = url+'/oauth2/authorization/naver';
           break;
         case 'google':
-          url = 'http://localhost:8080/oauth2/authorization/google';
+          url = url+'/oauth2/authorization/google';
           break;
         default:
           console.error('Unsupported provider');
