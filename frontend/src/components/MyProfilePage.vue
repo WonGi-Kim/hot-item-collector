@@ -200,7 +200,7 @@ body {
       <section class="product-section">
         <h2 @click="goToPurchasedProducts">내가 구매한 상품</h2>
         <div v-if="purchasedProducts.length > 0" class="product-list">
-          <div v-for="product in purchasedProducts" :key="product.id" class="product-card" @click="goToProduct(product.id)">
+          <div v-for="product in purchasedProducts" :key="product.id" class="product-card" @click="goToYourProduct(product.id)">
             <img :src="product.image" :alt="product.name" class="product-image">
             <div class="product-info">
               <div class="product-name">{{ product.name }}</div>
