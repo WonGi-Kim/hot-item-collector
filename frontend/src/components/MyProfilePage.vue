@@ -179,7 +179,7 @@ body {
           <p class="profile-bio">{{ user.bio }}</p>
           <div class="profile-stats">
             <span>팔로워: {{ user.followers }}</span>
-            <button @click="showFollowers">팔로워 목록</button>
+            <button @click="showFollowers">팔로잉 목록</button>
           </div>
         </div>
       </section>

@@ -60,7 +60,7 @@ body {
 
 .product-info {
   display: flex;
-  gap: 30px;
+  gap: 100px;
 }
 
 .product-image-container {
