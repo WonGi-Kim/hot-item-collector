@@ -1,9 +1,8 @@
 package com.sparta.hotitemcollector.global.exception;
 
-import org.springframework.http.HttpStatus;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
@@ -34,6 +33,7 @@ public enum ErrorCode {
 	// email
 	INCORRECT_AUTHCODE(HttpStatus.UNAUTHORIZED, "인증번호가 일치하지 않습니다."),
 	DUPLICATE_AUTHCODE(HttpStatus.BAD_REQUEST,"인증번호가 존재합니다."),
+	DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST, "이미 아이디가 존재하는 이메일 입니다."),
 
 	// Product
 	NOT_FOUND_PRODUCT(HttpStatus.BAD_REQUEST, "상품을 찾을 수 없습니다."),

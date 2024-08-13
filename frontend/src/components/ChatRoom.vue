@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue'
+import {computed, ref} from 'vue'
 import AppHeader from './AppHeader.vue';
 import AppFooter from './AppFooter.vue';
 
@@ -188,7 +188,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 /* The CSS styles remain the same */
 :root {
   --main-color: #FF0000;
