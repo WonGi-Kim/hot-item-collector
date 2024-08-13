@@ -49,7 +49,7 @@
 
 import AppHeader from './AppHeader.vue';
 import AppFooter from './AppFooter.vue';
-import { ref, onMounted } from 'vue';
+import {onMounted, ref} from 'vue';
 import {useRouter} from "vue-router";
 
 export default {
@@ -585,7 +585,7 @@ header {
 /* Item Cards Styles */
 .item-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-columns: repeat(4, minmax(250px, 1fr));
   gap: 20px;
   margin: 30px 0;
 }
@@ -604,7 +604,7 @@ header {
 
 .item-card img {
   width: 100%;
-  height: 200px;
+  height: 253px;
   object-fit: cover;
 }
 

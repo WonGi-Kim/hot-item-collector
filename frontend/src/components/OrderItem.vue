@@ -1,11 +1,12 @@
 <script>
-import {ref, onMounted} from 'vue'
+import {onMounted, ref} from 'vue'
 import {DateTime} from 'luxon'
 import Cookies from "js-cookie";
-const client = require('../client')
 import AppHeader from './AppHeader.vue';
 import AppFooter from './AppFooter.vue';
 import router from "@/router";
+
+const client = require('../client')
 
 export default {
   components: {AppHeader, AppFooter},
@@ -173,23 +174,33 @@ body {
 }
 
 .date-range-selector input[type="date"] {
-  padding: 5px;
+  padding: 10px;
   border: 1px solid var(--card-border);
-  border-radius: 5px;
+  border-radius: 8px; /* 검색창의 모서리도 둥글게 */
+  font-size: 16px; /* 폰트 사이즈 통일 */
+  box-sizing: border-box; /* 패딩과 보더를 포함한 박스 사이즈 계산 */
 }
 
 .date-range-selector button {
-  padding: 5px 10px;
+  padding: 10px 20px; /* 버튼의 패딩을 검색창과 일치시킴 */
+  width: 130px;
   background-color: var(--button-color);
   color: var(--bg-color);
   border: none;
-  border-radius: 5px;
+  border-radius: 8px; /* 버튼 모서리를 둥글게 */
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  font-size: 16px; /* 폰트 사이즈 통일 */
+  font-weight: bold; /* 폰트 두께 조정 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 버튼에 그림자 추가 */
 }
 
 .date-range-selector button:hover {
-  background-color: var(--hover-color);
+  background-color: var(--hover-color); /* 호버 시 배경색 변경 */
+  transform: scale(1.05); /* 호버 시 버튼 크기 약간 증가 */
+}
+
+.date-range-selector button:active {
+  transform: scale(0.95); /* 클릭 시 버튼 크기 약간 감소 */
 }
 
 .purchase-date {

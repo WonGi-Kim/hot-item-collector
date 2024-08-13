@@ -710,6 +710,10 @@ export default {
   --chat-received: #FFFFFF;
   --border-color: #ddd;
   --chat-header-bg: #f0f0f0;
+  --card-border: #e0e0e0;
+  --category-bg: #f1f1f1;
+  --status-sold: #4CAF50;
+  --status-selling: #2196F3;
 }
 .modalTitle {
   text-align: center;
