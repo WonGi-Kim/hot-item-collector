@@ -346,33 +346,27 @@ export default {
 
 
     const showFollowers = () => {
-      alert('팔로워 목록 페이지로 이동합니다.')
       router.push(`/profile/follow`);
     }
 
     const goToProduct = (productId) => {
-      alert(`상품 ID ${productId}의 상세 페이지로 이동합니다.`)
       router.push(`/product/update/${productId}`);
     }
     const goToYourProduct = (productId) => {
-      alert(`상품 ID ${productId}의 상세 페이지로 이동합니다.`)
       router.push(`/product/detail/${productId}`);
     }
 
     const goToRegisteredProducts = () => {
-      alert('내가 등록한 상품 목록 페이지로 이동합니다.')
       router.push(`/product/sale`);
     }
 
     const goToPurchasedProducts = () => {
-      alert('내가 구매한 상품 목록 페이지로 이동합니다.')
       router.push(`/orders/buy`)
 
       //alert('내가 구매한 상품 목록 페이지로 이동합니다.')
     }
 
     const goToLikedProducts = () => {
-      alert('내가 좋아요한 상품 목록 페이지로 이동합니다.')
       router.push(`/product/like`);
     }
 
