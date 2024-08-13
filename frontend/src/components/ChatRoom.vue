@@ -27,7 +27,7 @@
         </div>
         <div class="chat-window" v-if="activeChat">
           <div class="chat-header">
-            {{ activeChat.roomName }}
+            {{ activeChat.sellerName }}
           </div>
           <div class="chat-messages" id="chat-room">
             <div
@@ -58,7 +58,8 @@
 import Cookies from 'js-cookie';
 import AppHeader from './AppHeader.vue';
 import AppFooter from './AppFooter.vue';
-import { ref, computed, onMounted, watch } from 'vue';
+import {computed, onMounted, ref, watch} from 'vue';
+
 const client = require('../client');
 
 export default {
@@ -276,20 +277,7 @@ export default {
 
 <style scoped>
 /* The CSS styles remain the same */
-:root {
-  --main-color: #FF0000;
-  --text-color: #333;
-  --bg-color: #FFFFFF;
-  --hover-color: #FF6666;
-  --button-color: #FFCCCB;
-  --button-hover-color: #FF6666;
-  --footer-bg: #f8f8f8;
-  --chat-bg: #f0f0f0;
-  --chat-sent: #e6f3ff;
-  --chat-received: #f5f5f5;
-  --border-color: #ddd;
-  --chat-header-bg: #f0f0f0;
-}
+
 
 body {
   font-family: Arial, sans-serif;
@@ -302,29 +290,6 @@ body {
   min-height: 100vh;
 }
 
-.top-bar {
-  background-color: var(--main-color);
-  color: var(--bg-color);
-  padding: 10px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.top-bar h1 {
-  margin: 0;
-  font-size: 1.5em;
-}
-
-.top-bar nav a {
-  color: var(--bg-color);
-  text-decoration: none;
-  margin-left: 20px;
-}
-
-.top-bar nav a:hover {
-  color: var(--hover-color);
-}
 
 .main-content {
   flex: 1;
@@ -349,6 +314,9 @@ body {
   overflow-y: auto;
 }
 
+input {
+  margin-top: 0px;
+}
 .chat-search {
   display: flex;
   padding: 10px;
@@ -372,7 +340,7 @@ body {
 }
 
 .chat-search button:hover {
-  background-color: var(--button-hover-color);
+  background-color: var(--hover-color);
 }
 
 .chat-items {
@@ -489,16 +457,16 @@ body {
 }
 
 .chat-input button {
-  background-color: var(--button-color);
+  background-color: var(--input-border);
   border: none;
-  padding: 10px;
+  padding: 5px;
   margin-left: 5px;
   border-radius: 4px;
   cursor: pointer;
 }
 
 .chat-input button:hover {
-  background-color: var(--button-hover-color);
+  background-color: var(--hover-color);
 }
 
 .bottom-bar {
@@ -564,6 +532,6 @@ body {
 
 .modal-buttons .confirm:hover,
 .modal-buttons .cancel:hover {
-  background-color: var(--button-hover-color);
+  background-color: var(--hover-color);
 }
 </style>
