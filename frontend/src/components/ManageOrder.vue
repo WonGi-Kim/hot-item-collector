@@ -1,9 +1,10 @@
 <script>
 import {onMounted, ref} from 'vue';
 import Cookies from "js-cookie";
-const client = require('../client')
 import AppHeader from './AppHeader.vue';
 import AppFooter from './AppFooter.vue';
+
+const client = require('../client')
 
 export default {
   components: { AppHeader, AppFooter },
@@ -180,19 +181,23 @@ main {
 
 .search-filters input,
 .search-filters select {
+  margin-top: 0px;
   padding: 8px;
   border: 1px solid var(--input-border);
   border-radius: 4px;
 }
 
 .search-filters button {
-  padding: 8px 15px;
+  padding: 10px 20px; /* 버튼의 패딩을 검색창과 일치시킴 */
+  width: 130px;
   background-color: var(--button-color);
   color: var(--bg-color);
   border: none;
-  border-radius: 4px;
+  border-radius: 8px; /* 버튼 모서리를 둥글게 */
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  font-size: 16px; /* 폰트 사이즈 통일 */
+  font-weight: bold; /* 폰트 두께 조정 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 버튼에 그림자 추가 */
 }
 
 .search-filters button:hover {
