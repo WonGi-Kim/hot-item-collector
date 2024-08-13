@@ -57,6 +57,7 @@ export default {
     const searchQuery = ref('');
     const activeChat = computed(() => chatList.value[activeChatIndex.value] || null);
     const filteredChatList = computed(() => chatList.value.filter(chat => chat.roomName.toLowerCase().includes(searchQuery.value.toLowerCase())));
+    const currentUser = ref('');
 
     const accessToken = Cookies.get('access_token');
     if (!accessToken) {
@@ -161,16 +162,28 @@ export default {
       await connectSocket(newRoomId);
     };
 
+    const fetchUserProfile = async () => {
+      try {
+        const response = await client.get('/users/profile', {
+          headers: {
+            'Authorization': accessToken
+          }
+        });
+        currentUser.value = response.data.result.nickname;
+      } catch (error) {
+        console.error('Failed to fetch user profile:', error);
+      }
+    };
+
     const addMessageToChat = (roomId, message) => {
       const chat = chatList.value.find(c => c.roomId === roomId);
       if (chat) {
-        const currentUser = Cookies.get('username');
         const isDuplicate = chat.messages.some(m => m.id === message.id);
 
         if (!isDuplicate) {
           chat.messages.push({
             id: message.id,
-            type: message.sender === currentUser ? 'sent' : 'received',
+            type: message.sender === currentUser.value ? 'sent' : 'received',
             text: message.message,
             time: new Date(message.timestamp).toLocaleString('ko-KR', {
               year: 'numeric',
@@ -204,6 +217,7 @@ export default {
 
     onMounted(() => {
       loadChatLists();
+      fetchUserProfile();
     });
 
     // Watch for changes in activeChatIndex to ensure socket connection is managed
@@ -231,7 +245,8 @@ export default {
       disconnectSocket,
       setActiveChat,
       addMessageToChat,
-      sendMessage
+      sendMessage,
+      fetchUserProfile
     };
   }
 };
