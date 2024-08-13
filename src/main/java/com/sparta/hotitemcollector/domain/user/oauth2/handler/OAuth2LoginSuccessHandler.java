@@ -42,8 +42,8 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         log.info("OAuth2 Login 성공!");
         try {
             CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-            log.info((String) oAuth2User.getAttributes().get("id"));
-            String socialId = String.valueOf(oAuth2User.getAttributes().get("id"));
+            log.info(oAuth2User.getName());
+            String socialId = oAuth2User.getName();
 
             OAuthUser oAuthUser = oAuthUserRepository.findBySocialId(socialId)
                     .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
