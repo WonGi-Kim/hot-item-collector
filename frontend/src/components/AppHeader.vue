@@ -399,22 +399,17 @@ export default {
       }
 
       try {
-        const response = await client.post('/users/logout', {}, {
+        await client.post('/users/logout', {}, {
           headers: {
             'Authorization': accessToken
           }
         });
-
-        if (response.status === 200) {
           Cookies.remove('access_token');
           Cookies.remove('refresh_token');
           alert('로그아웃 성공');
           this.isLoggedIn = false;
           console.log('로그아웃 성공');
           await this.$router.push('/');
-        } else {
-          console.error('로그아웃 실패:', response.data);
-        }
       } catch (error) {
         console.error('로그아웃 요청 실패:', error.response ? error.response.data : error.message);
       }
