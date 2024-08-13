@@ -35,7 +35,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     private final TokenService tokenService;
     private final OAuthUserRepository oAuthUserRepository;
     private final UserRepository userRepository;
-    String REDIRECT_URL = "http://localhost:8081";
+    String REDIRECT_URL = "http://hotitemcollector.com:8081";
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
