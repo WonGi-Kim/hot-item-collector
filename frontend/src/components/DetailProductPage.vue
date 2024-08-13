@@ -37,8 +37,9 @@
             <div class="product-actions-container">
               <p class="product-price">{{ formatPrice(product.price) }}원</p>
               <div class="buy-actions">
-                <button v-if="isLoggedIn" class="add-to-cart" @click="addToCart">장바구니 담기</button>
-                <button v-if="isLoggedIn" class="buy-now" @click="buyNow">구매하기</button>
+                <button v-if="isLoggedIn&product.status !=='SOLD_OUT'" class="add-to-cart" @click="addToCart">장바구니 담기</button>
+                <button v-if="isLoggedIn&product.status !=='SOLD_OUT'" class="buy-now" @click="buyNow">구매하기</button>
+                <button v-else class="sold-out" disabled>판매완료</button>
               </div>
             </div>
           </div>
@@ -531,7 +532,7 @@ body {
 }
 
 .add-to-cart,
-.buy-now {
+.buy-now ,.sold-out{
   padding: 12px 24px;
   font-size: 16px;
   border: none;
@@ -549,6 +550,7 @@ body {
 .add-to-cart:hover {
   background-color: #e0e0e0;
 }
+
 
 .buy-now {
   background-color: var(--main-color);

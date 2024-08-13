@@ -190,7 +190,7 @@ body {
           <div v-for="product in registeredProducts" :key="product.id" class="product-card" @click="goToProduct(product.id)">
             <img :src="product.image" :alt="product.name" class="product-image">
             <div class="product-info">
-              <div class="product-name">상품명: {{ product.name }}</div>
+              <div class="product-name">{{ product.name }}</div>
             </div>
           </div>
         </div>
