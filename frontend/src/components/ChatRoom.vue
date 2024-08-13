@@ -45,7 +45,7 @@
 import Cookies from 'js-cookie';
 import AppHeader from './AppHeader.vue';
 import AppFooter from './AppFooter.vue';
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 const client = require('../client');
 
 export default {
@@ -96,19 +96,18 @@ export default {
     const socketConnections = {};
 
     const connectSocket = async (roomId) => {
-      const Stomp = await loadStompJs();
-
       if (socketConnections[roomId]) {
         console.log(`Socket for room ${roomId} is already connected.`);
         return;
       }
 
+      const Stomp = await loadStompJs();
       const socket = new WebSocket('ws://localhost:8080/ws');
       const stompClient = Stomp.over(socket);
 
       await new Promise((resolve, reject) => {
         stompClient.connect({ 'Authorization': accessToken }, () => {
-          console.log('Connected to room: ' + roomId);
+          console.log('Connected to WebSocket.');
 
           const subscription = stompClient.subscribe(`/topic/${roomId}`, (message) => {
             try {
@@ -151,15 +150,14 @@ export default {
     };
 
     const setActiveChat = async (index) => {
-      const previousRoomId = activeChat.value?.roomId;
       const newRoomId = chatList.value[index].roomId;
-
-      if (previousRoomId && previousRoomId !== newRoomId) {
-        disconnectSocket(previousRoomId);
+      if (activeChatIndex.value !== null) {
+        const previousRoomId = chatList.value[activeChatIndex.value].roomId;
+        if (previousRoomId !== newRoomId) {
+          disconnectSocket(previousRoomId); // Disconnect the existing socket before connecting to a new one
+        }
       }
-
       activeChatIndex.value = index;
-
       await connectSocket(newRoomId);
     };
 
@@ -186,10 +184,9 @@ export default {
       }
     };
 
-    // 메시지 전송
     const sendMessage = () => {
       if (newMessage.value.trim() !== '') {
-        const roomId = activeChat.value.roomId;
+        const roomId = activeChat.value?.roomId;
         const messageContent = {
           roomId: roomId,
           message: newMessage.value
@@ -200,13 +197,25 @@ export default {
           connection.stompClient.send('/app/send', {}, JSON.stringify(messageContent));
           newMessage.value = '';
         } else {
-          console.error(`No active connection for room: ${roomId}`);
+          console.error(`No active WebSocket connection or no roomId.`);
         }
       }
     };
 
     onMounted(() => {
       loadChatLists();
+    });
+
+    // Watch for changes in activeChatIndex to ensure socket connection is managed
+    watch(activeChatIndex, async (newIndex, oldIndex) => {
+      if (oldIndex !== null && oldIndex !== newIndex) {
+        const previousRoomId = chatList.value[oldIndex].roomId;
+        disconnectSocket(previousRoomId);
+      }
+      if (newIndex !== null) {
+        const newRoomId = chatList.value[newIndex].roomId;
+        await connectSocket(newRoomId);
+      }
     });
 
     return {
@@ -216,12 +225,13 @@ export default {
       newMessage,
       searchQuery,
       filteredChatList,
-      setActiveChat,
-      sendMessage,
-      loadChatLists,
       loadStompJs,
+      loadChatLists,
+      connectSocket,
       disconnectSocket,
-      connectSocket
+      setActiveChat,
+      addMessageToChat,
+      sendMessage
     };
   }
 };

@@ -56,6 +56,10 @@ public class WebSocketInterceptor implements ChannelInterceptor {
             } else {
                 throw new CustomException(ErrorCode.HEADER_NOT_FOUND);
             }
+        } else if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
+            // DISCONNECT 요청 처리
+            System.out.println("Client disconnected: " + accessor.getSessionId());
+            // 필요한 경우 세션 정리 작업을 추가합니다.
         }
         return message;
     }
