@@ -18,9 +18,9 @@
 
 <style>
 footer {
+  margin-top: 60px;
   background-color: var(--footer-bg);
   padding: 30px 0;
-  margin-top: auto;
 }
 
 .footer-content {
