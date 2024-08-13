@@ -1,16 +1,17 @@
 <script>
 import AppHeader from './AppHeader.vue';
-import { ref, computed, onMounted } from 'vue';
-const client = require('../client')
-import { useRouter, useRoute } from "vue-router";
+import {computed, onMounted, ref} from 'vue';
+import {useRoute, useRouter} from "vue-router";
 import AppFooter from './AppFooter.vue';
+
+const client = require('../client')
 export default {
   components: { AppHeader, AppFooter },
   setup() {
     const isLoggedIn = ref(false);
     const currentPage = ref(1);
     const totalPages = ref(1);
-    const itemsPerPage = 16;
+    const itemsPerPage = 8;
     const products = ref([]); // 초기값을 빈 배열로 설정
     const searchQuery = ref('');
     const categoryType = ref('');

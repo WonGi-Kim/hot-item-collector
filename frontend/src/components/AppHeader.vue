@@ -226,6 +226,7 @@
 
 <script>
 import Cookies from "js-cookie";
+
 const client = require('../client')
 
 export default {
@@ -704,6 +705,11 @@ export default {
   --footer-bg: #f8f8f8;
   --kakao-color: #FEE500;
   --input-border: #ccc;
+  --chat-bg: #f0f0f0;
+  --chat-sent: #e6f3ff;
+  --chat-received: #FFFFFF;
+  --border-color: #ddd;
+  --chat-header-bg: #f0f0f0;
 }
 .modalTitle {
   text-align: center;
