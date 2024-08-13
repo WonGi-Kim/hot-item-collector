@@ -128,10 +128,9 @@ export default {
         <div v-for="product in products" :key="product.id" class="product-card" @click="goToProduct(product.id)">
           <img :src="product.image.imageUrl" :alt="product.name" class="product-image">
           <div class="product-info">
-            <div class="product-id">ID: {{ product.id }}</div>
             <div class="product-name">{{ product.name }}</div>
-            <span :class="['product-status', product.status === 'SOLD_OUT' ? 'status-sold' : 'status-selling']">
-              {{ product.status === 'SOLD_OUT' ? '판매완료' : '판매중' }}
+            <span :class="['product-status', product.status === 'ON_SALE' ? 'status-selling' : 'status-sold']">
+              {{ product.status === 'ON_SALE' ? '판매중' : '판매완료' }}
             </span>
           </div>
         </div>
@@ -280,13 +279,13 @@ body {
 }
 
 .status-selling {
-  background-color: var(--status-selling);
-  color: var(--bg-color);
+  background-color: red;
+  color: white;
 }
 
 .status-sold {
-  background-color: var(--status-sold);
-  color: var(--bg-color);
+  background-color: red;
+  color: white;
 }
 
 .pagination {
