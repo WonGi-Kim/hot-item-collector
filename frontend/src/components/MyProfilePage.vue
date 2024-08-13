@@ -230,12 +230,13 @@ body {
 </template>
 
 <script>
-import { ref, onMounted  } from 'vue'
+import {onMounted, ref} from 'vue'
 import AppHeader from './AppHeader.vue';
 import AppFooter from './AppFooter.vue';
-const client = require('../client')
 import Cookies from "js-cookie";
-import { useRouter } from 'vue-router';
+import {useRouter} from 'vue-router';
+
+const client = require('../client')
 
 export default {
   name: 'App',
@@ -308,6 +309,7 @@ export default {
         purchasedProducts.value = purchaseResponse.data.result.content.map(product => ({
           id: product.productId,
           name: product.productName,
+          orderId: product.orderId,
           sellerId: product.sellerId,
           sellerNickname: product.sellerNickname,
           image: product.productImage.imageUrl
@@ -353,7 +355,12 @@ export default {
       router.push(`/product/update/${productId}`);
     }
     const goToYourProduct = (productId) => {
-      router.push(`/product/detail/${productId}`);
+      const orderItem = purchasedProducts.value.find(product => product.id === productId);
+      if (orderItem) {
+        router.push({name: 'DetailOrder', query: {orderId: orderItem.orderId}});
+      } else {
+        console.error('주문 아이템을 찾을 수 없습니다.');
+      }
     }
 
     const goToRegisteredProducts = () => {
