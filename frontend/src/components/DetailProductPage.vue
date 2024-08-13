@@ -11,6 +11,9 @@
             <button v-if="isLoggedIn" class="follow-button" @click="toggleFollow">
               {{ isFollowing ? '팔로우 취소' : '팔로우' }}
             </button>
+            <button v-if="isLoggedIn" class="chat-button">
+              채팅하기
+            </button>
           </div>
         </div>
         <div class="product-info">
@@ -34,8 +37,9 @@
             <div class="product-actions-container">
               <p class="product-price">{{ formatPrice(product.price) }}원</p>
               <div class="buy-actions">
-                <button v-if="isLoggedIn" class="add-to-cart" @click="addToCart">장바구니 담기</button>
-                <button v-if="isLoggedIn" class="buy-now" @click="buyNow">구매하기</button>
+                <button v-if="isLoggedIn&product.status !=='SOLD_OUT'" class="add-to-cart" @click="addToCart">장바구니 담기</button>
+                <button v-if="isLoggedIn&product.status !=='SOLD_OUT'" class="buy-now" @click="buyNow">구매하기</button>
+                <button v-else class="sold-out" disabled>판매완료</button>
               </div>
             </div>
           </div>
@@ -357,15 +361,19 @@ body {
   padding: 0;
   background-color: var(--bg-color);
   color: var(--text-color);
+}
+#app {
+  font-family: Arial, sans-serif;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
 .container {
-  max-width: 1200px;
+  width: 80%;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0;
+  flex: 1;
 }
 
 /* Product Detail Styles */
@@ -400,7 +408,7 @@ body {
   font-weight: bold;
 }
 
-.follow-button {
+.follow-button,.chat-button {
   padding: 5px 15px;
   background-color: var(--main-color);
   color: var(--bg-color);
@@ -410,13 +418,13 @@ body {
   transition: background-color 0.3s ease;
 }
 
-.follow-button:hover {
+.follow-button:hover,.chat-button:hover {
   background-color: var(--hover-color);
 }
 
 .product-info {
   display: flex;
-  gap: 30px;
+  gap: 100px;
 }
 
 .product-image-container {
@@ -528,7 +536,7 @@ body {
 }
 
 .add-to-cart,
-.buy-now {
+.buy-now ,.sold-out{
   padding: 12px 24px;
   font-size: 16px;
   border: none;
@@ -546,6 +554,7 @@ body {
 .add-to-cart:hover {
   background-color: #e0e0e0;
 }
+
 
 .buy-now {
   background-color: var(--main-color);

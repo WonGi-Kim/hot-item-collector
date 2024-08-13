@@ -85,7 +85,6 @@ export default {
       fetchProducts(currentPage.value);
     });
     const goToProduct = (productId) => {
-      alert(`상품 ID ${productId}의 상세 페이지로 이동합니다.`)
       router.push(`/product/detail/${productId}`);
     }
 
@@ -139,11 +138,15 @@ export default {
 /* 기본 스타일 추가 */
 #app {
   font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 .container {
   width: 80%;
   margin: 0 auto;
+  flex: 1;
 }
 
 .item-grid {

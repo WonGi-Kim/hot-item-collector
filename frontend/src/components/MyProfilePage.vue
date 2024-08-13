@@ -190,7 +190,7 @@ body {
           <div v-for="product in registeredProducts" :key="product.id" class="product-card" @click="goToProduct(product.id)">
             <img :src="product.image" :alt="product.name" class="product-image">
             <div class="product-info">
-              <div class="product-name">상품명: {{ product.name }}</div>
+              <div class="product-name">{{ product.name }}</div>
             </div>
           </div>
         </div>
@@ -200,7 +200,7 @@ body {
       <section class="product-section">
         <h2 @click="goToPurchasedProducts">내가 구매한 상품</h2>
         <div v-if="purchasedProducts.length > 0" class="product-list">
-          <div v-for="product in purchasedProducts" :key="product.id" class="product-card" @click="goToProduct(product.id)">
+          <div v-for="product in purchasedProducts" :key="product.id" class="product-card" @click="goToYourProduct(product.id)">
             <img :src="product.image" :alt="product.name" class="product-image">
             <div class="product-info">
               <div class="product-name">{{ product.name }}</div>
@@ -346,33 +346,27 @@ export default {
 
 
     const showFollowers = () => {
-      alert('팔로워 목록 페이지로 이동합니다.')
       router.push(`/profile/follow`);
     }
 
     const goToProduct = (productId) => {
-      alert(`상품 ID ${productId}의 상세 페이지로 이동합니다.`)
       router.push(`/product/update/${productId}`);
     }
     const goToYourProduct = (productId) => {
-      alert(`상품 ID ${productId}의 상세 페이지로 이동합니다.`)
       router.push(`/product/detail/${productId}`);
     }
 
     const goToRegisteredProducts = () => {
-      alert('내가 등록한 상품 목록 페이지로 이동합니다.')
       router.push(`/product/sale`);
     }
 
     const goToPurchasedProducts = () => {
-      alert('내가 구매한 상품 목록 페이지로 이동합니다.')
       router.push(`/orders/buy`)
 
       //alert('내가 구매한 상품 목록 페이지로 이동합니다.')
     }
 
     const goToLikedProducts = () => {
-      alert('내가 좋아요한 상품 목록 페이지로 이동합니다.')
       router.push(`/product/like`);
     }
 

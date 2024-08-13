@@ -1,17 +1,10 @@
 <template>
   <div id="app">
-    <AppHeader/>
+    <AppHeader />
     <div class="main-content">
       <div class="chat-container">
         <div class="chat-list">
-          <div class="chat-search">
-            <input v-model="searchQuery" placeholder="채팅방 검색..." />
-            <button @click="filterChats">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-              </svg>
-            </button>
-          </div>
+          <!-- 채팅방 목록 -->
           <div class="chat-items">
             <div
                 v-for="(chat, index) in filteredChatList"
@@ -19,173 +12,266 @@
                 :class="['chat-item', { active: activeChatIndex === index }]"
                 @click="setActiveChat(index)"
             >
-              <img :src="chat.avatar" :alt="chat.name" class="chat-item-avatar" />
+              <img :src="chat.avatar" :alt="chat.sellerName" class="chat-item-avatar" />
               <div class="chat-item-info">
-                <div class="chat-item-name">{{ chat.name }}</div>
-                <div class="chat-item-preview">{{ chat.messages[chat.messages.length - 1].text }}</div>
+                <div class="chat-item-name">
+                  <!-- 현재 사용자와 sellerName이 같다면 buyerName을 사용 -->
+                  {{ chat.sellerName === currentUser.valueOf() ? chat.buyerName : chat.sellerName }}
+                </div>
+                <div class="chat-item-preview">
+                  {{ chat.messages.length > 0 ? chat.messages[chat.messages.length - 1].text : 'No messages' }}
+                </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="chat-window">
-          <div class="chat-header" @click="showUserModal">
-            <img :src="activeChat.avatar" :alt="activeChatName" class="chat-header-avatar" />
-            {{ activeChatName }}
+        <div class="chat-window" v-if="activeChat">
+          <div class="chat-header">
+            {{ activeChat.roomName }}
           </div>
-          <div class="chat-messages">
-            <div v-for="(message, index) in activeChat.messages" :key="index" :class="['message', message.type]">
+          <div class="chat-messages" id="chat-room">
+            <div
+                v-for="(message, index) in activeChat.messages"
+                :key="index"
+                :class="['message', message.type]"
+            >
               <div class="message-bubble">{{ message.text }}</div>
               <div class="message-time">{{ message.time }}</div>
             </div>
           </div>
           <div class="chat-input">
-            <input v-model="newMessage" @keyup.enter="sendMessage" placeholder="메시지를 입력하세요..." />
+            <input
+                v-model="newMessage"
+                @keyup.enter="sendMessage"
+                placeholder="메시지를 입력하세요..."
+            />
             <button @click="sendMessage">전송</button>
           </div>
         </div>
       </div>
     </div>
-
-
-
-    <!-- User Profile Modal -->
-    <div class="modal" v-if="showModal">
-      <div class="modal-content">
-        <div class="modal-profile">
-          <img :src="activeChat.avatar" :alt="activeChatName" />
-          <div class="modal-profile-info">
-            <h2>{{ activeChatName }}</h2>
-            <p>{{ activeChat.bio }}</p>
-          </div>
-        </div>
-        <div class="modal-buttons">
-          <button class="confirm" @click="goToUserProfile">상세 프로필</button>
-          <button class="cancel" @click="closeModal">닫기</button>
-        </div>
-      </div>
-    </div>
-    <AppFooter/>
+    <AppFooter />
   </div>
 </template>
 
 <script>
-import {computed, ref} from 'vue'
+import Cookies from 'js-cookie';
 import AppHeader from './AppHeader.vue';
 import AppFooter from './AppFooter.vue';
+import { ref, computed, onMounted, watch } from 'vue';
+const client = require('../client');
 
 export default {
-  components: {AppFooter, AppHeader},
+  components: { AppHeader, AppFooter },
   setup() {
-    const chatList = ref([
-      // Example chat data
-      {
-        name: 'Alice',
-        avatar: 'https://randomuser.me/api/portraits/women/1.jpg',
-        messages: [
-          { type: 'received', text: '안녕하세요!', time: '2024-08-12 10:00' }
-        ],
-        bio: 'Alice의 프로필입니다.'
-      },
-      {
-        name: 'Bob',
-        avatar: 'https://randomuser.me/api/portraits/men/1.jpg',
-        messages: [
-          { type: 'received', text: '안녕하세요!', time: '2024-08-12 10:05' }
-        ],
-        bio: 'Bob의 프로필입니다.'
-      }
-    ])
+    const chatList = ref([]);
+    const activeChatIndex = ref(null);
+    const newMessage = ref('');
+    const searchQuery = ref('');
+    const activeChat = computed(() => chatList.value[activeChatIndex.value] || null);
+    const filteredChatList = computed(() =>
+        chatList.value.filter(chat =>
+            chat.roomName.toLowerCase().includes(searchQuery.value.toLowerCase())
+        )
+    );
+    const currentUser = ref('');
 
-    const activeChatIndex = ref(0)
-    const newMessage = ref('')
-    const searchQuery = ref('')
-    const showModal = ref(false)
-
-    const activeChat = computed(() => chatList.value[activeChatIndex.value])
-    const activeChatName = computed(() => activeChat.value.name)
-
-    const filteredChatList = computed(() => {
-      return chatList.value.filter(chat =>
-          chat.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-      )
-    })
-
-    const setActiveChat = (index) => {
-      activeChatIndex.value = index
+    const accessToken = Cookies.get('access_token');
+    if (!accessToken) {
+      throw new Error('Access token is missing.');
     }
+
+    const loadStompJs = () => {
+      return new Promise((resolve, reject) => {
+        const stompScript = document.createElement('script');
+        stompScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js';
+        stompScript.onload = () => resolve(window.Stomp);
+        stompScript.onerror = () => reject(new Error('Failed to load STOMP.js.'));
+        document.head.appendChild(stompScript);
+      });
+    };
+
+    const loadChatLists = async () => {
+      try {
+        const response = await client.get('/chatrooms/list', {
+          headers: {
+            Authorization: accessToken,
+          },
+        });
+        chatList.value = response.data.result.map(chat => ({
+          roomId: chat.roomId,
+          roomName: chat.roomName,
+          buyerName: chat.buyerName,
+          sellerName: chat.sellerName,
+          avatar: chat.sellerImage,
+          messages: [],
+        }));
+      } catch (error) {
+        console.error('Failed to load chat rooms:', error);
+      }
+    };
+
+    const socketConnections = {};
+
+    const connectSocket = async roomId => {
+      if (socketConnections[roomId]) {
+        console.log(`Socket for room ${roomId} is already connected.`);
+        return;
+      }
+
+      const Stomp = await loadStompJs();
+      const socket = new WebSocket('ws://localhost:8080/ws');
+      const stompClient = Stomp.over(socket);
+
+      await new Promise((resolve, reject) => {
+        stompClient.connect(
+            { Authorization: accessToken },
+            () => {
+              console.log('Connected to WebSocket.');
+
+              const subscription = stompClient.subscribe(`/topic/${roomId}`, message => {
+                try {
+                  const chatMessages = JSON.parse(message.body);
+                  if (Array.isArray(chatMessages)) {
+                    chatMessages.forEach(chatMessage => {
+                      addMessageToChat(roomId, chatMessage);
+                    });
+                  } else {
+                    addMessageToChat(roomId, chatMessages);
+                  }
+                } catch (e) {
+                  console.error('Error parsing message body:', e);
+                }
+              });
+
+              socketConnections[roomId] = {
+                stompClient,
+                subscription,
+              };
+
+              stompClient.send(`/app/join/${roomId}`, {}, JSON.stringify({ roomId }));
+              resolve();
+            },
+            error => {
+              console.error('Connection error:', error);
+              reject(error);
+            }
+        );
+      });
+    };
+
+    const disconnectSocket = roomId => {
+      const connection = socketConnections[roomId];
+      if (connection) {
+        connection.subscription.unsubscribe();
+        connection.stompClient.disconnect(() => {
+          console.log(`Disconnected from room: ${roomId}`);
+        });
+        delete socketConnections[roomId];
+      }
+    };
+
+    const setActiveChat = async index => {
+      const newRoomId = chatList.value[index].roomId;
+      if (activeChatIndex.value !== null) {
+        const previousRoomId = chatList.value[activeChatIndex.value].roomId;
+        if (previousRoomId !== newRoomId) {
+          disconnectSocket(previousRoomId); // Disconnect the existing socket before connecting to a new one
+        }
+      }
+      activeChatIndex.value = index;
+      await connectSocket(newRoomId);
+    };
+
+    const fetchUserProfile = async () => {
+      try {
+        const response = await client.get('/users/profile', {
+          headers: {
+            Authorization: accessToken,
+          },
+        });
+        currentUser.value = response.data.result.nickname;
+      } catch (error) {
+        console.error('Failed to fetch user profile:', error);
+      }
+    };
+
+    const addMessageToChat = (roomId, message) => {
+      const chat = chatList.value.find(c => c.roomId === roomId);
+      if (chat) {
+        const isDuplicate = chat.messages.some(m => m.id === message.id);
+
+        if (!isDuplicate) {
+          chat.messages.push({
+            id: message.id,
+            type: message.sender === currentUser.value ? 'sent' : 'received',
+            text: message.message,
+            time: new Date(message.timestamp).toLocaleString('ko-KR', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit',
+            }),
+          });
+        }
+      }
+    };
 
     const sendMessage = () => {
       if (newMessage.value.trim() !== '') {
-        const now = new Date()
-        const time = now.toLocaleString('ko-KR', {
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit'
-        })
-        activeChat.value.messages.push({
-          type: 'sent',
-          text: newMessage.value,
-          time: time
-        })
-        newMessage.value = ''
+        const roomId = activeChat.value?.roomId;
+        const messageContent = {
+          roomId: roomId,
+          message: newMessage.value,
+        };
 
-        // Simulate a response
-        setTimeout(() => {
-          const responseTime = new Date()
-          const responseTimeString = responseTime.toLocaleString('ko-KR', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit'
-          })
-          activeChat.value.messages.push({
-            type: 'received',
-            text: '네, 알겠습니다. 더 궁금한 점이 있으면 말씀해 주세요.',
-            time: responseTimeString
-          })
-        }, 1000)
+        const connection = socketConnections[roomId];
+        if (connection && connection.stompClient) {
+          connection.stompClient.send('/app/send', {}, JSON.stringify(messageContent));
+          newMessage.value = '';
+        } else {
+          console.error(`No active WebSocket connection or no roomId.`);
+        }
       }
-    }
+    };
 
-    const filterChats = () => {
-      // Filtering is handled by the computed property 'filteredChatList'
-    }
+    onMounted(() => {
+      loadChatLists();
+      fetchUserProfile();
+    });
 
-    const showUserModal = () => {
-      showModal.value = true
-    }
-
-    const closeModal = () => {
-      showModal.value = false
-    }
-
-    const goToUserProfile = () => {
-      // Typically use router here
-      alert(`${activeChatName.value}의 상세 프로필로 이동합니다.`)
-      closeModal()
-    }
+    // Watch for changes in activeChatIndex to ensure socket connection is managed
+    watch(activeChatIndex, async (newIndex, oldIndex) => {
+      if (oldIndex !== null && oldIndex !== newIndex) {
+        const previousRoomId = chatList.value[oldIndex].roomId;
+        disconnectSocket(previousRoomId);
+      }
+      if (newIndex !== null) {
+        const newRoomId = chatList.value[newIndex].roomId;
+        await connectSocket(newRoomId);
+      }
+    });
 
     return {
       chatList,
       activeChatIndex,
       activeChat,
-      activeChatName,
       newMessage,
       searchQuery,
-      showModal,
       filteredChatList,
+      loadStompJs,
+      loadChatLists,
+      connectSocket,
+      disconnectSocket,
       setActiveChat,
+      addMessageToChat,
       sendMessage,
-      filterChats,
-      showUserModal,
-      closeModal,
-      goToUserProfile
-    }
-  }
-}
+      fetchUserProfile,
+      currentUser
+    };
+  },
+};
 </script>
 
 <style scoped>

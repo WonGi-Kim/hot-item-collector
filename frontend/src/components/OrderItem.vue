@@ -44,8 +44,6 @@ export default {
     }
     const goToOrderDetail = (itemId) => {
       const orderItem = orders.value.find(order => order.productId === itemId);
-
-      alert(`주문 ID ${orderItem.orderId}의 주문상세 페이지로 이동합니다.`)
       if (orderItem) {
         router.push({name: 'DetailOrder', query: {orderId: orderItem.orderId}});
       } else {
@@ -147,15 +145,19 @@ body {
   padding: 0;
   background-color: var(--bg-color);
   color: var(--text-color);
+}
+
+#app{
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
 .container {
-  max-width: 1200px;
+  width: 80%;
   margin: 0 auto;
   padding: 0 20px;
+  flex: 1;
 }
 
 /* Purchased Products Styles */

@@ -20,14 +20,14 @@ public class ChatRoomController {
 
     @PostMapping("/chatroom")
     public ResponseEntity<CommonResponse> createChatRoom(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody ChatRoomCreationDto roomCreationDto) {
-        ChatRoomDetailDto chatRoom = chatRoomService.createChatRoom(userDetails.getUser().getNickname(),roomCreationDto.getSeller());
+        ChatRoomDetailDto chatRoom = chatRoomService.createChatRoom(userDetails.getUser().getId(), roomCreationDto.getSellerId());
         CommonResponse response = new CommonResponse<>("채팅방 생성 및 조회 완료", 200, chatRoom);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("chatrooms/list")
     private ResponseEntity<CommonResponse> getAllChatRooms(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        List<ChatRoomDetailDto> chatRoomDetailDtoList = chatRoomService.getAllChatRoomByUser(userDetails.getUser().getNickname());
+        List<ChatRoomDetailDto> chatRoomDetailDtoList = chatRoomService.getAllChatRoomByUser(userDetails.getUser().getId());
         CommonResponse response = new CommonResponse<>("채팅방 목록 조회", 200, chatRoomDetailDtoList);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

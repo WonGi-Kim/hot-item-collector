@@ -15,15 +15,19 @@ body {
   margin: 0;
   padding: 0;
   color: var(--text-color);
+ 
+}
+#app{
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
 .container {
-  max-width: 1200px;
+  width: 80%;
   margin: 0 auto;
   padding: 0 20px;
+  flex: 1;
 }
 
 

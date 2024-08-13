@@ -1,5 +1,6 @@
 package com.sparta.hotitemcollector.domain.user;
 
+import com.sparta.hotitemcollector.domain.chat.chatroom.ChatRoom;
 import com.sparta.hotitemcollector.domain.user.dto.user.ProfileImageRequestDto;
 import com.sparta.hotitemcollector.global.Timestamped;
 import jakarta.persistence.*;
@@ -7,6 +8,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Entity
@@ -54,6 +57,13 @@ public class User extends Timestamped {
 
     @Column
     private String info;
+
+    // User가 생성한 ChatRoom 리스트 (buyer 혹은 seller일 수 있음)
+    @OneToMany(mappedBy = "buyer")
+    private List<ChatRoom> buyerChatRooms;
+
+    @OneToMany(mappedBy = "seller")
+    private List<ChatRoom> sellerChatRooms;
 
     @Builder
     public User(String loginId,String password,String email, String username, String nickname,ProfileImage profileImage){
