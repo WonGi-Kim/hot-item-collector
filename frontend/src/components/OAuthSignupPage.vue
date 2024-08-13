@@ -280,14 +280,25 @@ export default {
 </script>
 
 <style scoped>
+:root {
+  --main-color: #FF0000;
+  --text-color: #333;
+  --bg-color: #FFFFFF;
+  --hover-color: #FF6666;
+  --button-color: #FF4136;
+  --footer-bg: #f8f8f8;
+  --kakao-color: #FEE500;
+  --input-border: #ccc;
+  --shadow-color: #9f0000;
+}
 body {
-  font-family: 'Roboto', Arial, sans-serif;
-  background-color: #f5f5f5;
+  font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
+  background-color: var(--bg-color);
+  color: var(--text-color);
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
   min-height: 100vh;
 }
 .container {
@@ -300,7 +311,7 @@ body {
   text-align: center;
 }
 h1 {
-  color: #ff6600;
+  color: var(--main-color);
   margin-bottom: 1.5rem;
   font-size: 2.8rem;
   font-weight: 700;
@@ -314,7 +325,7 @@ h1 {
 button {
   margin: 0.75rem;
   padding: 1rem 2rem;
-  background-color: #ff6600;
+  background-color: var(--main-color);
   color: white;
   border: none;
   border-radius: 50px;
@@ -325,7 +336,7 @@ button {
   box-shadow: 0 4px 6px rgba(255, 102, 0, 0.2);
 }
 button:hover {
-  background-color: #e65c00;
+  background-color: var(--main-color);
   transform: translateY(-2px);
   box-shadow: 0 6px 8px rgba(255, 102, 0, 0.3);
 }
@@ -382,7 +393,7 @@ button:hover {
   padding: 0;
 }
 .close-button:hover {
-  color: #ff6600;
+  color: var(--main-color);
   background-color: #f0f0f0;
 }
 form {
@@ -407,7 +418,7 @@ input {
 }
 input:focus {
   outline: none;
-  border-color: #ff6600;
+  border-color: var(--main-color);
 }
 .error {
   color: #ff3333;
@@ -420,7 +431,7 @@ input:focus {
 }
 .submit-button {
   margin-top: 2rem;
-  background-color: #ff6600;
+  background-color: var(--main-color);
   color: white;
   border: none;
   padding: 1rem;
@@ -432,12 +443,12 @@ input:focus {
   width: 100%;
 }
 .submit-button:hover {
-  background-color: #e65c00;
+  background-color: var(--main-color);
   transform: translateY(-2px);
   box-shadow: 0 4px 6px rgba(255, 102, 0, 0.2);
 }
 h2 {
-  color: #ff6600;
+  color: var(--main-color);
   font-size: 2rem;
   margin-bottom: 2rem;
   font-weight: 700;
@@ -475,7 +486,7 @@ h2 {
 }
 .timer {
   font-size: 0.9rem;
-  color: #ff6600;
+  color: var(--main-color);
   margin-top: 0.5rem;
   width: 100%;
   text-align: right;
@@ -483,7 +494,7 @@ h2 {
 .resend-code {
   background: none;
   border: none;
-  color: #ff6600;
+  color: var(--main-color);
   cursor: pointer;
   font-size: 0.9rem;
   text-decoration: underline;
@@ -491,7 +502,7 @@ h2 {
   margin: 0;
 }
 .resend-code:hover {
-  color: #e65c00;
+  color: var(--main-color);
 }
 .email-input-container {
   position: relative;
@@ -516,7 +527,7 @@ h2 {
   width: 20px;
   height: 20px;
   border: 2px solid #f3f3f3;
-  border-top: 2px solid #ff6600;
+  border-top: 2px solid var(--main-color);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-right: 10px;
