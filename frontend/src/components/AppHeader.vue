@@ -25,9 +25,10 @@
             <div class="dropdown-content">
               <a href="#" @click="viewMyInfo">내정보 보기</a>
               <a href="#" @click="editProfile">정보 수정</a>
-              <a href="#" @click="deleteAccount">회원 탈퇴</a>
-              <a href="#" @click="logout">로그아웃</a>
+              <a href="#" @click="goToChatRoom">채팅 목록</a>
               <a href="#" @click="showChangePasswordModal = true">비밀번호 변경</a>
+              <a href="#" @click="logout">로그아웃</a>
+              <a href="#" @click="deleteAccount">회원 탈퇴</a>
 
             </div>
           </div>
@@ -461,6 +462,9 @@ export default {
     goToCart() {
       // 장바구니 이동 함수 구현
       this.$router.push('/cart');
+    },
+    goToChatRoom(){
+      this.$router.push('/chatroom');
     },
 
 
