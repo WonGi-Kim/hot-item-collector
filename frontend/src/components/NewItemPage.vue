@@ -110,11 +110,15 @@ export default {
 /* 기본 스타일 추가 */
 #app {
   font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 .container {
   width: 80%;
   margin: 0 auto;
+  flex: 1;
 }
 
 .item-grid {

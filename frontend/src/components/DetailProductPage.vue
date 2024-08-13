@@ -361,15 +361,19 @@ body {
   padding: 0;
   background-color: var(--bg-color);
   color: var(--text-color);
+}
+#app {
+  font-family: Arial, sans-serif;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
 .container {
-  max-width: 1200px;
+  width: 80%;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0;
+  flex: 1;
 }
 
 /* Product Detail Styles */
@@ -420,7 +424,7 @@ body {
 
 .product-info {
   display: flex;
-  gap: 30px;
+  gap: 100px;
 }
 
 .product-image-container {
