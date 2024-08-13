@@ -1,11 +1,5 @@
 package com.sparta.hotitemcollector.domain.user;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
 import com.sparta.hotitemcollector.domain.follow.FollowRepository;
 import com.sparta.hotitemcollector.domain.s3.service.S3Service;
 import com.sparta.hotitemcollector.domain.token.Token;
@@ -46,11 +40,17 @@ public class UserService {
     private final OAuthUserRepository oAuthUserRepository;
 
     public void signup(SignupRequestDto signupRequestDto) {
-        Optional<User> finduser = userRepository.findByLoginId(signupRequestDto.getLoginId());
+        boolean isLoginIdExists = userRepository.existsByLoginId(signupRequestDto.getLoginId());
+        boolean isEmailExists = userRepository.existsByEmail(signupRequestDto.getEmail());
 
-        if (finduser.isPresent()) {
+        if (isLoginIdExists) {
             throw new CustomException(ErrorCode.DUPLICATE_USER);
         }
+
+        if (isEmailExists) {
+            throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
+        }
+
 
 
         String password = signupRequestDto.getPassword();
@@ -352,8 +352,8 @@ public class UserService {
         return userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
     }
 
-    public User findByEmail(String email){
-        return userRepository.findByEmail(email).orElseThrow(()->new CustomException(ErrorCode.NOT_FOUND_USER));
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     public User saveUser(User user){
