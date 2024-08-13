@@ -1,5 +1,6 @@
 package com.sparta.hotitemcollector.domain.chat.chatroom;
 
+import com.sparta.hotitemcollector.domain.user.User;
 import com.sparta.hotitemcollector.global.Timestamped;
 
 import jakarta.persistence.*;
@@ -18,11 +19,17 @@ public class ChatRoom extends Timestamped {
     @Column(nullable = false, unique = true)
     private String roomId;
     private String roomName;
-    private String buyer;
-    private String seller;
+    @ManyToOne
+    @JoinColumn(name = "buyer_id")
+    private User buyer;
+
+    @ManyToOne
+    @JoinColumn(name = "seller_id")
+    private User seller;
+
 
     @Builder
-    public ChatRoom(String roomId,String roomName, String buyer, String seller) {
+    public ChatRoom(String roomId,String roomName, User buyer, User seller) {
         this.roomId = roomId;
         this.roomName = roomName;
         this.buyer = buyer;

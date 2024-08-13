@@ -4,5 +4,5 @@ import lombok.Getter;
 
 @Getter
 public class ChatRoomCreationDto {
-    private String seller;
+    private Long sellerId;
 }
