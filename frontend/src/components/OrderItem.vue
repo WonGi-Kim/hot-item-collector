@@ -44,8 +44,6 @@ export default {
     }
     const goToOrderDetail = (itemId) => {
       const orderItem = orders.value.find(order => order.productId === itemId);
-
-      alert(`주문 ID ${orderItem.orderId}의 주문상세 페이지로 이동합니다.`)
       if (orderItem) {
         router.push({name: 'DetailOrder', query: {orderId: orderItem.orderId}});
       } else {

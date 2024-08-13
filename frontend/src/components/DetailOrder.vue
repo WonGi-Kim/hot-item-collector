@@ -41,14 +41,7 @@ export default {
     const router = useRouter();
 
     const goToProductDetail = (productId) => {
-      alert(`상품 ID ${productId}의 상세 페이지로 이동합니다.`)
       router.push({ name: 'DetailProductPage', params: { productId } });
-    }
-
-    const goToSellerDetail = (sellerId) => {
-      alert(`판매자 ID ${sellerId}의 상세 페이지로 이동합니다.`)
-      // 아직 안되는 듯
-      // router.push({ name: 'OtherProfilePage', params: { sellerId } });
     }
 
     const accessToken = Cookies.get('access_token');
@@ -98,7 +91,6 @@ export default {
       deliveryStatuses,
       currentStatusIndex,
       goToProductDetail,
-      goToSellerDetail,
       fetchOrderDetail
     }
   }
@@ -133,8 +125,9 @@ export default {
               <div class="product-info">
                 <div>
                   <div class="product-name">{{ product.name }}</div>
-                  <a :href="'/seller/' + product.sellerId" class="seller-name"
-                     @click.stop="goToSellerDetail(product.sellerId)">{{ product.seller }}</a>
+                  <a :href="'/seller/' + product.sellerId" class="seller-name">{{
+                      product.seller
+                    }}</a>
                 </div>
                 <span>{{ product.price.toLocaleString() }}원</span>
               </div>
@@ -147,7 +140,6 @@ export default {
                   <div class="status-icon">{{ index + 1 }}</div>
                   <div class="status-label">{{ status }}</div>
                 </div>
-                <pre>현재 상태 인덱스: {{ product.currentStatusIndex }}</pre>
               </div>
             </div>
           </div>
@@ -158,7 +150,7 @@ export default {
   </div>
 </template>
 
-<style scoped>
+<style>
 :root {
   --main-color: #FF0000;
   --text-color: #333;
