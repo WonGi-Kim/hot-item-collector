@@ -24,7 +24,7 @@ public class ProfileImage extends Timestamped {
     private Long id;
     @Column(name = "file_name")
     private String filename;
-    @Column(name = "image_url")
+    @Column(name = "image_url",length = 1000)
     private String imageUrl;
 
     public ProfileImage(ProfileImageRequestDto requestDto) {

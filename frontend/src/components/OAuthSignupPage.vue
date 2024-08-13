@@ -191,7 +191,7 @@ export default {
           alert('기존 계정과 연결되었습니다!');
         }
         this.closeModal();
-        window.location.href = 'http://localhost:8081/';
+        window.location.href = '/';
       } catch (error) {
         if (error.response && error.response.status === 409) {
           this.error = '이미 사용 중인 이메일 주소입니다. 다른 이메일을 사용해주세요.';

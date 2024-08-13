@@ -225,7 +225,6 @@
 
 <script>
 import Cookies from "js-cookie";
-
 const client = require('../client')
 
 export default {
@@ -552,24 +551,24 @@ export default {
     }
     ,
     validatePassword() {
-      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#+-])[A-Za-z\d@$!%*?&#+-]{8,15}$/;
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/;
       this.passwordError = !passwordRegex.test(this.password) ? '비밀번호는 8~15자의 영문 대/소문자, 숫자, 특수문자를 포함해야 합니다.' : '';
     },
     validateConfirmPassword() {
       this.confirmPasswordError = this.password === this.confirmPassword ? '' : '비밀번호가 일치하지 않습니다.';
     },
     socialLogin(provider) {
-      let url = 'http://localhost:8080';
+      let url = 'http://hotitemcollector.com:8080';
 
       switch (provider) {
         case 'kakao':
-          url = url + '/oauth2/authorization/kakao';
+          url = url+'/oauth2/authorization/kakao';
           break;
         case 'naver':
-          url = url + '/oauth2/authorization/naver';
+          url = url+'/oauth2/authorization/naver';
           break;
         case 'google':
-          url = url + '/oauth2/authorization/google';
+          url = url+'/oauth2/authorization/google';
           break;
         default:
           console.error('Unsupported provider');

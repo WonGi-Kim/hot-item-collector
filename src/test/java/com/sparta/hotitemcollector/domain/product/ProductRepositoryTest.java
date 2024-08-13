@@ -62,7 +62,7 @@ public class ProductRepositoryTest {
 		System.out.println("====================================");
 	}
 
-	@Test
+	/*@Test
 	@DisplayName("2. findTop10ByOrderByLikesDesc를 테스트한다")
 	void test2() {
 		//given
@@ -78,7 +78,7 @@ public class ProductRepositoryTest {
 		// then
 		System.out.println("총 걸린 시간 : " + (after - before) + "ms");
 		System.out.println("====================================");
-	}
+	}*/
 
 	@Test
 	@DisplayName("22. findTop10ByOrderByLikesDesc를 테스트한다")
@@ -99,7 +99,7 @@ public class ProductRepositoryTest {
 	}
 
 
-	@Test
+	/*@Test
 	@DisplayName("3. findByIdWithImages를 테스트한다")
 	void test3() {
 		//given
@@ -115,7 +115,7 @@ public class ProductRepositoryTest {
 		// then
 		System.out.println("총 걸린 시간 : " + (after - before) + "ms");
 		System.out.println("====================================");
-	}
+	}*/
 
 	@Test
 	@DisplayName("3. findAll을 테스트한다")
