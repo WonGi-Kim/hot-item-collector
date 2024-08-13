@@ -6,10 +6,8 @@
   <footer>
     <div class="container footer-content">
       <div class="footer-links">
-        <a href="/about">회사 소개</a>
-        <a href="/terms">이용약관</a>
-        <a href="/privacy">개인정보처리방침</a>
-        <a href="/contact">고객센터</a>
+        <a href="https://www.notion.so/teamsparta/372caa14ae7841e9a6fd652e459a41ee">팀 노션 페이지</a>
+        <a href="https://github.com/coool-developers/hot-item-collector">팀 깃허브</a>
       </div>
       <div class="footer-copyright">&copy; 2023 Hot Item Collector. All rights reserved.</div>
     </div>
