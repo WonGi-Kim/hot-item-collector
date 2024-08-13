@@ -71,17 +71,14 @@ export default {
     };
 
     const goToProduct = (productId) => {
-      alert(`상품 ID ${productId}의 상세 페이지로 이동합니다.`);
       router.push(`/product/update/${productId}`);
     };
 
     const goToProductManagement = () => {
-      alert('주문 관리 페이지로 이동합니다.');
       router.push('/orders/sell');
     };
 
     const goToProductRegistration = () => {
-      alert('상품 등록 페이지로 이동합니다.');
       router.push('/product/upload');
     };
 
