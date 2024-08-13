@@ -145,15 +145,19 @@ body {
   padding: 0;
   background-color: var(--bg-color);
   color: var(--text-color);
+}
+
+#app{
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
 .container {
-  max-width: 1200px;
+  width: 80%;
   margin: 0 auto;
   padding: 0 20px;
+  flex: 1;
 }
 
 /* Purchased Products Styles */
