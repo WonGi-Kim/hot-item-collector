@@ -11,6 +11,9 @@
             <button v-if="isLoggedIn" class="follow-button" @click="toggleFollow">
               {{ isFollowing ? '팔로우 취소' : '팔로우' }}
             </button>
+            <button v-if="isLoggedIn" class="chat-button">
+              채팅하기
+            </button>
           </div>
         </div>
         <div class="product-info">
@@ -400,7 +403,7 @@ body {
   font-weight: bold;
 }
 
-.follow-button {
+.follow-button,.chat-button {
   padding: 5px 15px;
   background-color: var(--main-color);
   color: var(--bg-color);
@@ -410,7 +413,7 @@ body {
   transition: background-color 0.3s ease;
 }
 
-.follow-button:hover {
+.follow-button:hover,.chat-button:hover {
   background-color: var(--hover-color);
 }
 
