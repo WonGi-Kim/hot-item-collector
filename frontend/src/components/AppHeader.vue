@@ -553,7 +553,7 @@ export default {
       this.confirmPasswordError = this.password === this.confirmPassword ? '' : '비밀번호가 일치하지 않습니다.';
     },
     socialLogin(provider) {
-      let url = 'http://localhost:8080';
+      let url = 'http://hotitemcollector.com:8080';
 
       switch (provider) {
         case 'kakao':
