@@ -4,6 +4,7 @@ import com.sparta.hotitemcollector.domain.s3.service.ImageService;
 import com.sparta.hotitemcollector.domain.s3.service.S3Service;
 import com.sparta.hotitemcollector.domain.security.UserDetailsImpl;
 import com.sparta.hotitemcollector.domain.user.dto.OauthSignupRequestDto;
+import com.sparta.hotitemcollector.domain.user.dto.UserNicknameRequestDto;
 import com.sparta.hotitemcollector.domain.user.dto.auth.ValidAuthCodeDto;
 import com.sparta.hotitemcollector.domain.user.dto.auth.*;
 import com.sparta.hotitemcollector.domain.user.dto.user.*;
@@ -179,6 +180,13 @@ public class UserController {
     public ResponseEntity<CommonResponse> getUserAddress(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         UserAddressDto profile = userService.getUserAddress(userDetails.getUser());
         CommonResponse response = new CommonResponse<>("유저 주소 조회 성공", 200, profile);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/nickname")
+    public ResponseEntity<CommonResponse> getNicknameByLoginId(@RequestParam String loginId) {
+        String nickname = userService.getNicknameByLoginId(loginId);
+        CommonResponse response = new CommonResponse<>("닉네임 조회 성공", 200, nickname);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
