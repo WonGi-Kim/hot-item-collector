@@ -468,6 +468,7 @@ export default {
         window.location.reload();
       } catch (error) {
         console.error('회원가입 실패:', error.response.data);
+
         if (error.response && error.response.data) {
           const {error: errorType, message} = error.response.data;
           if (errorType === 'Conflict') {
