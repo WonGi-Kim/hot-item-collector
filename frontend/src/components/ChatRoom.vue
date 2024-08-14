@@ -156,8 +156,8 @@ export default {
       }
 
       const Stomp = await loadStompJs();
-      const socket = new WebSocket('ws://localhost:8080/ws');
-      // const socket = new WebSocket('ws://hotitemcollector.com:8080/ws');
+      // const socket = new WebSocket('ws://localhost:8080/ws'); // local test
+      const socket = new WebSocket('ws://hotitemcollector.com:8080/ws');
       const stompClient = Stomp.over(socket);
 
       await new Promise((resolve, reject) => {
