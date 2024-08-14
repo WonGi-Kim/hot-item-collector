@@ -49,45 +49,6 @@
       </div>
     </div>
   </nav>
-  <!-- 회원가입 모달 -->
-  <!--  <div v-if="showSignupModal" class="modal-overlay" @click.self="showSignupModal = false">-->
-  <!--    <div class="modal-container">-->
-  <!--      <button class="close-btn" @click="showSignupModal = false">&times;</button>-->
-  <!--      <h1>회원가입</h1>-->
-  <!--      <form @submit.prevent="register">-->
-  <!--        <div class="form-group">-->
-  <!--          <label for="auth-signupLoginId">아이디</label>-->
-  <!--          <input type="text" id="auth-signupLoginId" v-model="signupLoginId" @input="validateLoginId" required>-->
-  <!--          <div class="error" v-if="loginIdError">{{ loginIdError }}</div>-->
-  <!--        </div>-->
-  <!--        <div class="form-group">-->
-  <!--          <label for="auth-signupPassword">비밀번호</label>-->
-  <!--          <input type="password" id="auth-signupPassword" v-model="signupPassword" @input="validatePassword" required>-->
-  <!--          <div class="error" v-if="passwordError">{{ passwordError }}</div>-->
-  <!--        </div>-->
-  <!--        <div class="form-group">-->
-  <!--          <label for="auth-username">이름</label>-->
-  <!--          <input type="text" id="auth-username" v-model="username" required>-->
-  <!--        </div>-->
-  <!--        <div class="form-group">-->
-  <!--          <label for="auth-nickname">닉네임</label>-->
-  <!--          <input type="text" id="auth-nickname" v-model="nickname" required>-->
-  <!--          <div class="error" v-if="nicknameError">{{ nicknameError }}</div>-->
-  <!--        </div>-->
-  <!--        <button type="submit" :disabled="!isSignupFormValid">회원가입</button>-->
-  <!--      </form>-->
-  <!--      <div class="social-login">-->
-  <!--        <div class="social-login-divider">-->
-  <!--          <span>또는</span>-->
-  <!--        </div>-->
-  <!--        <button @click="kakaoLogin" class="kakao-login-btn">카카오톡으로 회원가입</button>-->
-  <!--      </div>-->
-  <!--      <div class="login-link">-->
-  <!--        이미 계정이 있으신가요? <a @click="switchToLogin">로그인</a>-->
-  <!--      </div>-->
-  <!--    </div>-->
-  <!--  </div>-->
-
   <div class="modal" :class="{ active: showModal }">
     <div class="modal-content">
       <button class="close-button" @click="closeModal">&times;</button>
@@ -102,7 +63,10 @@
             <label for="loginId">아이디</label>
             <input type="text" id="loginId" v-model="loginId" required @input="validateLoginId">
           </div>
-
+          <div class="form-group">
+            <label for="nickname">닉네임</label>
+            <input id="nickname" v-model="nickname" required type="text">
+          </div>
           <div class="form-group">
             <label for="email">이메일</label>
             <div class="email-verification">
