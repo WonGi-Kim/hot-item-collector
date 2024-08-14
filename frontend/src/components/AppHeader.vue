@@ -372,12 +372,14 @@ export default {
         });
           Cookies.remove('access_token');
           Cookies.remove('refresh_token');
-          alert('로그아웃 성공');
           this.isLoggedIn = false;
-          console.log('로그아웃 성공');
           await this.$router.push('/');
       } catch (error) {
         console.error('로그아웃 요청 실패:', error.response ? error.response.data : error.message);
+        Cookies.remove('access_token');
+        Cookies.remove('refresh_token');
+        this.isLoggedIn = false;
+        await this.$router.push('/');
       }
     },
     async deleteAccount() {
