@@ -4,7 +4,6 @@ import com.sparta.hotitemcollector.domain.s3.service.ImageService;
 import com.sparta.hotitemcollector.domain.s3.service.S3Service;
 import com.sparta.hotitemcollector.domain.security.UserDetailsImpl;
 import com.sparta.hotitemcollector.domain.user.dto.OauthSignupRequestDto;
-import com.sparta.hotitemcollector.domain.user.dto.UserNicknameRequestDto;
 import com.sparta.hotitemcollector.domain.user.dto.auth.ValidAuthCodeDto;
 import com.sparta.hotitemcollector.domain.user.dto.auth.*;
 import com.sparta.hotitemcollector.domain.user.dto.user.*;
