@@ -373,13 +373,29 @@ export default {
           Cookies.remove('access_token');
           Cookies.remove('refresh_token');
           this.isLoggedIn = false;
+        // 로그아웃 후 현재 경로를 확인
+        const currentPath = this.$route.path;
+        if (currentPath === '/') {
+          // 현재 경로가 '/'이면 페이지 새로고침
+          window.location.reload();
+        } else {
+          // 다른 경로일 경우 루트 페이지로 이동
           await this.$router.push('/');
+        }
       } catch (error) {
         console.error('로그아웃 요청 실패:', error.response ? error.response.data : error.message);
         Cookies.remove('access_token');
         Cookies.remove('refresh_token');
         this.isLoggedIn = false;
-        await this.$router.push('/');
+        // 로그아웃 후 현재 경로를 확인
+        const currentPath = this.$route.path;
+        if (currentPath === '/') {
+          // 현재 경로가 '/'이면 페이지 새로고침
+          window.location.reload();
+        } else {
+          // 다른 경로일 경우 루트 페이지로 이동
+          await this.$router.push('/');
+        }
       }
     },
     async deleteAccount() {
