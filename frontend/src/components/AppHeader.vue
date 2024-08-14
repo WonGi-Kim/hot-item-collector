@@ -982,6 +982,15 @@ input:focus {
   box-shadow: 0 4px 6px rgba(255, 102, 0, 0.2);
 }
 
+/* 비활성화된 버튼에 대한 스타일 추가 */
+.submit-button:disabled {
+  background-color: #ececec;
+  color: #8d8d8d;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
 h2 {
 
   color: var(--main-color);
