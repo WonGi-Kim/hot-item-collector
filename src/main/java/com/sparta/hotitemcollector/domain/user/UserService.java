@@ -222,7 +222,10 @@ public class UserService {
     public ProfileResponseDto updateProfile(ProfileRequestDto requestDto, User user) {
         User findUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
-
+        boolean isNicknameExists = userRepository.existsByNickname(requestDto.getNickname());
+        if (isNicknameExists) {
+            throw new CustomException(ErrorCode.DUPLICATE_NICKNAME);
+        }
         if (requestDto.getNickname() != null) {
             findUser.updateNickname(requestDto.getNickname());
         }
