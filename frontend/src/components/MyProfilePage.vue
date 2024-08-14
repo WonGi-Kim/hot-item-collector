@@ -276,6 +276,7 @@ export default {
         });
         // Check if bio is missing
         if (!userResponse.data.result.info) {
+          alert('프로필 초기 세팅을 위해 이동합니다.')
           router.push('/profile/update');
           return; // Exit the function if redirecting
         }
