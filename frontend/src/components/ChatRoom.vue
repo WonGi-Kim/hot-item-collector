@@ -99,16 +99,51 @@ export default {
             Authorization: accessToken,
           },
         });
-        chatList.value = response.data.result.map(chat => ({
-          roomId: chat.roomId,
-          roomName: chat.roomName,
-          buyerName: chat.buyerName,
-          sellerName: chat.sellerName,
-          avatar: chat.sellerImage,
-          messages: [],
-        }));
+
+        // 현재 사용자의 로그인 ID를 가져옵니다
+        const currentLoginId = currentUser.value;
+        console.info("currentLoginId = " + currentLoginId)
+
+        // chatList를 먼저 가져오고, 각각의 chat에 대해 닉네임을 가져와서 추가
+        chatList.value = await Promise.all(
+            response.data.result.map(async (chat) => {
+              // 현재 사용자가 sellerLoginId와 동일한지 확인
+              const isSeller = currentLoginId === chat.sellerLoginId;
+              const otherLoginId = isSeller ? chat.buyerLoginId : chat.sellerLoginId;
+
+              // 상대방의 닉네임을 가져옴
+              const otherName = await fetchNickname(otherLoginId);
+
+              // chat 객체에 상대방의 닉네임을 추가하여 반환
+              return {
+                roomId: chat.roomId,
+                roomName: otherName, // 상대방의 닉네임을 채팅방 이름으로 사용
+                buyerLoginId: chat.buyerLoginId,
+                sellerLoginId: chat.sellerLoginId,
+                avatar: chat.sellerImage,
+                messages: [],
+                sellerName: otherName, // 상대방의 닉네임 추가
+              };
+            })
+        );
+        console.info(chatList.value);
+
       } catch (error) {
         console.error('Failed to load chat rooms:', error);
+      }
+    };
+
+    const fetchNickname = async (loginId) => {
+      try {
+        const response = await client.get(`/users/nickname?loginId=${loginId}`, {
+          headers: {
+            Authorization: accessToken,
+          },
+        });
+        return response.data.result;
+      } catch (error) {
+        console.error('Failed to fetch nickname:', error);
+        return 'Unknown';
       }
     };
 
@@ -121,6 +156,7 @@ export default {
       }
 
       const Stomp = await loadStompJs();
+      // const socket = new WebSocket('ws://localhost:8080/ws'); // local test
       const socket = new WebSocket('ws://hotitemcollector.com:8080/ws');
       const stompClient = Stomp.over(socket);
 
@@ -191,7 +227,7 @@ export default {
             Authorization: accessToken,
           },
         });
-        currentUser.value = response.data.result.nickname;
+        currentUser.value = response.data.result.loginId;
       } catch (error) {
         console.error('Failed to fetch user profile:', error);
       }
@@ -237,9 +273,10 @@ export default {
       }
     };
 
-    onMounted(() => {
-      loadChatLists();
-      fetchUserProfile();
+    onMounted(async () => {
+      await fetchUserProfile();
+      await loadChatLists();
+
     });
 
     // Watch for changes in activeChatIndex to ensure socket connection is managed
@@ -269,7 +306,7 @@ export default {
       addMessageToChat,
       sendMessage,
       fetchUserProfile,
-      currentUser
+      currentUser,
     };
   },
 };
