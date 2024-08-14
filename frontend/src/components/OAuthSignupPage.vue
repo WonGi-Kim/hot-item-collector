@@ -38,13 +38,15 @@
               <label for="email">이메일</label>
               <div class="email-verification">
                 <div class="email-input-container">
-                  <input type="email" id="email" v-model="email" required @input="validateEmail">
+                  <input id="email" v-model="email" :disabled="isEmailVerified" required type="email"
+                         @input="validateEmail">
                   <span v-if="isEmailVerified" class="email-status-icon success">&#10004;</span>
                   <span v-if="verificationError" class="email-status-icon failure">&#10008;</span>
                 </div>
                 <button :disabled="!isEmailValid || isEmailVerified || isSendingCode|| timer > 0" type="button"
                         @click="sendVerificationCode">
                   <span v-if="isSendingCode" class="loading-spinner"></span>
+                  {{ verificationButtonText }}
                 </button>
               </div>
               <p class="error" v-if="emailError">{{ emailError }}</p>

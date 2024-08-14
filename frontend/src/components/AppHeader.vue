@@ -73,7 +73,8 @@
             <label for="email">이메일</label>
             <div class="email-verification">
               <div class="email-input-container">
-                <input type="email" id="email" v-model="email" required @input="validateEmail">
+                <input id="email" v-model="email" :disabled="isEmailVerified" required type="email"
+                       @input="validateEmail">
                 <span v-if="isEmailVerified" class="email-status-icon success">&#10004;</span>
                 <span v-if="verificationError" class="email-status-icon failure">&#10008;</span>
               </div>
@@ -1046,6 +1047,12 @@ h2 {
   text-decoration: underline;
   padding: 0;
   margin: 0;
+}
+
+input:disabled {
+  background-color: #f0f0f0; /* 비활성화된 입력 필드의 배경색 */
+  cursor: not-allowed; /* 커서를 금지 표시로 변경 */
+  border-color: #d0d0d0; /* 비활성화된 입력 필드의 테두리 색상 */
 }
 
 .resend-code:hover {
