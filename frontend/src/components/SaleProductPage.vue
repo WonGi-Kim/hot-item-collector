@@ -1,10 +1,11 @@
 <script>
-import { ref } from 'vue';
+import {ref} from 'vue';
 import AppHeader from "@/components/AppHeader.vue";
 import AppFooter from "@/components/AppFooter.vue";
 import Cookies from "js-cookie";
-const client = require('../client')
 import {useRouter} from "vue-router";
+
+const client = require('../client')
 
 export default {
   components: {AppFooter, AppHeader},
@@ -144,18 +145,6 @@ export default {
 </template>
 
 <style scoped>
-:root {
-  --main-color: #FF0000;
-  --text-color: #333;
-  --bg-color: #FFFFFF;
-  --hover-color: #FF6666;
-  --button-color: #FF4136;
-  --footer-bg: #f8f8f8;
-  --card-border: #e0e0e0;
-  --status-sold: #4CAF50;
-  --status-selling: #2196F3;
-  --category-bg: #f1f1f1;
-}
 
 body {
   font-family: Arial, sans-serif;
@@ -234,8 +223,9 @@ body {
 
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(250px, 1fr));
   gap: 20px;
+  margin: 30px 0;
 }
 
 .product-card {
@@ -251,7 +241,7 @@ body {
 
 .product-image {
   width: 100%;
-  height: 200px;
+  height: 253px;
   object-fit: cover;
 }
 
@@ -262,6 +252,11 @@ body {
 .product-name {
   font-weight: bold;
   margin-bottom: 5px;
+  overflow: hidden; /* 텍스트가 넘치면 숨김 */
+  text-overflow: ellipsis; /* 넘치는 텍스트를 '...'으로 표시 */
+  white-space: nowrap; /* 텍스트 줄 바꿈 방지 */
+  width: 100%; /* 부모 컨테이너의 너비를 따라감 */
+  box-sizing: border-box; /* padding과 border를 width에 포함시킴 */
 }
 
 .product-id {
@@ -272,15 +267,19 @@ body {
 
 .product-status {
   display: inline-block;
-  padding: 3px 8px;
-  border-radius: 3px;
-  font-size: 12px;
-  font-weight: bold;
+  width: 60px; /* 네모 박스의 고정 너비 */
+  height: 30px; /* 네모 박스의 고정 높이 */
+  text-align: center; /* 텍스트를 가운데 정렬 */
+  line-height: 30px; /* 텍스트를 수직 가운데 정렬 */
+  border-radius: 5px; /* 모서리를 둥글게 */
+  font-size: 12px; /* 폰트 크기 설정 */
+  font-weight: bold; /* 폰트 두께 설정 */
+  box-sizing: border-box; /* padding과 border를 width에 포함시킴 */
 }
 
 .status-selling {
-  background-color: red;
-  color: white;
+  background-color: var(--status-sold); /* 판매완료 상태 색상 */
+  color: white; /* 글자 색상 */
 }
 
 .status-sold {

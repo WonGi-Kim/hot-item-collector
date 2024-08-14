@@ -148,39 +148,55 @@ export default {
 
 .item-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4개의 열을 만들고, 각 열이 동일한 비율로 공간을 차지하도록 설정 */
-  gap: 16px; /* 아이템 간의 간격을 설정 */
+  grid-template-columns: repeat(4, minmax(250px, 1fr)); /* 4개의 열을 고정하고 각 열이 동일한 비율로 공간을 차지하도록 설정 */
+  gap: 16px; /* 아이템 간의 간격 설정 */
 }
 
 .item-card {
+  display: flex;
+  flex-direction: column;
   background: #fff;
   border: 1px solid #ddd;
   border-radius: 8px;
   overflow: hidden;
   cursor: pointer;
   transition: transform 0.2s;
+  height: 100%; /* 카드의 높이를 부모의 높이에 맞게 조정 */
 }
 
 .item-card:hover {
-  transform: scale(1.05);
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .item-card img {
   width: 100%;
-  height: auto;
+  height: 253px; /* 이미지의 고정 높이 설정 */
+  object-fit: cover; /* 이미지가 카드에 맞게 잘리도록 설정 */
 }
 
 .item-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   padding: 10px;
+  height: 100%; /* info 영역이 카드의 전체 높이를 차지하도록 설정 */
 }
 
 .item-name {
   font-weight: bold;
+  margin-bottom: 5px;
+  overflow: hidden; /* 텍스트가 넘치면 숨김 */
+  text-overflow: ellipsis; /* 넘치는 텍스트를 '...'으로 표시 */
+  white-space: nowrap; /* 텍스트 줄 바꿈 방지 */
+  width: 100%; /* 부모 컨테이너의 너비를 따라감 */
+  box-sizing: border-box; /* padding과 border를 width에 포함시킴 */
 }
 
 .item-seller {
   font-size: 0.9em;
   color: #555;
+  margin-top: auto; /* 판매자 정보를 카드 하단에 배치 */
 }
 
 .pagination {
@@ -202,7 +218,6 @@ button {
 button:disabled {
   background-color: #ddd;
 }
-
 
 
 label {
