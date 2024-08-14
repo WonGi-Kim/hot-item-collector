@@ -19,7 +19,6 @@ import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -43,12 +42,14 @@ public class UserService {
     public void signup(SignupRequestDto signupRequestDto) {
         boolean isLoginIdExists = userRepository.existsByLoginId(signupRequestDto.getLoginId());
         boolean isEmailExists = userRepository.existsByEmail(signupRequestDto.getEmail());
-
+        boolean isNicknameExisits = userRepository.existsByNickname(signupRequestDto.getNickname());
         if (isLoginIdExists) {
             throw new CustomException(ErrorCode.DUPLICATE_USER);
         }
-
         if (isEmailExists) {
+            throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
+        }
+        if (isNicknameExisits) {
             throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
         }
 
@@ -66,6 +67,7 @@ public class UserService {
                 .password(encodedPassword)
                 .username(signupRequestDto.getUsername())
                 .email(signupRequestDto.getEmail())
+                .nickname(signupRequestDto.getNickname())
                 .build();
 
         ProfileImage profileImage = new ProfileImage(requestDto);

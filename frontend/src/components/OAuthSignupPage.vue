@@ -27,6 +27,10 @@
               <label for="loginId">아이디</label>
               <input type="text" id="loginId" v-model="loginId" required>
             </div>
+            <div class="form-group">
+              <label for="nickname">닉네임</label>
+              <input id="nickname" v-model="nickname" required type="text">
+            </div>
 
             <div class="form-group">
               <label for="email">이메일</label>
@@ -100,6 +104,7 @@ export default {
       password: '',
       confirmPassword: '',
       username: '',
+      nickname: '',
       error: '',
       emailError: '',
       passwordError: '',
@@ -174,6 +179,7 @@ export default {
             socialId: this.socialId,
             loginId: this.loginId,
             username: this.username,
+            nickname: this.nickname,
             email: this.email,
             password: this.password
           });
@@ -206,6 +212,7 @@ export default {
       this.password = '';
       this.confirmPassword = '';
       this.username = '';
+      this.nickname = '';
       this.error = '';
       this.emailError = '';
       this.passwordError = '';

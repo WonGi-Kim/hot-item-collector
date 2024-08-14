@@ -22,10 +22,13 @@ public class SignupRequestDto {
 
     private String email;
 
+    private String nickname;
+
     public SignupRequestDto(OauthSignupRequestDto oauthSignupRequestDto) {
         this.loginId = oauthSignupRequestDto.getLoginId();
         this.password = oauthSignupRequestDto.getPassword();
         this.username = oauthSignupRequestDto.getUsername();
         this.email = oauthSignupRequestDto.getEmail();
+        this.nickname = oauthSignupRequestDto.getNickname();
     }
 }
