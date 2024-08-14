@@ -19,6 +19,7 @@ import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -377,5 +378,8 @@ public class UserService {
         return userRepository.findByNickname(nickname).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
     }
 
-
+    public String getNicknameByLoginId(String loginId) {
+        User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+        return user.getNickname();
+    }
 }

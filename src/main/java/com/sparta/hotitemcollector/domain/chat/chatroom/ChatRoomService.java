@@ -84,8 +84,8 @@ public class ChatRoomService {
         return new ChatRoomDetailDto(
                 chatRoom.getRoomId(),
                 chatRoom.getRoomName(),
-                chatRoom.getBuyer().getNickname(),
-                chatRoom.getSeller().getNickname(),
+                chatRoom.getBuyer().getLoginId(),
+                chatRoom.getSeller().getLoginId(),
                 chatRoom.getSeller().getProfileImage().getImageUrl()
         );
     }

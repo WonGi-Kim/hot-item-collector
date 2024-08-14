@@ -181,4 +181,11 @@ public class UserController {
         CommonResponse response = new CommonResponse<>("유저 주소 조회 성공", 200, profile);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @GetMapping("/nickname")
+    public ResponseEntity<CommonResponse> getNicknameByLoginId(@RequestParam String loginId) {
+        String nickname = userService.getNicknameByLoginId(loginId);
+        CommonResponse response = new CommonResponse<>("닉네임 조회 성공", 200, nickname);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

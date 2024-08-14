@@ -25,7 +25,7 @@ public class ChatMessageController {
         // 현재 인증된 사용자 정보 추출
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        String sender = userDetails.getUser().getNickname();
+        String sender = userDetails.getUser().getLoginId();
 
         ChatMessageDto chatMessage = chatMessageService.sendMessage(requestDto.getRoomId(), requestDto.getMessage(), sender);
 
