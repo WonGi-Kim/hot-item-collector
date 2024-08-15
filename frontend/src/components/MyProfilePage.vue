@@ -209,7 +209,8 @@ body {
       <section class="product-section">
         <h2 @click="goToPurchasedProducts">내가 구매한 상품</h2>
         <div v-if="purchasedProducts.length > 0" class="product-list">
-          <div v-for="product in purchasedProducts" :key="product.id" class="product-card" @click="goToYourProduct(product.id)">
+          <div v-for="product in purchasedProducts" :key="product.id" class="product-card"
+               @click="goToPurchasedProduct(product.id)">
             <img :src="product.image" :alt="product.name" class="product-image">
             <div class="product-info">
               <div class="product-name">{{ product.name }}</div>
@@ -223,7 +224,8 @@ body {
       <section class="product-section">
         <h2 @click="goToLikedProducts">내가 좋아요한 상품</h2>
         <div v-if="likedProducts.length > 0" class="product-list">
-          <div v-for="product in likedProducts" :key="product.id" class="product-card" @click="goToYourProduct(product.id)">
+          <div v-for="product in likedProducts" :key="product.id" class="product-card"
+               @click="goToLikedProduct(product.id)">
             <img :src="product.image" :alt="product.name" class="product-image">
             <div class="product-info">
               <div class="product-name">{{ product.name }}</div>
@@ -364,13 +366,16 @@ export default {
     const goToProduct = (productId) => {
       router.push(`/product/update/${productId}`);
     }
-    const goToYourProduct = (productId) => {
+    const goToPurchasedProduct = (productId) => {
       const orderItem = purchasedProducts.value.find(product => product.id === productId);
       if (orderItem) {
         router.push({name: 'DetailOrder', query: {orderId: orderItem.orderId}});
       } else {
         console.error('주문 아이템을 찾을 수 없습니다.');
       }
+    }
+    const goToLikedProduct = (productId) => {
+      router.push(`/product/detail/${productId}`);
     }
 
     const goToRegisteredProducts = () => {
@@ -397,7 +402,9 @@ export default {
       goToRegisteredProducts,
       goToPurchasedProducts,
       goToLikedProducts,
-      goToYourProduct
+      goToPurchasedProduct,
+      goToLikedProduct
+
     }
   }
 }

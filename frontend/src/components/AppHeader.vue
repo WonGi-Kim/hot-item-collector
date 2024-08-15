@@ -62,16 +62,19 @@
           <div class="form-group">
             <label for="loginId">아이디</label>
             <input type="text" id="loginId" v-model="loginId" required @input="validateLoginId">
+            <p v-if="loginIdError" class="error">{{ loginIdError }}</p>
           </div>
           <div class="form-group">
             <label for="nickname">닉네임</label>
             <input id="nickname" v-model="nickname" required type="text">
+            <p v-if="nicknameError" class="error">{{ nicknameError }}</p>
           </div>
           <div class="form-group">
             <label for="email">이메일</label>
             <div class="email-verification">
               <div class="email-input-container">
-                <input type="email" id="email" v-model="email" required @input="validateEmail">
+                <input id="email" v-model="email" :disabled="isEmailVerified" required type="email"
+                       @input="validateEmail">
                 <span v-if="isEmailVerified" class="email-status-icon success">&#10004;</span>
                 <span v-if="verificationError" class="email-status-icon failure">&#10008;</span>
               </div>
@@ -89,9 +92,7 @@
             <p class="timer" v-if="timer > 0">
               남은 시간: {{ formatTime(timer) }}
             </p>
-            <p class="verification-status" :class="{ success: isEmailVerified, failure: verificationError }">
-              {{ verificationStatus }}
-            </p>
+
           </div>
 
           <div class="form-group">
@@ -113,7 +114,7 @@
           <div class="form-group">
             <label for="loginId">아이디</label>
             <input type="text" id="loginId" v-model="loginId" required>
-            <p class="error" v-if="emailError">{{ emailError }}</p>
+            <p v-if="loginIdError" class="error">{{ loginIdError }}</p>
           </div>
 
           <div class="form-group">
@@ -128,22 +129,26 @@
           <div class="sc-b82c0cba-2 DwtdQ">
             <div class="sc-jXUnUj bMUZyR">
               <div class="sc-kXWJUi gIRbED">
-              </div></div><div class="sc-b82c0cba-4 faerXM">
-            <div class="sc-grBnJl dBXZuI">
-              <span class="sc-hrDJJk bReByP">다른 방법으로 가입하기</span>
+              </div>
             </div>
-          </div>
+            <div class="sc-b82c0cba-4 faerXM">
+              <div class="sc-grBnJl dBXZuI">
+                <span class="sc-hrDJJk bReByP">다른 방법으로 가입하기</span>
+              </div>
+            </div>
           </div>
         </div>
         <div v-else>
           <div class="sc-b82c0cba-2 DwtdQ">
             <div class="sc-jXUnUj bMUZyR">
               <div class="sc-kXWJUi gIRbED">
-              </div></div><div class="sc-b82c0cba-4 faerXM">
-            <div class="sc-grBnJl dBXZuI">
-              <span class="sc-hrDJJk bReByP">다른 방법으로 로그인하기</span>
+              </div>
             </div>
-          </div>
+            <div class="sc-b82c0cba-4 faerXM">
+              <div class="sc-grBnJl dBXZuI">
+                <span class="sc-hrDJJk bReByP">다른 방법으로 로그인하기</span>
+              </div>
+            </div>
           </div>
         </div>
         <div class="social-buttons">
@@ -154,8 +159,9 @@
             <img src="@/assets/google.png" alt="대체 텍스트">
           </button>
         </div>
+        <p v-if="error" class="error">{{ error }}</p>
+
       </form>
-      <p class="error" v-if="error">{{ error }}</p>
     </div>
   </div>
   <!-- 비밀번호 변경 모달 -->
@@ -486,13 +492,15 @@ export default {
         console.error('회원가입 실패:', error.response.data);
 
         if (error.response && error.response.data) {
-          const {error: errorType, message} = error.response.data;
-          if (errorType === 'Conflict') {
-            if (message.includes('아이디')) {
-              this.loginIdError = message;
-            } else if (message.includes('닉네임')) {
-              this.nicknameError = message;
-            }
+          console.log(error.response.data.message);
+          const {message, error: errorType} = error.response.data;
+          console.log(errorType);
+          if (message.includes('이메일')) {
+            this.emailError = message;
+          } else if (message.includes('닉네임')) {
+            this.nicknameError = message;
+          } else if (message.includes('아이디')) {
+            this.loginIdError = message;
           }
         }
       }
@@ -534,7 +542,7 @@ export default {
     }
     ,
     validatePassword() {
-      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/;
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&^~`#()_+\-=[\]{};':"\\|,.<>/?])[A-Za-z\d@$!%`~*?&^#()_+\-=[\]{};':"\\|,.<>/?]{8,15}$/;
       this.passwordError = !passwordRegex.test(this.password) ? '비밀번호는 8~15자의 영문 대/소문자, 숫자, 특수문자를 포함해야 합니다.' : '';
     },
     validateConfirmPassword() {
@@ -545,13 +553,13 @@ export default {
 
       switch (provider) {
         case 'kakao':
-          url = url+'/oauth2/authorization/kakao';
+          url = url + '/oauth2/authorization/kakao';
           break;
         case 'naver':
-          url = url+'/oauth2/authorization/naver';
+          url = url + '/oauth2/authorization/naver';
           break;
         case 'google':
-          url = url+'/oauth2/authorization/google';
+          url = url + '/oauth2/authorization/google';
           break;
         default:
           console.error('Unsupported provider');
@@ -562,7 +570,7 @@ export default {
     }
     ,
     validateNewPassword() {
-      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/;
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&`~^#()_+\-=[\]{};':"\\|,.<>/?])[A-Za-z\d@$!~`%*?&^#()_+\-=[\]{};':"\\|,.<>/?]{8,15}$/;
       this.newPasswordError = !passwordRegex.test(this.newPassword) ? '비밀번호는 8~15자의 영문 대/소문자, 숫자, 특수문자를 포함해야 합니다.' : '';
       this.validateConfirmNewPassword();
     }
@@ -698,6 +706,7 @@ export default {
   --status-sold: #4CAF50;
   --status-selling: #2196F3;
 }
+
 .modalTitle {
   text-align: center;
 }
@@ -768,19 +777,23 @@ header {
   margin: 10px 0;
   max-width: 600px;
 }
+
 .DwtdQ {
   position: relative;
   width: 100%;
   margin-top: 22px;
 }
+
 .bMUZyR {
   width: 100%;
   padding: 8px 0px;
 }
+
 .gIRbED {
   width: 100%;
   border-bottom: 1px solid rgba(90, 101, 119, 0.15);
 }
+
 .faerXM {
   position: absolute;
   top: 50%;
@@ -789,6 +802,7 @@ header {
   transform: translate(-50%, -50%);
   background-color: rgb(255, 255, 255);
 }
+
 .dBXZuI {
   display: flex;
   flex-flow: row;
@@ -796,10 +810,12 @@ header {
   max-width: fit-content;
   align-items: center;
 }
+
 .bReByP {
   color: #333;
   font: 500 0.875rem / 1.46 "Pretendard Variable", Figtree, "IBM Plex Sans JP", "Pretendard JP Variable";
 }
+
 /* .search-bar 내부의 input 스타일 */
 .search-bar input {
   padding: 10px;
@@ -982,6 +998,15 @@ input:focus {
   box-shadow: 0 4px 6px rgba(255, 102, 0, 0.2);
 }
 
+/* 비활성화된 버튼에 대한 스타일 추가 */
+.submit-button:disabled {
+  background-color: #ececec;
+  color: #8d8d8d;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
 h2 {
 
   color: var(--main-color);
@@ -1047,6 +1072,12 @@ h2 {
   text-decoration: underline;
   padding: 0;
   margin: 0;
+}
+
+input:disabled {
+  background-color: #f0f0f0; /* 비활성화된 입력 필드의 배경색 */
+  cursor: not-allowed; /* 커서를 금지 표시로 변경 */
+  border-color: #d0d0d0; /* 비활성화된 입력 필드의 테두리 색상 */
 }
 
 .resend-code:hover {

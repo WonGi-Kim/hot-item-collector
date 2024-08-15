@@ -98,31 +98,7 @@ public class UserService {
             throw new CustomException(ErrorCode.NOT_FOUND);
         }
     }
-//    public LoginResponseDto login(LoginReqeustDto loginReqeustDto) {
-//        User finduser = userRepository.findByLoginId(loginReqeustDto.getLoginId())
-//                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
-//
-//        checkUserStatus(finduser);
-//
-//        if (!passwordEncoder.matches(loginReqeustDto.getPassword(), finduser.getPassword())) {
-//            throw new CustomException(ErrorCode.INCORRECT_PASSWORD);
-//        }
-//
-//        String access = jwtUtil.createAccessToken(finduser.getLoginId());
-//        String refresh = jwtUtil.createRefreshToken(finduser.getLoginId());
-//
-//
-//        // 토큰을 데이터베이스에 저장
-//        Optional<Token> optionalToken = tokenService.findRefreshToken(finduser);
-//        if (optionalToken.isPresent()) {
-//            Token token = optionalToken.get();
-//            tokenService.updateToken(token, refresh);
-//        } else {
-//            tokenService.saveToken(finduser, refresh);
-//        }
-//
-//        return new LoginResponseDto("Bearer " + access, refresh);
-//    }
+
 
     public LoginResponseDto refreshToken(RefreshRequestDto refreshRequestDto) {
         String refreshToken = refreshRequestDto.getRefresh();
@@ -224,10 +200,14 @@ public class UserService {
     public ProfileResponseDto updateProfile(ProfileRequestDto requestDto, User user) {
         User findUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
-        boolean isNicknameExists = userRepository.existsByNickname(requestDto.getNickname());
-        if (isNicknameExists) {
-            throw new CustomException(ErrorCode.DUPLICATE_NICKNAME);
+
+        if (!findUser.getNickname().equals(requestDto.getNickname())) {
+            boolean isNicknameExists = userRepository.existsByNickname(requestDto.getNickname());
+            if (isNicknameExists) {
+                throw new CustomException(ErrorCode.DUPLICATE_NICKNAME);
+            }
         }
+
         if (requestDto.getNickname() != null) {
             findUser.updateNickname(requestDto.getNickname());
         }

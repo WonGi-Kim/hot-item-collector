@@ -25,22 +25,26 @@
             </div>
             <div class="form-group">
               <label for="loginId">아이디</label>
+              <p v-if="loginIdError" class="error">{{ loginIdError }}</p>
               <input type="text" id="loginId" v-model="loginId" required>
             </div>
             <div class="form-group">
               <label for="nickname">닉네임</label>
               <input id="nickname" v-model="nickname" required type="text">
+              <p v-if="nicknameError" class="error">{{ nicknameError }}</p>
             </div>
 
             <div class="form-group">
               <label for="email">이메일</label>
               <div class="email-verification">
                 <div class="email-input-container">
-                  <input type="email" id="email" v-model="email" required @input="validateEmail">
+                  <input id="email" v-model="email" :disabled="isEmailVerified" required type="email"
+                         @input="validateEmail">
                   <span v-if="isEmailVerified" class="email-status-icon success">&#10004;</span>
                   <span v-if="verificationError" class="email-status-icon failure">&#10008;</span>
                 </div>
-                <button type="button" @click="sendVerificationCode" :disabled="!isEmailValid || isEmailVerified || isSendingCode|| timer > 0">
+                <button :disabled="!isEmailValid || isEmailVerified || isSendingCode|| timer > 0" type="button"
+                        @click="sendVerificationCode">
                   <span v-if="isSendingCode" class="loading-spinner"></span>
                   {{ verificationButtonText }}
                 </button>
@@ -107,7 +111,9 @@ export default {
       nickname: '',
       error: '',
       emailError: '',
+      loginIdError: '',
       passwordError: '',
+      nicknameError: '',
       confirmPasswordError: '',
       modalTitle: '',
       submitButtonText: '',
@@ -164,7 +170,7 @@ export default {
       this.emailError = emailRegex.test(this.email) ? '' : '유효한 이메일 주소를 입력해주세요.';
     },
     validatePassword() {
-      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/;
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&`~^#()_+\-=[\]{};':"\\|,.<>/?])[A-Za-z\d@$!~`%*?&^#()_+\-=[\]{};':"\\|,.<>/?]{8,15}$/;
       this.passwordError = passwordRegex.test(this.password) ? '' : '비밀번호는 8~15자의 영문 대/소문자, 숫자, 특수문자를 포함해야 합니다.';
     },
     validateConfirmPassword() {
@@ -174,6 +180,7 @@ export default {
       try {
         let response;
         if (this.isNewUser) {
+
           const response = await client.post('users/oauth/signup', {
             oauthId: this.oauthId,
             socialId: this.socialId,
@@ -199,10 +206,19 @@ export default {
         this.closeModal();
         window.location.href = '/';
       } catch (error) {
-        if (error.response && error.response.status === 409) {
-          this.error = '이미 사용 중인 이메일 주소입니다. 다른 이메일을 사용해주세요.';
-        } else {
-          this.error = '오류가 발생했습니다. 다시 시도해주세요.';
+        console.error('회원가입 실패:', error.response.data);
+
+        if (error.response && error.response.data) {
+          console.log(error.response.data.message);
+          const {message, error: errorType} = error.response.data;
+          console.log(errorType);
+          if (message.includes('이메일')) {
+            this.emailError = message;
+          } else if (message.includes('닉네임')) {
+            this.nicknameError = message;
+          } else if (message.includes('아이디')) {
+            this.loginIdError = message;
+          }
         }
       }
     },
@@ -232,7 +248,7 @@ export default {
         this.isSendingCode = true;
         this.verificationButtonText = '전송 중...';
         // 이메일 인증 코드 발송 API 호출
-        await client.post('users/email', { email: this.email });
+        await client.post('users/email', {email: this.email});
         console.log('인증 코드 발송:');
         this.showVerificationCode = true;
         this.startTimer();
@@ -298,6 +314,7 @@ export default {
   --input-border: #ccc;
   --shadow-color: #9f0000;
 }
+
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -308,6 +325,7 @@ body {
   flex-direction: column;
   min-height: 100vh;
 }
+
 .container {
   margin-top: 100px;
   background-color: white;
@@ -317,18 +335,21 @@ body {
   width: 550px;
   text-align: center;
 }
+
 h1 {
   color: var(--main-color);
   margin-bottom: 1.5rem;
   font-size: 2.8rem;
   font-weight: 700;
 }
+
 .info-text {
   color: #555;
   margin-bottom: 2.5rem;
   line-height: 1.8;
   font-size: 1.1rem;
 }
+
 button {
   margin: 0.75rem;
   padding: 1rem 2rem;
@@ -342,11 +363,13 @@ button {
   font-weight: 600;
   box-shadow: 0 4px 6px rgba(255, 102, 0, 0.2);
 }
+
 button:hover {
   background-color: var(--main-color);
   transform: translateY(-2px);
   box-shadow: 0 6px 8px rgba(255, 102, 0, 0.3);
 }
+
 .modal {
   position: fixed;
   top: 0;
@@ -362,10 +385,12 @@ button:hover {
   visibility: hidden;
   transition: all 0.3s ease;
 }
+
 .modal.active {
   opacity: 1;
   visibility: visible;
 }
+
 .modal-content {
   background-color: white;
   padding: 3rem;
@@ -378,9 +403,11 @@ button:hover {
   max-height: 90vh;
   overflow-y: auto;
 }
+
 .modal.active .modal-content {
   transform: scale(1);
 }
+
 .close-button {
   position: absolute;
   top: 15px;
@@ -399,20 +426,24 @@ button:hover {
   border-radius: 50%;
   padding: 0;
 }
+
 .close-button:hover {
   color: var(--main-color);
   background-color: #f0f0f0;
 }
+
 form {
   display: flex;
   flex-direction: column;
 }
+
 label {
   margin-top: 1.5rem;
   font-weight: 600;
   text-align: left;
   color: #333;
 }
+
 input {
   padding: 0.75rem;
   margin-top: 0.5rem;
@@ -423,19 +454,23 @@ input {
   width: 100%;
   box-sizing: border-box;
 }
+
 input:focus {
   outline: none;
   border-color: var(--main-color);
 }
+
 .error {
   color: #ff3333;
   margin-top: 0.75rem;
   font-size: 0.9rem;
   text-align: left;
 }
+
 .form-group {
   margin-bottom: 1.75rem;
 }
+
 .submit-button {
   margin-top: 2rem;
   background-color: var(--main-color);
@@ -449,27 +484,32 @@ input:focus {
   transition: all 0.3s ease;
   width: 100%;
 }
+
 .submit-button:hover {
   background-color: var(--main-color);
   transform: translateY(-2px);
   box-shadow: 0 4px 6px rgba(255, 102, 0, 0.2);
 }
+
 h2 {
   color: var(--main-color);
   font-size: 2rem;
   margin-bottom: 2rem;
   font-weight: 700;
 }
+
 .email-verification {
   display: flex;
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
 }
+
 .email-verification input {
   flex: 1;
   min-width: 200px;
 }
+
 .email-verification button,
 .verification-code button {
   padding: 0.75rem 1rem;
@@ -478,6 +518,7 @@ h2 {
   white-space: nowrap;
   flex-shrink: 0;
 }
+
 .verification-code {
   margin-top: 1rem;
   display: flex;
@@ -486,11 +527,13 @@ h2 {
   gap: 10px;
   flex-wrap: wrap;
 }
+
 .verification-code input {
   flex: 0 1 150px;
   min-width: 100px;
   max-width: 150px;
 }
+
 .timer {
   font-size: 0.9rem;
   color: var(--main-color);
@@ -498,6 +541,7 @@ h2 {
   width: 100%;
   text-align: right;
 }
+
 .resend-code {
   background: none;
   border: none;
@@ -508,13 +552,16 @@ h2 {
   padding: 0;
   margin: 0;
 }
+
 .resend-code:hover {
   color: var(--main-color);
 }
+
 .email-input-container {
   position: relative;
   flex: 1;
 }
+
 .email-status-icon {
   position: absolute;
   right: 10px;
@@ -522,9 +569,11 @@ h2 {
   transform: translateY(-50%);
   font-size: 1.2rem;
 }
+
 .email-status-icon.success {
   color: #4CAF50;
 }
+
 .email-status-icon.failure {
   color: #f44336;
 }
@@ -539,8 +588,13 @@ h2 {
   animation: spin 1s linear infinite;
   margin-right: 10px;
 }
+
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>
