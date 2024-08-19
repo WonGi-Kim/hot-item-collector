@@ -265,7 +265,8 @@ export default {
 
         const connection = socketConnections[roomId];
         if (connection && connection.stompClient) {
-          connection.stompClient.send('/app/send', {}, JSON.stringify(messageContent));
+          // 각 방에 맞는 경로로 메시지를 전송
+          connection.stompClient.send(`/app/send/${roomId}`, {}, JSON.stringify(messageContent));
           newMessage.value = '';
         } else {
           console.error(`No active WebSocket connection or no roomId.`);
