@@ -42,6 +42,15 @@
 </div>
 <br>
 
+## 🧊팀원소개
+
+![image](https://github.com/user-attachments/assets/e496df5c-2e3d-4f89-afd7-edd3d17523ea)
+![image](https://github.com/user-attachments/assets/26e4db3d-9137-49cb-9ca4-2e579140c206)
+
+<br>
+
+
+
 ## 🔎주요기술
 
 <details>
@@ -265,10 +274,15 @@
 
 ## 🖥️와이어프레임
 
+![image](https://github.com/user-attachments/assets/d0959a5e-a9bf-41c7-b4ba-84b7d5619e85)
+
 <br>
 
 ## 📐서비스 아키텍쳐
 
 ![image](https://github.com/user-attachments/assets/ef296cc8-f810-4efc-9cdd-077e8e1cf1bd)
+
+<br>
+
 
 
