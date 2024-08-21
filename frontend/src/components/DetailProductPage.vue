@@ -39,6 +39,7 @@
               <div class="buy-actions">
                 <button v-if="isLoggedIn&product.status !=='SOLD_OUT'" class="add-to-cart" @click="addToCart">장바구니 담기</button>
                 <button v-if="isLoggedIn&product.status !=='SOLD_OUT'" class="buy-now" @click="buyNow">구매하기</button>
+                <button v-if="!isLoggedIn&product.status !=='SOLD_OUT'"  class="sold-out" disabled>로그인을 해주세요</button>
                 <button v-else class="sold-out" disabled>판매완료</button>
               </div>
             </div>
@@ -150,9 +151,9 @@ export default {
           };
         }
 
-        if (!accessToken) {
-          return;
-        }
+        // if (!accessToken) {
+        //   return;
+        // }
 
         try{
           const responseFollow = await client.get(`/follow/${product.value.userId}`, {
