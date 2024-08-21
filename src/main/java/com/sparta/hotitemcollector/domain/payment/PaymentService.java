@@ -92,7 +92,7 @@ public class PaymentService {
         paymentRepository.save(payment);
 
         // 아임포트 사전 검증 추가
-        iamportClient.postPrepare(createPrepareData(payment));
+        // iamportClient.postPrepare(createPrepareData(payment));
 
         return order.getId();
     }

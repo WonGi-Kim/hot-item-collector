@@ -151,4 +151,16 @@ public class OrderService {
 	public List<OrderItem> findOrderItemListByOrderId(Long orderId) {
 		return orderItemRepository.findOrderItemListByOrderId(orderId);
 	}
+
+	public String deleteOrder(Long orderId) {
+		if (orderRepository.existsById(orderId)) {
+			orderRepository.deleteById(orderId);
+			orderItemRepository.deleteByOrderId(orderId);
+			return "Order deleted";
+		} else if(!orderRepository.existsById(orderId)) {
+			return "Order not deleted";
+		} else {
+			throw new CustomException(ErrorCode.NOT_FOUND_ORDER);
+		}
+	}
 }
