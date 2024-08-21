@@ -257,7 +257,7 @@
   <br>
 
   <div align = "center">
-    <img src="https://github.com/user-attachments/assets/">
+    <img src="https://github.com/user-attachments/assets/6de63da2-df9e-415c-807c-86e93874a200">
   </div>
 </details>
 
@@ -268,8 +268,9 @@
 
   <br>
 
+
   <div align = "center">
-    <img src="https://github.com/user-attachments/assets/">
+    <img src="https://github.com/user-attachments/assets/b91f56b8-dabe-466d-8303-672889e16a87">
   </div>
 </details>
 
@@ -286,7 +287,8 @@
 
 ## 📐서비스 아키텍쳐
 
-![image](https://github.com/user-attachments/assets/ef296cc8-f810-4efc-9cdd-077e8e1cf1bd)
+![image](https://github.com/user-attachments/assets/0f86b7a1-72b1-4b73-83cc-87c33358131c)
+
 
 <br>
 
