@@ -149,6 +149,20 @@ export default {
             }
           } else {
             alert("결제 실패");
+            try {
+              // 결제 실패 시 주문 삭제
+              const deleteResponse = await client.delete(`/order/${orderId}`, {
+                headers: {
+                  'Authorization': accessToken
+                }
+              });
+
+              alert("결제가 실패하여 주문이 취소되었습니다.");
+              console.log("주문 삭제 성공:", deleteResponse.data);
+            } catch (deleteError) {
+              alert("주문 삭제 중 오류가 발생했습니다.");
+              console.log("주문 삭제 실패:", deleteError);
+            }
             console.log("결제 실패:", rsp);
           }
         });

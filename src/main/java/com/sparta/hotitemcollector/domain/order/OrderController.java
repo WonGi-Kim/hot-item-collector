@@ -10,12 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.sparta.hotitemcollector.domain.order.dto.OrderItemBySellerResponseDto;
 import com.sparta.hotitemcollector.domain.order.dto.OrderItemResponseDto;
@@ -92,6 +87,13 @@ public class OrderController {
 		orderService.updateStatus(orderItemId, orderStatusRequestDto, userDetails.getUser());
 
 		CommonResponse response = new CommonResponse("주문의 상태가 변경됐습니다.", 201, "");
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	@DeleteMapping("/order/{orderId}")
+	public ResponseEntity<CommonResponse> deleteOrder(@PathVariable ("orderId") Long orderId){
+		CommonResponse response = new CommonResponse("주문 삭제", 200, orderService.deleteOrder(orderId));
+
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
