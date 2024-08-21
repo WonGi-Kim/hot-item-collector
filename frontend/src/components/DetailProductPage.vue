@@ -151,9 +151,9 @@ export default {
           };
         }
 
-        // if (!accessToken) {
-        //   return;
-        // }
+        if (!accessToken) {
+          return;
+        }
 
         try{
           const responseFollow = await client.get(`/follow/${product.value.userId}`, {
