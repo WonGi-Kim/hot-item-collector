@@ -19,4 +19,6 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long>, Ord
 	Page<OrderItem> findOrderItemPageByUserId(Long userId, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
 
 	List<OrderItem> findOrderItemListByOrderId(Long orderId);
+
+	void deleteByOrderId(Long orderId);
 }

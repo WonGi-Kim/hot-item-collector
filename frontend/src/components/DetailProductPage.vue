@@ -150,6 +150,10 @@ export default {
           };
         }
 
+        if (!accessToken) {
+          return;
+        }
+
         try{
           const responseFollow = await client.get(`/follow/${product.value.userId}`, {
             headers: {
@@ -167,6 +171,9 @@ export default {
     };
 
     const fetchLikeStatus = async () => {
+      if (!accessToken) {
+        return;
+      }
       try {
         const response = await client.get(`/likes/${productId}`, {
           headers: {
