@@ -152,6 +152,7 @@ public class OrderService {
 		return orderItemRepository.findOrderItemListByOrderId(orderId);
 	}
 
+	@Transactional
 	public String deleteOrder(Long orderId) {
 		if (orderRepository.existsById(orderId)) {
 			orderRepository.deleteById(orderId);
