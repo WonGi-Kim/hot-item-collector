@@ -23,22 +23,27 @@
   <img src="https://img.shields.io/badge/Spring%20Boot-6DB33F?style=for-the-badge&logo=Spring%20Boot&logoColor=white">
   <img src="https://img.shields.io/badge/Spring%20Security-6DB33F?style=for-the-badge&logo=Spring%20Security&logoColor=white">
   <img src="https://img.shields.io/badge/JSON%20Web%20Tokens-000000?style=for-the-badge&logo=JSON%20Web%20Tokens&logoColor=white">
-  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=Docker&logoColor=white">
+  
 </div>
 <div align="center">
+    <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=Docker&logoColor=white">
   <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=MySQL&logoColor=white">
   <img src="https://img.shields.io/badge/Redis-FF4438?style=for-the-badge&logo=Redis&logoColor=white">
   <img src="https://img.shields.io/badge/Amazon%20S3-569A31?style=for-the-badge&logo=Amazon%20S3&logoColor=white">
   <img src="https://img.shields.io/badge/Vue.js-4FC08D?style=for-the-badge&logo=Vue.js&logoColor=white">
   <img src="https://img.shields.io/badge/NGINX-009639?style=for-the-badge&logo=NGINX&logoColor=white">
-  <img src="https://img.shields.io/badge/PortOne-B14B20?style=for-the-badge&logo=PortOneX&logoColor=white">
 </div>
 <div align="center">
   <img src="https://img.shields.io/badge/GitHub%20Actions-2088FF?style=for-the-badge&logo=GitHub%20Actions&logoColor=white">
   <img src="https://img.shields.io/badge/Amazon%20EC2-FF9900?style=for-the-badge&logo=Amazon%20EC2&logoColor=white">
   <img src="https://img.shields.io/badge/WebSocket-FF6600?style=for-the-badge&logo=WebSocket&logoColor=white">
+  <img src="https://img.shields.io/badge/STOMP-660000?style=for-the-badge&logo=STOMP&logoColor=white">
+    <img src="https://img.shields.io/badge/RabbitMq-F26722?style=for-the-badge&logo=RabbitMq&logoColor=white">
+</div>
+<div align="center">
   <img src="https://img.shields.io/badge/OAuth%202.0-000000?style=for-the-badge&logo=OAuth%202.0&logoColor=white">
-  <img src="https://img.shields.io/badge/Gmail%20SMTP-EA4335?style=for-the-badge&logo=Gmail&logoColor=white">
+  <img src="https://img.shields.io/badge/SMTP-EA4335?style=for-the-badge&logo=Gmail&logoColor=white">
+    <img src="https://img.shields.io/badge/PortOne-B14B20?style=for-the-badge&logo=PortOneX&logoColor=white">
 </div>
 <br>
 
@@ -51,7 +56,7 @@
 
 
 
-## 🔎주요기술
+## 🔎주요기술 
 
 <details>
  <summary>
@@ -153,7 +158,8 @@
 
 ## ✏️ERD
 
-![image](https://github.com/user-attachments/assets/6362e786-b62b-4995-a694-329e1b9faaf2)
+![image](https://github.com/user-attachments/assets/4bea6d20-5a67-4374-898c-a558cf100240)
+
 
 <br>
 
