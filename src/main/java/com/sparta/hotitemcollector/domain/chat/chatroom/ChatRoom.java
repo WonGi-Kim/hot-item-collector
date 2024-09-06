@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -18,7 +19,7 @@ public class ChatRoom extends Timestamped {
 
     @Column(nullable = false, unique = true)
     private String roomId;
-    private String roomName;
+    private String lastMessage;
     @ManyToOne
     @JoinColumn(name = "buyer_id")
     private User buyer;
@@ -29,10 +30,14 @@ public class ChatRoom extends Timestamped {
 
 
     @Builder
-    public ChatRoom(String roomId,String roomName, User buyer, User seller) {
+    public ChatRoom(String roomId,String lastMessage, User buyer, User seller) {
         this.roomId = roomId;
-        this.roomName = roomName;
+        this.lastMessage = lastMessage;
         this.buyer = buyer;
         this.seller = seller;
+    }
+
+    public void updateLastMessage(String lastMessage){
+        this.lastMessage = lastMessage;
     }
 }

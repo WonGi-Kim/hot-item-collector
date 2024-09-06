@@ -19,7 +19,8 @@
                   {{ chat.sellerName === currentUser.valueOf() ? chat.buyerName : chat.sellerName }}
                 </div>
                 <div class="chat-item-preview">
-                  {{ chat.messages.length > 0 ? chat.messages[chat.messages.length - 1].text : 'No messages' }}
+<!--                  {{ chat.messages.length > 0 ? chat.messages[chat.messages.length - 1].text : 'No messages' }}-->
+                  {{ chat.lastMessage }}
                 </div>
               </div>
             </div>
@@ -122,6 +123,7 @@ export default {
                 sellerLoginId: chat.sellerLoginId,
                 avatar: chat.sellerImage,
                 messages: [],
+                lastMessage: chat.lastMessage || 'No messages',
                 sellerName: otherName, // 상대방의 닉네임 추가
               };
             })
@@ -156,8 +158,8 @@ export default {
       }
 
       const Stomp = await loadStompJs();
-      // const socket = new WebSocket('ws://localhost:8080/ws'); // local test
-      const socket = new WebSocket('ws://hotitemcollector.com:8080/ws');
+      const socket = new WebSocket('ws://localhost:8080/ws'); // local test
+      // const socket = new WebSocket('ws://hotitemcollector.com:8080/ws');
       const stompClient = Stomp.over(socket);
 
       await new Promise((resolve, reject) => {
@@ -251,6 +253,8 @@ export default {
               minute: '2-digit',
             }),
           });
+          // 채팅방의 lastMessage를 업데이트
+          chat.lastMessage = message.message;
         }
       }
     };
