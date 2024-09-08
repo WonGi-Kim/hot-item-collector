@@ -18,6 +18,13 @@ public class ChatRoomController {
 
     private final ChatRoomService chatRoomService;
 
+    @PatchMapping("/chatroom/last/{roomId}")
+    public ResponseEntity<CommonResponse> callLastMessage(@PathVariable String roomId) {
+        ChatRoomDetailDto chatRoom = chatRoomService.updateLastMessage(roomId);
+        CommonResponse response = new CommonResponse<>("채팅방 진입 완료", 200, chatRoom);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PostMapping("/chatroom")
     public ResponseEntity<CommonResponse> createChatRoom(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody ChatRoomCreationDto roomCreationDto) {
         ChatRoomDetailDto chatRoom = chatRoomService.createChatRoom(userDetails.getUser().getId(), roomCreationDto.getSellerId());
@@ -25,7 +32,7 @@ public class ChatRoomController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("chatrooms/list")
+    @GetMapping("/chatrooms/list")
     private ResponseEntity<CommonResponse> getAllChatRooms(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         List<ChatRoomDetailDto> chatRoomDetailDtoList = chatRoomService.getAllChatRoomByUser(userDetails.getUser().getId());
         CommonResponse response = new CommonResponse<>("채팅방 목록 조회", 200, chatRoomDetailDtoList);

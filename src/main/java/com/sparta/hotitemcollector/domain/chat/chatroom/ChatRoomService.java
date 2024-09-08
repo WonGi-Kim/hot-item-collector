@@ -1,5 +1,7 @@
 package com.sparta.hotitemcollector.domain.chat.chatroom;
 
+import com.sparta.hotitemcollector.domain.chat.chatmessage.ChatMessage;
+import com.sparta.hotitemcollector.domain.chat.chatmessage.ChatMessageRepository;
 import com.sparta.hotitemcollector.domain.chat.chatroom.dto.ChatRoomDetailDto;
 import com.sparta.hotitemcollector.domain.user.User;
 import com.sparta.hotitemcollector.domain.user.UserService;
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
 public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final UserService userService;
+    private final ChatMessageRepository chatMessageRepository;
 
     @Transactional
     public ChatRoomDetailDto createChatRoom(Long buyerId, Long sellerId) {
@@ -37,7 +40,6 @@ public class ChatRoomService {
         }
 
         String roomId = generateRoomId();
-        String roomName = generateRoomName(firstUser.getNickname(), secondUser.getNickname());
 
         // 채팅방이 이미 존재하는지 확인
         Optional<ChatRoom> existingChatRoom = chatRoomRepository.findByBuyerIdAndSellerId(firstUserId, secondUserId);
@@ -45,7 +47,7 @@ public class ChatRoomService {
         ChatRoom chatRoom = existingChatRoom.orElseGet(() -> {
             ChatRoom newChatRoom = ChatRoom.builder()
                     .roomId(roomId)
-                    .roomName(roomName)
+                    .lastMessage("No Message")
                     .buyer(firstUser)
                     .seller(secondUser)
                     .build();
@@ -55,6 +57,7 @@ public class ChatRoomService {
         return convertChatRoomToChatRoomDetailDto(chatRoom);
     }
 
+    // 채팅방 리스트 조회
     public List<ChatRoomDetailDto> getAllChatRoomByUser(Long userId) {
         // Buyer 또는 Seller가 해당 닉네임인 채팅방을 모두 조회
         List<ChatRoom> chatRooms = chatRoomRepository.findAllByBuyerIdOrSellerId(userId, userId);
@@ -64,8 +67,25 @@ public class ChatRoomService {
                 .collect(Collectors.toList());
     }
 
+    // 채팅방 상세 진입
     public ChatRoomDetailDto getChatRoom(String roomId) {
         ChatRoom chatRoom = getChatRoomById(roomId);
+        return convertChatRoomToChatRoomDetailDto(chatRoom);
+    }
+
+    // Disconnected 시 가장 마지막 message를 저장
+    public ChatRoomDetailDto updateLastMessage(String roomId) {
+        // 0. roomId 기반으로 채팅방 먼저 찾기
+        ChatRoom chatRoom = getChatRoomById(roomId);
+        // 1. 채팅방의 가장 마지막 메시지를 찾음
+        ChatMessage lastMessage = chatMessageRepository.findFirstByRoomIdOrderByCreatedAtDesc(roomId);
+        String lastMessageInChatRoom = lastMessage.getMessage();
+
+        // 2. 채팅방 메시지를 업데이트 하고 저장
+        chatRoom.updateLastMessage(lastMessageInChatRoom);
+
+        chatRoomRepository.save(chatRoom);
+
         return convertChatRoomToChatRoomDetailDto(chatRoom);
     }
 
@@ -76,14 +96,11 @@ public class ChatRoomService {
     private String generateRoomId() {
         return UUID.randomUUID().toString();
     }
-    private String generateRoomName(String buyer, String seller) {
-        return buyer + " 와 " + seller + " 의 채팅방";
-    }
 
     private ChatRoomDetailDto convertChatRoomToChatRoomDetailDto(ChatRoom chatRoom) {
         return new ChatRoomDetailDto(
                 chatRoom.getRoomId(),
-                chatRoom.getRoomName(),
+                chatRoom.getLastMessage(),
                 chatRoom.getBuyer().getLoginId(),
                 chatRoom.getSeller().getLoginId(),
                 chatRoom.getSeller().getProfileImage().getImageUrl()

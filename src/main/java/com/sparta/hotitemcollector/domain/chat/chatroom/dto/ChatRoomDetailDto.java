@@ -6,14 +6,14 @@ import lombok.Getter;
 @Getter
 public class ChatRoomDetailDto {
     private String roomId;
-    private String roomName;
+    private String lastMessage;
     private String buyerLoginId;
     private String sellerLoginId;
     private String sellerImage;
 
-    public ChatRoomDetailDto(String roomId, String roomName, String buyerLoginId, String sellerLoginId, String sellerImage) {
+    public ChatRoomDetailDto(String roomId, String lastMessage, String buyerLoginId, String sellerLoginId, String sellerImage) {
         this.roomId = roomId;
-        this.roomName = roomName;
+        this.lastMessage = lastMessage;
         this.buyerLoginId = buyerLoginId;
         this.sellerLoginId = sellerLoginId;
         this.sellerImage = sellerImage;

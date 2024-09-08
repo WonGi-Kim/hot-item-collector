@@ -4,12 +4,13 @@ Content-Type: application/json
 
 {
   "loginId": "user1",
-  "password": "passWord123!"
+  "password": "passWord12!"
 }
 
 > {%
-    client.global.set("access_token", response.body.result.access);
-    client.global.set("refresh_token", response.body.result.refresh);
+    client.global.set("access_token", response.headers.valueOf("access"));
+    client.global.set("refresh_token", response.headers.valueOf("refresh"));
+    client.log("access_token : " + client.global.get("access_token"))
 %}
 
 ### 로그인 유저 2
@@ -22,8 +23,8 @@ Content-Type: application/json
 }
 
 > {%
-    client.global.set("access_token", response.body.result.access);
-    client.global.set("refresh_token", response.body.result.refresh);
+    client.global.set("access_token", response.headers.valueOf("access"));
+    client.global.set("refresh_token", response.headers.valueOf("refresh"));
 %}
 
 ### 채팅방 생성
@@ -32,11 +33,16 @@ Content-Type: application/json
 Authorization: {{access_token}}
 
 {
-  "seller": "someone Lee"
+  "sellerId": "2"
 }
 
+### 채팅방 리스트 호출
+GET http://localhost:8080/chatrooms/list
+Content-Type: application/json
+Authorization: {{access_token}}
+
 ### 채팅방 조회
-GET http://localhost:8080/chatroom/5f176cc5-e620-4b22-b58b-8a5ab8af979a
+GET http://localhost:8080/chatroom/c3a6b960-10e9-4343-8225-0bd94ea9f2b8
 
 ### 채팅 생성
 POST http://localhost:8080/chat/message
@@ -54,7 +60,7 @@ Content-Type: application/json
 Authorization: {{access_token}}
 
 {
-  "seller": "someone Lee"
+  "seller": "nick1"
 }
 
 > {% client.global.set("roomId", response.body.roomId); %}
@@ -68,3 +74,8 @@ Authorization: {{access_token}}
   "roomId": "{{roomId}}",
   "message": "Hello, this is a test message"
 }
+
+### 채팅 마지막 메시지 호출
+PATCH http://localhost:8080/chatroom/last/c3a6b960-10e9-4343-8225-0bd94ea9f2b8
+Content-Type: application/json
+Authorization: {{access_token}}
