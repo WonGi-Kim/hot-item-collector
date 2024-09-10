@@ -20,6 +20,20 @@ Content-Type: application/json
   "nickname": "someone Lee"
 }
 
+### 회원가입 - 유저 2
+POST http://localhost:8080/users/signup
+Content-Type: application/json
+
+{
+  "loginId": "user3",
+  "password" : "passWord123!",
+  "username": "이아무개",
+  "nickname": "someone Lee",
+  "email": "test@test.com",
+  "role" : "1",
+  "userStatus" : "NORMAL"
+}
+
 ### 로그인 - 유저1
 POST http://localhost:8080/users/login
 Content-Type: application/json

@@ -33,7 +33,7 @@ Content-Type: application/json
 Authorization: {{access_token}}
 
 {
-  "sellerId": "2"
+  "sellerId": "3"
 }
 
 ### 채팅방 리스트 호출

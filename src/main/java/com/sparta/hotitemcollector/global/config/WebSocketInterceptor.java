@@ -1,5 +1,6 @@
 package com.sparta.hotitemcollector.global.config;
 
+import com.sparta.hotitemcollector.domain.chat.chatroom.ChatRoomService;
 import com.sparta.hotitemcollector.domain.security.UserDetailsServiceImpl;
 import com.sparta.hotitemcollector.global.exception.CustomException;
 import com.sparta.hotitemcollector.global.exception.ErrorCode;
@@ -25,6 +26,7 @@ public class WebSocketInterceptor implements ChannelInterceptor {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsServiceImpl;
+    private final ChatRoomService chatRoomService;
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
@@ -56,10 +58,23 @@ public class WebSocketInterceptor implements ChannelInterceptor {
             } else {
                 throw new CustomException(ErrorCode.HEADER_NOT_FOUND);
             }
+        } else if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
+            String destination = accessor.getDestination();  // 예: "/topic/{roomId}"
+            if (destination != null && destination.startsWith("/topic/")) {
+                String roomIdInMessage = destination.substring("/topic/".length()); // "/topic/" 뒤의 부분만 추출
+                accessor.getSessionAttributes().put("roomId", roomIdInMessage);
+            }
         } else if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
             // DISCONNECT 요청 처리
-            System.out.println("Client disconnected: " + accessor.getSessionId());
-            // 필요한 경우 세션 정리 작업을 추가합니다.
+            String roomId = (String) accessor.getSessionAttributes().get("roomId");
+            log.info("Room ID {} retrieved from session", roomId);
+
+            if (roomId != null) {
+                // roomId를 사용하여 필요한 로직 처리
+                chatRoomService.updateLastMessage(roomId);
+            } else {
+                log.warn("Room ID not found in session");
+            }
         }
         return message;
     }
